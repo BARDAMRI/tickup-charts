@@ -93,3 +93,12 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./example/dist
           publish_branch: gh-pages
+          
+      - name: Trigger Prime Update
+        if: success()
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GH_PAT }}" \
+          https://api.github.com/repos/BARDAMRI/tickup-prime/dispatches \
+          -d '{"event_type": "core_updated"}'
