@@ -35,7 +35,6 @@ jobs:
 
       - name: Bump version and push
         run: |
-          # שימוש ב-force-- למקרה שנוצרו שינויים קלים ב-Runner
           npm version patch -m "chore: release v%s [skip ci]" --force
           git push --follow-tags
         env:
