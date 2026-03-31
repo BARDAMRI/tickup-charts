@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "preinstall": "mkdir -p ../../tickup-prime-final && touch ../../tickup-prime-final/package.json",
     "dev": "vite",
     "dev:prime": "npm run prime:link-local && VITE_TICKUP_PRIME=1 vite",
     "build": "tsc -p tsconfig.app.json && vite build",

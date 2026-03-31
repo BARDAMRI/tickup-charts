@@ -29,8 +29,13 @@ jobs:
       - name: Create Mock Prime for CI
         run: |
           mkdir -p ../tickup-prime-final
-          echo '{"name": "@tickup/prime", "version": "1.0.0", "main": "index.js"}' > ../tickup-prime-final/package.json
+          echo '{"name": "@tickup/prime", "version": "1.0.0", "main": "index.js", "types": "index.d.ts"}' > ../tickup-prime-final/package.json
           echo "export const TickUpPrime = null;" > ../tickup-prime-final/index.js
+          echo "export const createTickUpPrimeEngine = (theme: any) => null;" >> ../tickup-prime-final/index.js
+          echo "export const getTickUpPrimeThemePatch = (theme: any) => ({});" >> ../tickup-prime-final/index.js
+          echo "export declare const TickUpPrime: any;" > ../tickup-prime-final/index.d.ts
+          echo "export declare const createTickUpPrimeEngine: (theme: any) => any;" >> ../tickup-prime-final/index.d.ts
+          echo "export declare const getTickUpPrimeThemePatch: (theme: any) => any;" >> ../tickup-prime-final/index.d.ts
 
       - name: Install root dependencies
         run: npm ci
