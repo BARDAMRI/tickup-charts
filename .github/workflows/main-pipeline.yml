@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   publish:
@@ -22,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22 
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
@@ -43,9 +44,8 @@ jobs:
       - name: Build & Publish to NPM
         run: |
           npm run build
-          npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # הוספת --provenance מחברת את החבילה למקור שלה בגיטהאב
+          npm publish --access public --provenance 
 
   deploy:
     needs: [publish]
@@ -61,7 +61,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: |
             package-lock.json
