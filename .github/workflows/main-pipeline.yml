@@ -6,12 +6,13 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,38 +26,37 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci 
 
       - name: Configure git identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump patch version
-        run: npm version patch -m "chore: bump version to %s [skip ci]"
+      - name: Bump version and push
+        run: |
+          # שימוש ב-force-- למקרה שנוצרו שינויים קלים ב-Runner
+          npm version patch -m "chore: release v%s [skip ci]" --force
+          git push --follow-tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push version commit and tag
-        run: git push --follow-tags
-
-      - name: Build core library
-        run: npm run build
-
-      - name: Publish to npm
-        run: npm publish --access public
+      - name: Build & Publish to NPM
+        run: |
+          npm run build
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   deploy:
-    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]') }}
     needs: [publish]
+    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Checkout repository (latest main)
+      - name: Checkout repository (latest main with new version)
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: main 
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -75,23 +75,18 @@ jobs:
           echo "export const TickUpPrime = null; export const createTickUpPrimeEngine = (t) => null; export const getTickUpPrimeThemePatch = (t) => ({});" > ../tickup-prime-final/index.js
           echo "export declare const TickUpPrime: any; export declare const createTickUpPrimeEngine: (t: any) => any; export declare const getTickUpPrimeThemePatch: (t: any) => any;" > ../tickup-prime-final/index.d.ts
 
-      - name: Install root dependencies
-        run: npm ci
+      - name: Install dependencies (Root & Example)
+        run: |
+          npm ci
+          cd example && npm ci
 
-      - name: Install example dependencies
-        run: npm ci
-        working-directory: example
-
-      - name: Build core library
-        run: npm run build
-
-      - name: Build showcase
-        run: npm run build
-        working-directory: example
+      - name: Build Core and Showcase
+        run: |
+          npm run build
+          cd example && npm run build
 
       - name: Add SPA fallback page
-        run: cp dist/index.html dist/404.html
-        working-directory: example
+        run: cp example/dist/index.html example/dist/404.html
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
