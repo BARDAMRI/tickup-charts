@@ -1,19 +1,19 @@
 ---
 name: Feature Request
-about: Suggest an idea for TickUp Charts.
-title: "[FEATURE] <Short description of the idea>"
+about: Suggest a new capability or enhancement for TickUp Charts
+title: "[FEATURE] "
 labels: enhancement
 assignees: BARDAMRI
 ---
 
-### Is your feature request related to a problem? Please describe.
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## Problem statement
+What user or developer problem does this solve?
 
-### Describe the solution you'd like
-A clear and concise description of what you want to happen.
+## Proposed solution
+Describe the behavior and API you would like.
 
-### Describe alternatives you've considered
-A clear and concise description of any alternative solutions or features you've considered.
+## Alternatives considered
+Other approaches you considered and why they are less suitable.
 
-### Additional context
-Add any other context or screenshots about the feature request here.
+## Additional context
+Mockups, references, benchmarks, or examples.

@@ -1,12 +1,24 @@
 # Security Policy
 
-TickUp Charts takes security seriously. If you find a vulnerability, please report it privately.
+TickUp Charts takes security seriously.
 
-## Reporting a Vulnerability
+## Reporting a vulnerability
 
-Please do **NOT** open an issue for security-related matters. Instead, email a detailed report (including reproduction steps) to:
-**[bardamri1702@gmail.com](mailto:bardamri1702@gmail.com)**
+Do **not** open public GitHub issues for suspected vulnerabilities.
 
-We will respond promptly and work on a coordinated disclosure.
+Please report security findings privately by email:
+- **bardamri1702@gmail.com**
 
-Thank you for helping keep the ecosystem secure.
+Include:
+- clear description of the issue
+- impact assessment
+- reproduction steps or proof of concept
+- affected versions/paths (if known)
+
+## Response process
+
+- We will acknowledge receipt as soon as possible.
+- We will investigate and provide status updates.
+- We aim for coordinated disclosure after a fix is available.
+
+Thank you for helping improve the security of TickUp Charts.

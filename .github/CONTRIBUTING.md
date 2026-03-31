@@ -1,12 +1,31 @@
 # Contributing to TickUp Charts
 
-Welcome! We are excited to have you contribute.
+Thanks for your interest in contributing to TickUp.
 
-## Guidelines
+## How to contribute
 
-- **PRs Welcome**: Pull requests are open to everyone.
-- **Pass Builds**: All PRs must pass the existing CI/CD build scripts before being considered for merge.
-- **Owner Review**: Every PR requires a manual review and approval from the project owner (BARDAMRI).
-- **Communication**: For major changes, please open an issue first to discuss your proposal.
+1. Fork the repository and create a feature branch.
+2. Keep changes focused and include clear commit messages.
+3. Run local checks before opening a PR:
+   - `npm install`
+   - `npm run build`
+   - `npm test`
+4. Open a pull request to `main` with:
+   - what changed
+   - why it changed
+   - how it was tested
 
-Thank you for making TickUp better!
+## Contribution expectations
+
+- Follow existing project structure and naming conventions.
+- Avoid unrelated refactors in feature/fix PRs.
+- Keep documentation in sync with behavior changes.
+- Be respectful and collaborative in issues and PR discussion.
+
+## Reporting issues
+
+- Bug reports: use the **Bug Report** issue template.
+- Feature ideas: use the **Feature Request** issue template.
+- Security issues: see `SECURITY.md` and report privately.
+
+By contributing, you agree that your contributions are licensed under the project license (`MIT`).

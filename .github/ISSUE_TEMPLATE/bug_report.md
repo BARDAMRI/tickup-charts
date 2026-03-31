@@ -1,31 +1,30 @@
 ---
 name: Bug Report
-about: Create a report to help us improve TickUp Charts.
-title: "[BUG] <Short description of the problem>"
+about: Report a reproducible problem in TickUp Charts
+title: "[BUG] "
 labels: bug
 assignees: BARDAMRI
 ---
 
-### Describe the Bug
-A clear and concise description of what the bug is.
+## Summary
+Clear and concise description of the bug.
 
-### To Reproduce
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## Reproduction steps
+1. 
+2. 
+3. 
 
-### Expected Behavior
-A clear and concise description of what you expected to happen.
+## Expected behavior
+What should happen?
 
-### Screenshots
-If applicable, add screenshots to help explain your problem.
+## Actual behavior
+What happens instead?
 
-### Desktop (please complete the following information):
- - OS: [e.g. macOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+## Environment
+- OS:
+- Browser:
+- Node.js version:
+- Package version:
 
-### Additional Context
-Add any other context about the problem here.
+## Additional context
+Logs, screenshots, stack traces, or sample data.
