@@ -28,7 +28,7 @@ TickUp ships **named product components** that fix toolbar layout:
 
 Use **`TickUpHost`** **without** `productId` to control `showSidebar` / `showTopBar` / `showSettingsBar` yourself.
 
-**Prime** may refer to **`productId: 'prime'`** (**`TickUpPrimeTier`**) or the **`prime`** render engine (**`chartOptions.base.engine`** / **`TickUpPrime`**). See [Prime engine & Pro roadmap](./15-prime-engine-and-pro-roadmap.md).
+**Prime** may refer to **`productId: 'prime'`** (**`TickUpPrimeTier`**) or the **`prime`** render engine (**`chartOptions.base.engine`** / **`TickUpPrime`**). See [Prime engine & Pro roadmap](https://github.com/BARDAMRI/tickup-prime/blob/main/documentation/15-prime-engine-and-pro-roadmap.md).
 
 ## Live data
 

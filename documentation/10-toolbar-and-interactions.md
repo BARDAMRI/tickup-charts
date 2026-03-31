@@ -28,7 +28,7 @@ Typical controls (some may hide on very narrow widths):
 | **Range** | `fitVisibleRangeToData`. |
 | **Export** | CSV download of series. |
 | **Refresh** | `onRefreshRequest` callback. |
-| **Theme** | Toggles **shell** light/dark (**`GlobalStyle`**, settings modal chrome). Notify the app via **`onThemeVariantChange`** on **`TickUpHost`**; keep **`themeVariant`** controlled in sync. Plot styling still follows **`chartOptions`** — align **`base.theme`** (and use **`getTickUpPrimeThemePatch`** / **`createTickUpPrimeEngine`** for Prime) so grid, axes, and watermarks match. See [Props & chart options](./05-props-and-chart-options.md) and [Prime engine](./15-prime-engine-and-pro-roadmap.md). |
+| **Theme** | Toggles **shell** light/dark (**`GlobalStyle`**, settings modal chrome). Notify the app via **`onThemeVariantChange`** on **`TickUpHost`**; keep **`themeVariant`** controlled in sync. Plot styling still follows **`chartOptions`** — align **`base.theme`** (and use **`getTickUpPrimeThemePatch`** / **`createTickUpPrimeEngine`** for Prime) so grid, axes, and watermarks match. See [Props & chart options](./05-props-and-chart-options.md) and [Prime engine](https://github.com/BARDAMRI/tickup-prime/blob/main/documentation/15-prime-engine-and-pro-roadmap.md). |
 
 ## Interval selection & search flow
 

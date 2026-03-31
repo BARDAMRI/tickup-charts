@@ -17,7 +17,7 @@ Props types: `TickUpPulseProps`, `TickUpFlowProps`, etc. Product components **om
 ### Prime tier vs Prime engine
 
 - **`TickUpPrimeTier`** — Same chrome as **Command**; shows an **evaluation strip** when **`licenseKey`** is unset.  
-- **`TickUpPrime`** (engine) — Visual profile: **`chartOptions.base.engine: 'prime'`** or **`ref.setEngine(TickUpPrime)`** (dark plot). For a **light** Prime plot, use **`getTickUpPrimeThemePatch('light')`** / **`createTickUpPrimeEngine('light')`**. Usable on **any** tier. See [Prime engine & Pro roadmap](./15-prime-engine-and-pro-roadmap.md).
+- **`TickUpPrime`** (engine) — Visual profile: **`chartOptions.base.engine: 'prime'`** or **`ref.setEngine(TickUpPrime)`** (dark plot). For a **light** Prime plot, use **`getTickUpPrimeThemePatch('light')`** / **`createTickUpPrimeEngine('light')`**. Usable on **any** tier. See [Prime engine & Pro roadmap](https://github.com/BARDAMRI/tickup-prime/blob/main/documentation/15-prime-engine-and-pro-roadmap.md).
 
 ### Symbol on Pulse (no top bar)
 

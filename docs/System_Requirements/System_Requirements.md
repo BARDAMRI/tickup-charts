@@ -42,7 +42,7 @@ Deliver fast, interactive **React** charts for trading and analytics: OHLCV on *
 
 - **2D Canvas** only (no WebGL core path)  
 - No server-side data store — host supplies **`intervalsArray`** or pushes via ref API  
-- **Prime** tier (`TickUpPrimeTier`) and **Prime engine** (`TickUpPrime`) are documented in **`documentation/15-prime-engine-and-pro-roadmap.md`**; the reference example may omit the tier row (see root **README**)
+- **Prime** tier (`TickUpPrimeTier`) and **Prime engine** (`TickUpPrime`) are documented in the Prime repository docs; the reference example may omit the tier row (see root **README**)
 
 ## 7. Documentation sources
 

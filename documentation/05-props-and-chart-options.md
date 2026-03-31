@@ -60,7 +60,7 @@ When you **do** change options intentionally, any deep change triggers a merge i
 
 - **`themeVariant` / `defaultThemeVariant` / `onThemeVariantChange`** drive **`GlobalStyle`** (page background), settings-modal chrome, and related shell UI — not the plot alone.
 - Plot colors still come from **`chartOptions`** (`base.theme`, `base.style`, …). Keep them **consistent** with the shell (e.g. light shell + `base.theme: 'light'`) so axes, grid, and watermarks stay readable.
-- For the **Prime** renderer (`base.engine: 'prime'`), use **`getTickUpPrimeThemePatch('light' | 'dark')`** or **`createTickUpPrimeEngine(theme)`** with **`ref.setEngine`** so the merged patch matches your host theme. **`TickUpPrime`** alone applies the **dark** Prime plot; see [Prime engine & Pro roadmap](./15-prime-engine-and-pro-roadmap.md).
+- For the **Prime** renderer (`base.engine: 'prime'`), use **`getTickUpPrimeThemePatch('light' | 'dark')`** or **`createTickUpPrimeEngine(theme)`** with **`ref.setEngine`** so the merged patch matches your host theme. **`TickUpPrime`** alone applies the **dark** Prime plot; see [Prime engine & Pro roadmap](https://github.com/BARDAMRI/tickup-prime/blob/main/documentation/15-prime-engine-and-pro-roadmap.md).
 
 ## `ChartOptions` structure (high level)
 

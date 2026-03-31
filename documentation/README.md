@@ -2,9 +2,9 @@
 
 Complete guides for integrating and operating the TickUp Charts React charting library.
 
-The **npm package** has **`tickup`** (default — `TickUpStage` and chart helpers) and **`tickup/full`** (e.g. `TickUpCommand`, `TickUpHost`, extended exports). Product-focused guides import from **`tickup/full`**. Behavior that exists only in private modules is summarized only when it affects hosts (e.g. internal i18n tables driving locale defaults).
+The **npm package** has **`tickup`** (default — `TickUpStage` and chart helpers) and **`tickup/full`** (e.g. `TickUpCommand`, `TickUpHost`, extended exports). Product-focused guides import from **`tickup/full`**.
 
-Published tarballs **include this `documentation/` folder** and the sibling **`legal/`** policy templates (see root `package.json` **`files`**) so links in **[14-legal-and-policies.md](./14-legal-and-policies.md)** resolve under `node_modules/tickup/`. Type declarations ship in **`dist/*.d.ts`**. Guides focus on the **free public** tiers plus the **Prime** engine/tier (see **[15](./15-prime-engine-and-pro-roadmap.md)**); advanced Pro indicators/drawings may ship later (same doc).
+Published tarballs **include this `documentation/` folder** and the sibling **`legal/`** policy templates (see root `package.json` **`files`**) so links in **[14-legal-and-policies.md](./14-legal-and-policies.md)** resolve under `node_modules/tickup/`. Type declarations ship in **`dist/*.d.ts`**. This documentation covers the open-source core package.
 
 The **reference example app** in [`../example/`](../example/) (Vite + React) exercises all product tiers, `chartOptions`, the compact symbol strip on Pulse, host symbol callbacks, and the imperative ref API; see [`../example/README.md`](../example/README.md). The example app itself is **not** published to npm.
 
@@ -26,7 +26,6 @@ The **reference example app** in [`../example/`](../example/) (Vite + React) exe
 | 12 | [Overlays & indicators](./12-overlays-and-indicators.md) | SMA/EMA/VWAP/Bollinger, `overlays` / `overlayKinds` |
 | 13 | [i18n & axes](./13-internationalization-and-axes.md) | Locale, RTL, currency, sessions, grid |
 | 14 | [Legal & policies](./14-legal-and-policies.md) | Terms of Service, Privacy, Acceptable Use templates (`legal/`) |
-| 15 | [Prime engine & Pro roadmap](./15-prime-engine-and-pro-roadmap.md) | `base.engine`, `TickUpPrime`, light/dark Prime patches, `setEngine`, Prime tier, planned Pro tools |
 
 ## Older material
 

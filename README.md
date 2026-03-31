@@ -8,7 +8,7 @@ High-performance **React** financial charts: Canvas 2D OHLCV, pan/zoom, drawings
 
 **[MIT](./LICENSE)** — free for commercial and personal use. The **documented, supported** embeds in this release are **TickUpPulse**, **TickUpFlow**, **TickUpCommand**, **TickUpDesk**, plus **TickUpHost** / **TickUpStage** for custom chrome.
 
-**Prime:** the **`TickUpPrime`** render profile (`chartOptions.base.engine: 'prime'` or `ref.setEngine(TickUpPrime)`) adds the neon canvas look and **dark** glass toolbars. For a **light** plot with Prime rendering, use **`getTickUpPrimeThemePatch('light')`** / **`createTickUpPrimeEngine('light')`** (see doc 15). **`TickUpPrimeTier`** (`productId: 'prime'`) is the licensed shell (same chrome as Command; optional **`licenseKey`** hides the eval strip). See **[documentation/15-prime-engine-and-pro-roadmap.md](./documentation/15-prime-engine-and-pro-roadmap.md)**.
+**Want Pro visuals and advanced tooling?** TickUp Prime adds the neon look, premium rendering profile, and Pro feature set as a separate package. See [tickup-prime](https://github.com/BARDAMRI/tickup-prime).
 
 **Publishing:** run **`npm run build`** and **`npm pack --dry-run`**, then **`npm publish`** with the intended **`version`** in `package.json`. The npm page shows this README, **LICENSE**, **CHANGELOG**, and bundled **documentation/**.
 
@@ -29,7 +29,7 @@ Developers building trading terminals, analytics dashboards, and embeddable mark
 
 ## API shape (important)
 
-The npm package is **React-based**: you render **`TickUpHost`**, **`TickUpStage`**, or tier components (`TickUpCommand`, …) and pass **`intervalsArray`** / **`chartOptions`**. The **Prime** visual engine uses **`ref.setEngine(TickUpPrime)`** or **`chartOptions.base.engine: 'prime'`** for the default **dark** Prime look; use **`createTickUpPrimeEngine('light')`** / **`getTickUpPrimeThemePatch('light')`** when the host uses a light plot. There is **no** separate `TickUpCore` DOM constructor in this codebase.
+The npm package is **React-based**: you render **`TickUpHost`**, **`TickUpStage`**, or tier components (`TickUpCommand`, …) and pass **`intervalsArray`** / **`chartOptions`**. There is **no** separate `TickUpCore` DOM constructor in this codebase.
 
 ## Quick setup
 
@@ -117,7 +117,7 @@ Guides (glossary, API, live data, drawings, settings, exports) live in **[`docum
 | Overlays (SMA, EMA, VWAP, …) | [documentation/12-overlays-and-indicators.md](./documentation/12-overlays-and-indicators.md) |
 | Locale, RTL, sessions | [documentation/13-internationalization-and-axes.md](./documentation/13-internationalization-and-axes.md) |
 | Full export list | [documentation/11-exports-and-advanced.md](./documentation/11-exports-and-advanced.md) |
-| Prime engine & Pro roadmap | [documentation/15-prime-engine-and-pro-roadmap.md](./documentation/15-prime-engine-and-pro-roadmap.md) |
+| Pro upgrade | [tickup-prime repository](https://github.com/BARDAMRI/tickup-prime) |
 | Legal & policies (templates) | [documentation/14-legal-and-policies.md](./documentation/14-legal-and-policies.md) · [`legal/`](./legal/) |
 | Example app (tiers, options, symbol API, ref demos) | [example/README.md](./example/README.md) |
 
