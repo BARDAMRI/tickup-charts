@@ -26,6 +26,12 @@ jobs:
             package-lock.json
             example/package-lock.json
 
+      - name: Create Mock Prime for CI
+        run: |
+          mkdir -p ../tickup-prime-final
+          echo '{"name": "@tickup/prime", "version": "1.0.0", "main": "index.js"}' > ../tickup-prime-final/package.json
+          echo "export const TickUpPrime = null;" > ../tickup-prime-final/index.js
+
       - name: Install root dependencies
         run: npm ci
 

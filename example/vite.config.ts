@@ -33,6 +33,7 @@ export default defineConfig({
     },
     build: {
         rollupOptions: {
+            external: ['@tickup/prime'],
             output: {
                 manualChunks(id) {
                     const normalized = id.replaceAll('\\', '/');
