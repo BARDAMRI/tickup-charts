@@ -1,6 +1,6 @@
 {
   "name": "tickup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "High-performance React financial charts. Canvas 2D rendering, advanced technical analysis tools, and real-time data streaming.",
   "type": "module",
   "main": "./dist/tickup.cjs.js",
@@ -22,6 +22,7 @@
   "files": [
     "dist",
     "documentation",
+    "assets",
     "legal",
     "LICENSE",
     "README.md",
@@ -57,10 +58,10 @@
   ],
   "author": "Bar Damri",
   "license": "MIT",
-  "homepage": "https://github.com/BARDAMRI/tickup-charts",
+  "homepage": "https://BARDAMRI.github.io/tickup-charts/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BARDAMRI/tickup-charts.git"
+    "url": "https://github.com/BARDAMRI/tickup-charts.git"
   },
   "bugs": {
     "url": "https://github.com/BARDAMRI/tickup-charts/issues"
