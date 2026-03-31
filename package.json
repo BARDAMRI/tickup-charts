@@ -1,6 +1,6 @@
 {
   "name": "tickup",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "High-performance React financial charts. Canvas 2D rendering, advanced technical analysis tools, and real-time data streaming.",
   "type": "module",
   "main": "./dist/tickup.cjs.js",
