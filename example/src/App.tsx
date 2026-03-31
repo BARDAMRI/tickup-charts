@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
-import type {Interval, TickUpHostHandle} from 'tickup/full';
+import type {Interval, TickUpChartEngine, TickUpHostHandle} from 'tickup/full';
 import {
     AxesPosition,
     ChartTheme,
@@ -162,7 +162,7 @@ const TIER_ROWS: {
     {
         key: 'prime',
         title: 'TickUp Prime',
-        blurb: 'Prime preview in core build (premium package loaded separately).',
+        blurb: 'Prime teaser lane. Link @tickup/prime locally to activate neon rendering.',
         Cmp: TickUpCommand,
         lux: true,
     },
@@ -285,6 +285,8 @@ export default function App() {
         return ChartTheme.dark;
     });
     const [page, setPage] = useState<'tiers' | 'ticks'>('tiers');
+    const [primeEngine, setPrimeEngine] = useState<TickUpChartEngine | null>(null);
+    const [primeLinked, setPrimeLinked] = useState(false);
 
     useEffect(() => {
         const mqLight = window.matchMedia('(prefers-color-scheme: light)');
@@ -295,22 +297,33 @@ export default function App() {
         return () => mqLight.removeEventListener('change', handler);
     }, []);
 
-    // Optional Prime runtime hook: if premium package is available, apply its engine.
+    // Optional Prime runtime hook: loads only when local/developer env explicitly enables it.
     useLayoutEffect(() => {
+        const enabled = String((import.meta as any).env?.VITE_TICKUP_PRIME ?? '') === '1';
+        if (!enabled) return;
+        const moduleId = '@tickup/prime';
+        import(/* @vite-ignore */ moduleId)
+            .then((m: any) => {
+                if (m?.TickUpPrime) {
+                    setPrimeEngine(m.TickUpPrime);
+                    setPrimeLinked(true);
+                }
+            })
+            .catch(() => {
+                setPrimeLinked(false);
+            });
+    }, []);
+
+    useLayoutEffect(() => {
+        if (!primeEngine) return;
         const timer = requestAnimationFrame(() => {
-            import('tickup/full')
-                .then((m: any) => {
-                    const h = refs.current.prime;
-                    if (h?.setEngine && m?.TickUpPrime) {
-                        h.setEngine(m.TickUpPrime);
-                    }
-                })
-                .catch(() => {
-                    // Core distribution works without the premium engine package.
-                });
+            const h = refs.current.prime;
+            if (h?.setEngine) {
+                h.setEngine(primeEngine);
+            }
         });
         return () => cancelAnimationFrame(timer);
-    }, []);
+    }, [primeEngine]);
 
     const exampleVisibleRange = useMemo(() => {
         if (!series.length) {
@@ -605,6 +618,11 @@ export default function App() {
                                         )}
                                     </div>
                                     <p className={`mt-2 text-sm lg:text-base ${theme === ChartTheme.dark ? 'text-slate-400' : 'text-slate-600'}`}>{blurb}</p>
+                                    {key === 'prime' && !primeLinked ? (
+                                        <p className={`mt-2 text-xs ${theme === ChartTheme.dark ? 'text-[#7dd3fc]' : 'text-[#0369a1]'}`}>
+                                            Prime package is not linked in this public build. Use <code>npm run dev:prime</code> to preview neon engine locally.
+                                        </p>
+                                    ) : null}
                                 </div>
                             </div>
 

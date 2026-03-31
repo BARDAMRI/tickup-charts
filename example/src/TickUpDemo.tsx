@@ -14,8 +14,6 @@ import {
     TickUpHost,
     TickUpRenderEngine,
     TimeDetailLevel,
-    createTickUpPrimeEngine,
-    getTickUpPrimeThemePatch,
 } from 'tickup/full';
 import {
     AreaChart,
@@ -198,6 +196,11 @@ type TickUpDemoProps = {
     onRangeFeedRequest?: (range: DemoRangeKey) => void | boolean | Promise<void | boolean>;
 };
 
+type PrimeBridge = {
+    createTickUpPrimeEngine: (theme: ChartTheme) => TickUpChartEngine;
+    getTickUpPrimeThemePatch: (theme: ChartTheme) => any;
+};
+
 const HOST_TO_DEMO_RANGE: Record<string, DemoRangeKey> = {
     '1D': '6h',
     '1W': '7d',
@@ -262,6 +265,8 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
     const [toast, setToast] = useState<string | null>(null);
     const [activeTool, setActiveTool] = useState<'cursor' | 'line' | 'ray' | 'fib' | 'pencil'>('cursor');
     const [liveTrading, setLiveTrading] = useState(true);
+    const [primeBridge, setPrimeBridge] = useState<PrimeBridge | null>(null);
+    const [primeOfferOpen, setPrimeOfferOpen] = useState(false);
     const toastTimerRef = useRef<number | null>(null);
 
     const showToastNow = useCallback((message: string, timeoutMs = 4200) => {
@@ -280,6 +285,25 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
             window.clearTimeout(toastTimerRef.current);
         }
     }, []);
+
+    useEffect(() => {
+        const enabled = String((import.meta as any).env?.VITE_TICKUP_PRIME ?? '') === '1';
+        if (!enabled) return;
+        const moduleId = '@tickup/prime';
+        import(/* @vite-ignore */ moduleId)
+            .then((m: any) => {
+                if (m?.createTickUpPrimeEngine && m?.getTickUpPrimeThemePatch) {
+                    setPrimeBridge({
+                        createTickUpPrimeEngine: m.createTickUpPrimeEngine,
+                        getTickUpPrimeThemePatch: m.getTickUpPrimeThemePatch,
+                    });
+                    showToastNow('Prime package detected. Turbo Mode is available.', 2600);
+                }
+            })
+            .catch(() => {
+                // Public build can run with no prime package linked.
+            });
+    }, [showToastNow]);
 
     const normalizeIntervalKey = useCallback((rawTf: string): DemoIntervalKey | null => {
         const clean = rawTf.trim();
@@ -562,11 +586,14 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
      * Keep props in lockstep with {@link useLayoutEffect} `setEngine` so grid/candles/theme never disagree
      * (avoids light grid on dark plots when `chartOptions` merges before the engine patch applies).
      */
-    const primeEngineForShell = useMemo(() => createTickUpPrimeEngine(shellTheme), [shellTheme]);
+    const primeEngineForShell = useMemo(
+        () => (primeBridge ? primeBridge.createTickUpPrimeEngine(shellTheme) : null),
+        [primeBridge, shellTheme]
+    );
 
     const chartOptions = useMemo(() => {
-        const patch = primeMode
-            ? getTickUpPrimeThemePatch(shellTheme)
+        const patch = primeMode && primeBridge
+            ? primeBridge.getTickUpPrimeThemePatch(shellTheme)
             : (shellTheme === ChartTheme.dark ? demoStandardDarkEngine : demoStandardLightEngine).getChartOptionsPatch();
         const b = patch.base ?? {};
         const st = b.style ?? {};
@@ -603,7 +630,7 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
                 numberOfYTicks: 8,
             },
         };
-    }, [overlayKinds, chartKind, shellTheme, primeMode]);
+    }, [overlayKinds, chartKind, shellTheme, primeMode, primeBridge]);
 
     useLayoutEffect(() => {
         let raf = 0;
@@ -612,7 +639,7 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
             if (!r?.setEngine) {
                 return;
             }
-            if (primeMode) {
+            if (primeMode && primeEngineForShell) {
                 r.setEngine(primeEngineForShell);
             } else if (shellTheme === 'dark') {
                 r.setEngine(demoStandardDarkEngine);
@@ -817,7 +844,13 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
                     </a>
                     <button
                         type="button"
-                        onClick={() => setPrimeMode((p) => !p)}
+                        onClick={() => {
+                            if (!primeBridge) {
+                                setPrimeOfferOpen(true);
+                                return;
+                            }
+                            setPrimeMode((p) => !p);
+                        }}
                         className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all md:text-xs ${primeMode
                             ? 'border-[#3EC5FF] bg-[#5A48DE] text-white'
                             : isPageDark
@@ -826,7 +859,7 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
                             }`}
                     >
                         <Zap className="h-3.5 w-3.5" fill={primeMode ? 'currentColor' : 'none'} />
-                        Prime
+                        Turbo Mode
                     </button>
                     <button
                         type="button"
@@ -1308,6 +1341,38 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
             {toast ? (
                 <div className="fixed bottom-6 left-1/2 z-50 max-w-md -translate-x-1/2 rounded-xl border border-white/10 bg-slate-900/95 px-4 py-3 text-center text-sm text-slate-100 shadow-2xl backdrop-blur-xl">
                     {toast}
+                </div>
+            ) : null}
+            {primeOfferOpen ? (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4">
+                    <div className="w-full max-w-lg rounded-2xl border border-white/15 bg-[#0f172a] p-5 text-slate-100 shadow-2xl">
+                        <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-[#7dd3fc]">Get Prime</div>
+                        <h3 className="mb-2 text-xl font-bold">Unlock Neon Turbo Mode</h3>
+                        <p className="mb-4 text-sm text-slate-300">
+                            Prime is not linked in this public core build. Add the optional Pro package to enable neon rendering and advanced capabilities.
+                        </p>
+                        <div className="mb-4 rounded-lg bg-black/30 p-3 font-mono text-xs text-slate-200">
+                            npm run prime:link-local<br/>
+                            npm run dev:prime
+                        </div>
+                        <div className="flex items-center justify-end gap-2">
+                            <a
+                                href="https://github.com/BARDAMRI/tickup-prime"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="rounded-lg border border-[#3EC5FF]/50 px-3 py-1.5 text-xs font-semibold text-[#7dd3fc] hover:bg-[#3EC5FF]/10"
+                            >
+                                Learn about Prime
+                            </a>
+                            <button
+                                type="button"
+                                onClick={() => setPrimeOfferOpen(false)}
+                                className="rounded-lg bg-[#3EC5FF] px-3 py-1.5 text-xs font-semibold text-black"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
                 </div>
             ) : null}
         </div>

@@ -1,0 +1,7 @@
+Repository: BARDAMRI/tickup-charts
+
+Description:
+🚀 High-performance, professional React financial charts. Lightning-fast Canvas 2D rendering, advanced drawing tools, and real-time data streaming. (Includes optional Prime Engine upgrade).
+
+Topics:
+react, trading, charts, fintech, canvas-2d, ohlc, stock-market, financial-visualization, high-performance

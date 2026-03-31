@@ -23,6 +23,37 @@ High-performance **React** financial charts: Canvas 2D OHLCV, pan/zoom, drawings
 - **Snapshots & export:** PNG capture helpers, CSV export from toolbar  
 - **Theming:** light / dark / grey chart themes, shell light–dark toggle, in-chart watermark (Desk)
 
+## Prime vs Core
+
+| Feature | Core (Free) | Prime (Pro) |
+| :--- | :---: | :---: |
+| Standard Rendering | ✅ | ✅ |
+| Basic Drawing Tools | ✅ | ✅ |
+| Neon Glow Aesthetics | ❌ | ✅ |
+| Advanced Pro Indicators | ❌ | ✅ |
+| High-Density Perf Mode | ❌ | ✅ |
+
+Prime is optional and layered on top of core. Build with core today, then upgrade to Prime when you need premium visuals and advanced capabilities.
+
+## Visual Showcase
+
+### The Prime Neon Engine
+![The "Hero" Prime Neon](./assets/showcase/hero-prime-neon.png)
+*High-performance rendering with neon glow effects enabled in Prime mode.*
+
+### Visual Quality Comparison
+| Standard (Core) | Prime (Neon) |
+| :---: | :---: |
+| ![Standard Comparison](./assets/showcase/compare-standard.png) | ![Prime Comparison](./assets/showcase/compare-prime.png) |
+
+### Interactive Performance
+![Interaction Demo](./assets/showcase/interaction-demo.gif)
+*Smooth pan, zoom, and real-time interaction at high FPS.*
+
+### Pro Analysis Tools
+![Pro Analysis](./assets/showcase/pro-analysis-tools.png)
+*Support for advanced technical indicators and precision drawing tools.*
+
 ## Who are TickUp Charts for?
 
 Developers building trading terminals, analytics dashboards, and embeddable market widgets who want a **React + styled-components** chart with a real drawing and streaming story.
@@ -123,9 +154,12 @@ Guides (glossary, API, live data, drawings, settings, exports) live in **[`docum
 
 Legacy / supplementary material may also appear under [`docs/`](./docs/).
 
-## Roadmap
+## 🗺️ Roadmap
 
-See [`docs/Project_Roadmap/`](./docs/Project_Roadmap/) or project issues for upcoming work.
+- **Q2 2026:** Advanced Technical Indicators (Ichimoku, SuperTrend)
+- **Q3 2026:** WebGL Rendering Engine for 1M+ data points
+- **Q4 2026:** Collaborative Drawing Tools (Multiplayer Charts)
+- **Ongoing:** Mobile-first touch optimization
 
 ## npm package entries
 
