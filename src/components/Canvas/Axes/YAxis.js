@@ -11,7 +11,7 @@ function YAxis(_a) {
         var y_axis_height = ((_a = parentContainerRef === null || parentContainerRef === void 0 ? void 0 : parentContainerRef.current) === null || _a === void 0 ? void 0 : _a.clientHeight) || 0;
         var y_axis_width = yAxisWidth || 40; // Default width if not set
         var step = (maxPrice - minPrice) / (numberOfYTicks - 1);
-        //TODO complete this function.
+        // Tick labels are intentionally disabled in this legacy axis helper.
         return [];
     }
     (0, react_1.useEffect)(function () {

@@ -1,7 +1,7 @@
 {
   "name": "tickup",
   "version": "1.0.0",
-  "description": "TickUp Charts \u2014 MIT-licensed React financial charts (Canvas 2D OHLCV): Pulse, Flow, Command, Desk, and custom layouts via tickup + tickup/full.",
+  "description": "High-performance React financial charts. Canvas 2D rendering, advanced technical analysis tools, and real-time data streaming.",
   "type": "module",
   "main": "./dist/tickup.cjs.js",
   "module": "./dist/tickup.es.js",
@@ -40,6 +40,9 @@
   "keywords": [
     "tickup",
     "react",
+    "fintech",
+    "canvas-2d",
+    "financial-visualization",
     "chart",
     "charts",
     "financial",

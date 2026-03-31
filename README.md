@@ -2,6 +2,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
+## 🚀 Live Showcase & Documentation
+
+[Explore the live showcase experience and documentation hub](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/README.md)
+
 High-performance **React** financial charts: Canvas 2D OHLCV, pan/zoom, drawings, live data merge, and tiered product layouts.
 
 ## License & what we ship publicly
@@ -36,6 +40,8 @@ High-performance **React** financial charts: Canvas 2D OHLCV, pan/zoom, drawings
 Prime is optional and layered on top of core. Build with core today, then upgrade to Prime when you need premium visuals and advanced capabilities.
 
 ## Visual Showcase
+
+All showcase media in this section is sourced from `./assets/showcase/`.
 
 ### The Prime Neon Engine
 ![The "Hero" Prime Neon](./assets/showcase/hero-prime-neon.png)

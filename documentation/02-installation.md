@@ -11,6 +11,12 @@ These are **peer dependencies**; your app must install them.
 ## npm
 
 ```bash
+npm install tickup
+```
+
+With peer dependencies in a single command:
+
+```bash
 npm install tickup react react-dom styled-components
 ```
 

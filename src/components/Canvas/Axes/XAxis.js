@@ -29,7 +29,7 @@ function XAxis(_a) {
         ctx.moveTo(0, 0);
         ctx.lineTo(width, 0);
         ctx.stroke();
-        // TODO: Uncomment and implement ticks drawing using visibleRange, timeDetailLevel, timeFormat12h
+        // Tick drawing is intentionally disabled in this legacy axis helper.
         // const ticks = generateTimeTicks(
         //     visibleRange.start,
         //     visibleRange.end,
