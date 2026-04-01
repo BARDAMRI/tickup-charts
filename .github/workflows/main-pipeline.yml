@@ -53,7 +53,9 @@ jobs:
           echo "Trusted publishing mode: OIDC (no NPM_TOKEN required)"
 
       - name: Publish to npm
-        run: npm publish --access public --provenance --ignore-scripts
+        run: |
+          npm run build
+          npm publish --access public
 
   deploy:
     needs: [publish]
@@ -118,4 +120,3 @@ jobs:
             -H "Authorization: token $GH_PAT" \
             "https://api.github.com/repos/${PRIME_REPO}/dispatches" \
             -d '{"event_type":"core_updated"}'
-            
