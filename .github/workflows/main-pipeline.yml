@@ -13,6 +13,10 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,32 +24,29 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22 
+          node-version: 22.14.0
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
-        run: npm ci 
+        run: npm ci
 
-      - name: Build & Publish to NPM
-        run: |
-          npm run build
-          npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # OIDC ישתמש בזה אוטומטית
+      - name: Publish to NPM
+        run: npm publish --access public --provenance
 
   deploy:
     needs: [publish]
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main 
+          ref: main
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22.14.0
           cache: npm
 
       - name: Create Mock Prime for CI
@@ -74,7 +75,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./example/dist
           publish_branch: gh-pages
-          
+
       - name: Trigger Prime Repository Sync
         if: success()
         run: |

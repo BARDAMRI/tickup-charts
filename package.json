@@ -40,7 +40,7 @@
   },
   "author": "Bar Damri",
   "license": "MIT",
-  "homepage": "https://BARDAMRI.github.io/tickup-charts/",
+  "homepage": "https://bardamri.github.io/tickup-charts/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BARDAMRI/tickup-charts.git"
@@ -52,7 +52,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.14.0"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
