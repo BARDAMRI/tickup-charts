@@ -44,7 +44,7 @@ jobs:
       - name: Build & Publish to NPM
         run: |
           npm run build
-          npm publish --access public --provenance 
+          npm publish --access public
 
   deploy:
     needs: [publish]
