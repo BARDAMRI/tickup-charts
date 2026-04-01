@@ -41,10 +41,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & Publish to NPM
-        run: |
-          npm run build
-          npm publish --access public
+      - name: Build package
+        run: npm run build
+
+      - name: Verify npm authentication
+        run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm
+        run: npm publish --access public --provenance --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   deploy:
     needs: [publish]
@@ -95,9 +103,17 @@ jobs:
           
       - name: Trigger Prime Repository Sync
         if: success()
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          PRIME_REPO: ${{ vars.PRIME_REPO || format('{0}/tickup-prime', github.repository_owner) }}
         run: |
-          curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token ${{ secrets.GH_PAT }}" \
-          https://api.github.com/repos/BARDAMRI/tickup-prime/dispatches \
-          -d '{"event_type": "core_updated"}'
+          if [ -z "$GH_PAT" ]; then
+            echo "::warning::GH_PAT is not configured; skipping Prime dispatch."
+            exit 0
+          fi
+
+          curl --fail-with-body -sS -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token $GH_PAT" \
+            "https://api.github.com/repos/${PRIME_REPO}/dispatches" \
+            -d '{"event_type":"core_updated"}'
