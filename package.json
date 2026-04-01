@@ -65,7 +65,7 @@
   "homepage": "https://BARDAMRI.github.io/tickup-charts/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BARDAMRI/tickup-charts.git"
+    "url": "https://github.com/BARDAMRI/tickup-charts"
   },
   "bugs": {
     "url": "https://github.com/BARDAMRI/tickup-charts/issues"
