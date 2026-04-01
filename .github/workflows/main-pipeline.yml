@@ -44,7 +44,6 @@ jobs:
       - name: Build & Publish to NPM
         run: |
           npm run build
-          # הוספת --provenance מחברת את החבילה למקור שלה בגיטהאב
           npm publish --access public --provenance 
 
   deploy:
@@ -87,14 +86,14 @@ jobs:
       - name: Add SPA fallback page
         run: cp example/dist/index.html example/dist/404.html
 
-      - name: Deploy to gh-pages branch
+      - name: Deploy Showcase to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./example/dist
           publish_branch: gh-pages
           
-      - name: Trigger Prime Update
+      - name: Trigger Prime Repository Sync
         if: success()
         run: |
           curl -X POST \
