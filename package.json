@@ -38,7 +38,7 @@
     "combine-code": "node combineFiles.cjs",
     "test": "jest"
   },
-  "author": "Bar Damri",
+  "author": "Bar Damri <bardamri1702@gmail.com>",
   "license": "MIT",
   "homepage": "https://bardamri.github.io/tickup-charts/",
   "repository": {
