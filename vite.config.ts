@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {createRequire} from 'node:module';
 import type {ObfuscatorOptions} from 'javascript-obfuscator';
+import {minify as terserMinify} from 'terser';
 
 const require = createRequire(import.meta.url);
 const {obfuscate} = require('javascript-obfuscator') as typeof import('javascript-obfuscator');
@@ -28,9 +29,40 @@ function tickUpLibObfuscator(
     };
 }
 
-const skipObfuscate =
-    process.env.TICKUP_SKIP_OBFUSCATE === '1' ||
-    process.env.TICKUP_SKIP_OBFUSCATE === 'true';
+function tickUpLibMinifier(enabled: boolean, mitBanner: string): Plugin {
+    return {
+        name: 'tickup-lib-minifier',
+        apply: 'build',
+        enforce: 'post',
+        async generateBundle(_, bundle) {
+            if (!enabled) return;
+            for (const [fileName, output] of Object.entries(bundle)) {
+                if (output.type !== 'chunk' || !fileName.endsWith('.js')) continue;
+                const minified = await terserMinify(output.code, {
+                    module: fileName.endsWith('.es.js'),
+                    compress: {
+                        drop_console: true,
+                        passes: 2,
+                    },
+                    format: {
+                        comments: false,
+                        preamble: mitBanner,
+                    },
+                    sourceMap: true,
+                });
+                if (!minified.code) continue;
+                output.code = minified.code;
+                if (typeof minified.map === 'string') {
+                    output.map = JSON.parse(minified.map);
+                }
+            }
+        },
+    };
+}
+
+const obfuscateEnabled =
+    process.env.TICKUP_OBFUSCATE === '1' ||
+    process.env.TICKUP_OBFUSCATE === 'true';
 
 const tickUpObfuscatorOptions: ObfuscatorOptions = {
     compact: true,
@@ -57,7 +89,12 @@ const tickUpObfuscatorOptions: ObfuscatorOptions = {
 const libEntry = process.env.TICKUP_LIB_ENTRY;
 
 export default defineConfig(({command}) => {
-    const plugins = [react(), tickUpLibObfuscator(!skipObfuscate, tickUpObfuscatorOptions)];
+    const mitBanner = `/*! TickUp Charts | MIT License | Copyright (c) ${new Date().getFullYear()} Bar Damri */`;
+    const plugins = [
+        react(),
+        tickUpLibObfuscator(obfuscateEnabled, tickUpObfuscatorOptions),
+        tickUpLibMinifier(true, mitBanner),
+    ];
     const resolve = {extensions: ['.tsx', '.ts', '.js'] as const};
 
     if (command === 'build') {
@@ -77,7 +114,8 @@ export default defineConfig(({command}) => {
             build: {
                 /** First entry (`index`) clears `dist/`; `full` appends so both bundles ship on npm. */
                 emptyOutDir: libEntry !== 'full',
-                sourcemap: skipObfuscate,
+                sourcemap: true,
+                minify: false,
                 cssCodeSplit: false,
                 assetsInlineLimit: 0,
                 lib: {

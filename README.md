@@ -37,6 +37,16 @@ TickUp is a lightning-fast, Canvas 2D-based charting library for React. It is bu
 | Performance | ✅ Up to 50k Data Points | 🚀 1M+ Data Points (HFT Optimized) |
 | License | ✅ MIT (Open Source) | 💎 Commercial (Private & Protected) |
 
+### Pricing & Licensing
+
+| Plan | License | Best For | Price |
+| :--- | :--- | :--- | :--- |
+| Community | MIT | Open Source & Hobbyists | Free |
+| Professional | Commercial | Solo Founders & Small Teams | $99/yr |
+| Enterprise | Custom | High-Frequency Trading & Banks | Contact Us |
+
+**Pro Features:** **Neon Rendering Engine**, **Advanced Indicators (Fibonacci, Elliott)**, **RTL Support**, and **Priority Support**.
+
 ### Visual Showcase
 
 ![Prime Hero](https://raw.githubusercontent.com/BARDAMRI/tickup-charts/main/assets/showcase/hero-prime-neon.png)
@@ -59,9 +69,7 @@ npm install tickup react react-dom styled-components
 
 ### 🚀 Take it to the next level with TickUp Prime
 
-Explore the Prime Showcase on GitHub Pages: [https://bardamri.github.io/tickup-charts/](https://bardamri.github.io/tickup-charts/)
-
-Experience the glowing shaders and professional analysis suite in our live demo.
+Interested in TickUp Prime? Visit our [Showcase](https://bardamri.github.io/tickup-charts/) to test it live or email us for a license key.
 
 ### Contact
 
