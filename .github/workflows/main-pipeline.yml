@@ -41,6 +41,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Preflight package name for npm publish
+        run: |
+          PKG_NAME="$(npm pkg get name | tr -d '\"')"
+          echo "Publishing package: ${PKG_NAME}"
+          if [[ "${PKG_NAME}" != @*/* ]]; then
+            echo "::error::Package name must be scoped for this pipeline (example: @bardamri/tickup)."
+            exit 1
+          fi
+
       - name: Build package
         run: npm run build
 

@@ -35,7 +35,7 @@ The optional Prime engine adds high-fidelity neon aesthetics and professional re
 ## 🛠️ Quick Start
 
 ```bash
-npm install tickup react react-dom styled-components
+npm install @bardamri/tickup react react-dom styled-components
 ```
 
 ## 📖 Documentation
