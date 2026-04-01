@@ -35,3 +35,11 @@ Several toggles map to `chartOptions.base` and `base.style`:
 - `showCandleTooltip`, `showCrosshair`, `showCrosshairValues`  
 - `showHistogram`, `showGrid`  
 - Axes, colors, drawings defaults as described in [Props & chart options](./05-props-and-chart-options.md).
+
+### Pro Tip
+
+Use settings parity between Standard and Prime during QA, then enable Prime-only visual profiles per workspace or account tier.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

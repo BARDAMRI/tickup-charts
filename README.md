@@ -1,57 +1,68 @@
-# 🚀 TickUp Charts
+<p align="center">
+  <img src="https://raw.githubusercontent.com/BARDAMRI/tickup-charts/main/public/tickup-icon.svg" alt="TickUp logo" width="96" height="96" />
+</p>
 
-## High-Performance React Financial Charts for the Modern Web
+<h1 align="center">TickUp Charts</h1>
 
-**Live Demo & Docs:** [View Live Showcase](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/README.md)
+<p align="center"><strong>The High-Performance Canvas Engine for Modern Financial Apps.</strong></p>
 
-TickUp is a lightning-fast, Canvas 2D-based charting library for React. Built for speed and precision, it handles thousands of data points with zero lag, providing a professional trading experience out of the box.
+<p align="center">
+  <a href="https://www.npmjs.com/package/tickup"><img src="https://img.shields.io/npm/v/tickup.svg" alt="NPM Version" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="License" /></a>
+  <a href="https://bundlephobia.com/package/tickup"><img src="https://img.shields.io/bundlephobia/minzip/tickup" alt="Bundle Size" /></a>
+</p>
 
-## 🌐 VIEW LIVE SHOWCASE & DOCUMENTATION
+### Live Demo & Documentation
 
-[Experience the performance and explore the full API documentation.](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/README.md)
+**Live Demo:** [https://bardamri.github.io/tickup-charts/](https://bardamri.github.io/tickup-charts/)  
+**Docs Hub:** [https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/README.md](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/README.md)
 
-## 📸 Visual Showcase
+TickUp is a lightning-fast, Canvas 2D-based charting library for React. It is built for professional financial interfaces where smooth interaction, visual accuracy, and predictable performance are critical.
 
-### 💎 The Prime Experience
+### Why TickUp
 
-The optional Prime engine adds high-fidelity neon aesthetics and professional rendering profiles.
+| Speed | Extensibility | Developer Experience |
+| --- | --- | --- |
+| **Canvas 2D pipeline** tuned for fast redraws and high-frequency updates. | **Composable architecture** ready for custom tools, overlays, and host app workflows. | **TypeScript-first API** with strong typing, IntelliSense, and practical docs. |
+
+### Standard vs Prime
+
+| Feature | Standard (MIT) | Prime (Pro) |
+| --- | --- | --- |
+| Engine | ✅ High-Speed Canvas 2D | 🚀 Ultra-Low Latency Rendering |
+| Visuals | ✅ Standard Financial Styles | 💎 "Neon" Glowing Rendering Mode |
+| Analysis Tools | ✅ Basic Indicators | 💎 Pro Tools (Fibonacci, Elliott, Gann) |
+| Interaction | ✅ Pan & Zoom | 🚀 Advanced Multi-Touch & Precision Drawing |
+| Localization | ✅ LTR Only | 💎 Full RTL Support (Hebrew/Arabic) |
+| Performance | ✅ Up to 50k Data Points | 🚀 1M+ Data Points (HFT Optimized) |
+| License | ✅ MIT (Open Source) | 💎 Commercial (Private & Protected) |
+
+### Visual Showcase
 
 ![Prime Hero](https://raw.githubusercontent.com/BARDAMRI/tickup-charts/main/assets/showcase/hero-prime-neon.png)
 
-### 📊 Core vs. Prime
-
-| Standard Core | Prime Turbo Mode |
+| Core Rendering | Prime Rendering |
 | --- | --- |
-| Clean, functional, and fast. | Neon glow, pro indicators, and high-density mode. |
 | ![Core](https://raw.githubusercontent.com/BARDAMRI/tickup-charts/main/assets/showcase/compare-standard.png) | ![Prime](https://raw.githubusercontent.com/BARDAMRI/tickup-charts/main/assets/showcase/compare-prime.png) |
 
-## ✨ Key Features
-
-- Canvas 2D Engine: Ultra-smooth rendering without WebGL complexity.
-- Pro Drawing Tools: Trend lines, Fibonacci, shapes, and full imperative API.
-- Live Data Flow: Seamless WebSocket integration (replace/append/merge).
-- Financial Tier Layouts: Built-in products like Pulse, Flow, Command, and Desk.
-
-## 🛠️ Quick Start
+### Installation
 
 ```bash
 npm install tickup react react-dom styled-components
 ```
 
-## 📖 Documentation
+### Documentation
 
 - [Quick Start Guide](./documentation/03-quick-start.md)
 - [Imperative API Reference](./documentation/06-imperative-api.md)
 - [Live Data & Updates](./documentation/07-data-and-live-updates.md)
 
-## 💎 Go Premium
+### 🚀 Take it to the next level with TickUp Prime
 
-Need the neon glow and advanced pro indicators? Check out [TickUp Prime](https://github.com/BARDAMRI/tickup-prime).
+Explore the Prime Showcase on GitHub Pages: [https://bardamri.github.io/tickup-charts/](https://bardamri.github.io/tickup-charts/)
 
-## 🗺️ Roadmap
+Experience the glowing shaders and professional analysis suite in our live demo.
 
-- Q2 2026: Advanced Indicators (Ichimoku, SuperTrend).
-- Q3 2026: WebGL Rendering Engine for 1M+ points.
-- Q4 2026: Collaborative Drawing Tools.
+### Contact
 
-Contact: [bardamri1702@gmail.com](mailto:bardamri1702@gmail.com) | [GitHub](https://github.com/BARDAMRI)
+[bardamri1702@gmail.com](mailto:bardamri1702@gmail.com) | [GitHub](https://github.com/BARDAMRI)

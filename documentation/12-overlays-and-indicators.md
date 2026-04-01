@@ -63,3 +63,11 @@ Lower-level functions such as `computeSeriesBySpec`, `drawOverlays`, `drawOverla
 ## Chart types
 
 Overlays are wired in **candlestick**, **line**, **area**, and **bar** draw paths when `showOverlayLine` is true.
+
+### Pro Tip
+
+Prime indicator packs are designed for desks that need richer multi-study analysis than the standard open-source baseline.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

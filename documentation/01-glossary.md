@@ -59,3 +59,11 @@ Internal drawing **mode** (toolbar) toggles between none, draw tools, select, an
 
 - **Trading session** — Recurring weekday window (`dayOfWeek` + `HH:mm` start/end) used to dim time outside regular hours.
 - **Holiday** — ISO date string list for calendar-aware behavior where applied.
+
+### Pro Tip
+
+Prime-only terms (advanced analysis packs, premium engines, and commercial licensing) are easiest to evaluate side-by-side in the live showcase before rollout planning.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

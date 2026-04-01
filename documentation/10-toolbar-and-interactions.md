@@ -83,3 +83,11 @@ From back to front: main OHLC (and grid, session shading, watermark), optional h
 ## Copy
 
 Selected axis or formatted numbers may normalize to clipboard-friendly representation when copying from the app (formatting service integration).
+
+### Pro Tip
+
+Prime users get the most value from interaction-heavy views where precision drawing and premium rendering run together under active market feeds.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

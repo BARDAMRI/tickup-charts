@@ -115,3 +115,11 @@ chartRef.current?.updateSelectedShape({
 // 3. Clear focus
 chartRef.current?.unselectShape();
 ```
+
+### Pro Tip
+
+Prime workflows benefit most from the imperative API when you need precise runtime control over rendering mode, overlays, and drawing orchestration.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

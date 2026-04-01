@@ -140,3 +140,11 @@ Wrap with **`ModeProvider`**. Pass **all** required `TickUpStageProps` from Type
 ## Deprecated
 
 - `ChartStage`, `ChartStageProps`, `ChartStageHandle` → use `TickUpStage*`.
+
+### Pro Tip
+
+Build on core exports first, then adopt Prime engine helpers to add premium behavior while preserving your existing API integration.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

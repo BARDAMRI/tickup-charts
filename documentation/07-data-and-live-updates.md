@@ -60,3 +60,11 @@ Use **`onIntervalSearch(tf)`** on the `TickUpHost` to intercept these changes. T
 
 - Do not pass a **new literal** `chartOptions={{}}` every render without `useMemo`; see [Props & chart options](./05-props-and-chart-options.md).  
 - Ensure `t` is monotonic where your feed requires it; merge modes handle ordering differently.
+
+### Pro Tip
+
+Prime deployments pair live merge flows with high-density rendering profiles to keep interaction smooth on larger streaming datasets.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

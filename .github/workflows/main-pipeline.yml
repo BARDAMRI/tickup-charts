@@ -11,28 +11,39 @@ permissions:
   id-token: write
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
+publish:
+  runs-on: ubuntu-latest
+  permissions:
+    contents: read
+    id-token: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.14.0
-          registry-url: https://registry.npmjs.org
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.14.0
+        registry-url: https://registry.npmjs.org
 
-      - name: Install dependencies
-        run: npm ci
+    - name: Show Node and npm versions
+      run: |
+        node -v
+        npm -v
 
-      - name: Publish to NPM
-        run: npm publish --access public --provenance
+    - name: Upgrade npm
+      run: npm install -g npm@latest
 
+    - name: Show npm version after upgrade
+      run: npm -v
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Publish to NPM
+      run: npm publish --access public --provenance
+      
   deploy:
     needs: [publish]
     runs-on: ubuntu-latest

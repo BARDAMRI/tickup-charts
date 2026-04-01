@@ -31,3 +31,11 @@ The **reference example app** in [`../example/`](../example/) (Vite + React) exe
 ## Older material
 
 Additional notes and legacy pages may still live under [`../docs/`](../docs/) (roadmap, contributing, design). The **authoritative integration reference** is this `documentation/` folder.
+
+### Pro Tip
+
+Use this docs hub for core integration, then evaluate TickUp Prime for teams that require premium rendering profiles and commercial-grade analysis workflows.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

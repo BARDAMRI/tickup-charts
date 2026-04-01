@@ -54,3 +54,11 @@ Axes support:
 ## Clipboard (shell behavior)
 
 When users copy selected text, the host shell may **normalize** numbers to a canonical plain form using the same axis parsing rules (implemented inside the chart app wrapper). This is a UX nicety for spreadsheets, not a separate public API export.
+
+### Pro Tip
+
+TickUp Prime is the right upgrade path for teams that need production-grade multilingual interfaces with advanced layout and rendering requirements.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

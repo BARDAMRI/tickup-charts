@@ -46,3 +46,11 @@ export function SmokeTest() {
 ```
 
 You still need to pass `intervalsArray` (can be `[]` for an empty chart). See [Quick start](./03-quick-start.md).
+
+### Pro Tip
+
+Start with the MIT core install for development, then upgrade to TickUp Prime in production environments that require advanced visuals and commercial Pro tooling.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

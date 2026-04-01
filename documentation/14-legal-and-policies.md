@@ -30,3 +30,11 @@ These markdown files are **starting points**, not a substitute for counsel. Repl
 ## Older stub
 
 A short legacy note lives in the repo under **`docs/Documentation/Terms_of_Use.md`** (that tree is **not** bundled on npm). [View on GitHub](https://github.com/BARDAMRI/TickUp/blob/main/docs/Documentation/Terms_of_Use.md) — it points here and to **`legal/`**.
+
+### Pro Tip
+
+Commercial Prime deployments should always pair technical rollout with the appropriate legal terms and policy templates for hosted services.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

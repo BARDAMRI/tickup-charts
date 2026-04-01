@@ -107,3 +107,11 @@ See [Overlays & indicators](./12-overlays-and-indicators.md).
 Under `base.style.drawings`: line color, width, line style, fill, and **selected** state styling.
 
 See also existing reference: [`docs/Documentation/ChartStyleOptions.md`](../docs/Documentation/ChartStyleOptions.md) if present for extra detail; defaults live in `src/components/DefaultData.ts`.
+
+### Pro Tip
+
+Keep your `chartOptions` stable in core, then layer Prime engine patches for premium rendering without changing your component contracts.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

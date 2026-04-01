@@ -130,3 +130,11 @@ chartRef.current?.updateSelectedShape({
 ## Shape properties UI
 
 `ShapePropertiesModal` is exported for advanced hosts who want to embed the same form outside the default flow. The shell wires it from the chart when editing.
+
+### Pro Tip
+
+Note: Advanced drawing tools like Fibonacci Retracements are available exclusively in TickUp Prime.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

@@ -49,3 +49,11 @@ Then you control which chrome appears. Settings saved in the modal still respect
 ## Mode provider
 
 The shell wraps children in **`ModeProvider`** internally. If you use **`TickUpStage`** alone (advanced), wrap with `ModeProvider` yourself. See [Exports & advanced](./11-exports-and-advanced.md).
+
+### Pro Tip
+
+Prime tiers are ideal when you need a product-ready trader layout with premium visuals and minimal custom chrome development.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)

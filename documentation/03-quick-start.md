@@ -84,3 +84,11 @@ See [Props & chart options](./05-props-and-chart-options.md).
 
 - [Products & layout](./04-products-and-layout.md) — choose the right tier  
 - [Imperative API](./06-imperative-api.md) — full ref surface  
+
+### Pro Tip
+
+Use the same host integration from this guide with Prime enabled to unlock premium rendering profiles without rewriting your app shell.
+
+### Prime Showcase
+
+[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
