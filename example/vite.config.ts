@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 const repoRoot = path.resolve(__dirname, '..');
+const primeEnabled = process.env.VITE_TICKUP_PRIME === '1';
+const useLocalSrc = process.env.VITE_USE_LOCAL_SRC === '1';
 
 export default defineConfig({
     base: '/tickup-charts/',
@@ -13,18 +15,26 @@ export default defineConfig({
      * Set `VITE_USE_LOCAL_SRC=1` only when you explicitly want local source aliases.
      */
     define: {
-        __TICKUP_USE_LOCAL_SRC__: JSON.stringify(process.env.VITE_USE_LOCAL_SRC === '1'),
+        __TICKUP_USE_LOCAL_SRC__: JSON.stringify(useLocalSrc),
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
         // Default: npm-like resolution from node_modules. Opt-in local alias when needed.
-        alias: process.env.VITE_USE_LOCAL_SRC === '1'
+        alias: useLocalSrc
             ? [
                 {find: 'tickup/full', replacement: path.join(repoRoot, 'src/full.ts')},
                 {find: 'tickup', replacement: path.join(repoRoot, 'src/index.ts')},
+                ...(primeEnabled
+                    ? []
+                    : [{find: '@tickup/prime', replacement: path.join(__dirname, 'src/mocks/primeShim.ts')}]),
                 {find: '@brand', replacement: path.join(repoRoot, 'src/assets/brand')},
             ]
-            : [{find: '@brand', replacement: path.join(repoRoot, 'src/assets/brand')}],
+            : [
+                ...(primeEnabled
+                    ? []
+                    : [{find: '@tickup/prime', replacement: path.join(__dirname, 'src/mocks/primeShim.ts')}]),
+                {find: '@brand', replacement: path.join(repoRoot, 'src/assets/brand')},
+            ],
     },
     server: {
         fs: {
@@ -32,8 +42,9 @@ export default defineConfig({
         },
     },
     build: {
+        target: 'esnext',
+        minify: false,
         rollupOptions: {
-            external: ['@tickup/prime'],
             output: {
                 manualChunks(id) {
                     const normalized = id.replaceAll('\\', '/');
@@ -52,6 +63,9 @@ export default defineConfig({
                         normalized.includes('/dist/tickup-full.es.js')
                     ) {
                         return 'vendor-tickup-core';
+                    }
+                    if (normalized.includes('/node_modules/@tickup/prime/')) {
+                        return 'vendor-tickup-prime';
                     }
                     if (
                         normalized.includes('/node_modules/react/') ||

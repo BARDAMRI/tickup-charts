@@ -679,9 +679,9 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
                             fontSize: 11,
                             textAlign: 'center',
                             fontFamily: 'system-ui, sans-serif',
-                            backgroundColor: themeVariant === ChartTheme.dark ? '#2d333b' : '#fff8e1',
-                            color: themeVariant === ChartTheme.dark ? '#d4d4d8' : '#5c4a00',
-                            borderBottom: `1px solid ${themeVariant === ChartTheme.dark ? '#444c56' : '#f0d060'}`,
+                            backgroundColor: themeVariant === ChartTheme.dark ? 'rgba(69, 26, 3, 0.4)' : '#fff8e1',
+                            color: themeVariant === ChartTheme.dark ? '#fcd9a8' : '#5c4a00',
+                            borderBottom: `1px solid ${themeVariant === ChartTheme.dark ? 'rgba(245, 158, 11, 0.35)' : '#f0d060'}`,
                         }}
                     >
                         TickUp Prime tier — evaluation mode. Provide <code>licenseKey</code> when your license is active.

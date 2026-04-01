@@ -8,8 +8,8 @@
     "dev:prime": "npm run prime:link-local && VITE_TICKUP_PRIME=1 vite",
     "build": "tsc -p tsconfig.app.json && vite build",
     "vercel-build": "npm run build",
-    "build:prime": "npm run prime:link-local && VITE_TICKUP_PRIME=1 tsc -p tsconfig.app.json && vite build",
-    "prime:link-local": "npm install --no-save ../../tickup-prime-final",
+    "build:prime": "npm run prime:link-local && VITE_TICKUP_PRIME=1 sh -c 'tsc -p tsconfig.app.json && vite build'",
+    "prime:link-local": "if [ -f ../../tickup-prime-final/dist/package.json ]; then npm install --no-save ../../tickup-prime-final/dist; else npm install --no-save ../../tickup-prime-final; fi",
     "preview": "vite preview"
   },
   "dependencies": {

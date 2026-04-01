@@ -9,6 +9,7 @@ import {
     TickUpCommand,
     TickUpDesk,
     TickUpFlow,
+    TickUpPrimeTier,
     TickUpPulse,
     TimeDetailLevel,
 } from 'tickup/full';
@@ -119,6 +120,12 @@ function jitterLastBar(last: Interval): Interval {
 }
 
 const LIVE_TICK_MS = 900;
+const PRIME_LICENSE_STORAGE_KEY = 'tickup:prime:license-key';
+
+function isValidPrimeLicenseKey(value: string): boolean {
+    const key = value.trim();
+    return /^TUP-PRIME-[A-Z0-9]{8,}$/.test(key);
+}
 
 // ----------------------------------------------------------------------------
 // STRUCTURE
@@ -163,7 +170,7 @@ const TIER_ROWS: {
         key: 'prime',
         title: 'TickUp Prime',
         blurb: 'Prime teaser lane. Link @tickup/prime locally to activate neon rendering.',
-        Cmp: TickUpCommand,
+        Cmp: TickUpPrimeTier,
         lux: true,
     },
 ];
@@ -287,6 +294,19 @@ export default function App() {
     const [page, setPage] = useState<'tiers' | 'ticks'>('tiers');
     const [primeEngine, setPrimeEngine] = useState<TickUpChartEngine | null>(null);
     const [primeLinked, setPrimeLinked] = useState(false);
+    const [primeLicenseInput, setPrimeLicenseInput] = useState<string>(() => {
+        if (typeof window === 'undefined') {
+            return '';
+        }
+        return window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? '';
+    });
+    const [primeLicenseKey, setPrimeLicenseKey] = useState<string>(() => {
+        if (typeof window === 'undefined') {
+            return '';
+        }
+        const persisted = window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? '';
+        return isValidPrimeLicenseKey(persisted) ? persisted : '';
+    });
 
     useEffect(() => {
         const mqLight = window.matchMedia('(prefers-color-scheme: light)');
@@ -301,8 +321,7 @@ export default function App() {
     useLayoutEffect(() => {
         const enabled = String((import.meta as any).env?.VITE_TICKUP_PRIME ?? '') === '1';
         if (!enabled) return;
-        const moduleId = '@tickup/prime';
-        import(/* @vite-ignore */ moduleId)
+        import('@tickup/prime')
             .then((m: any) => {
                 if (m?.TickUpPrime) {
                     setPrimeEngine(m.TickUpPrime);
@@ -312,6 +331,26 @@ export default function App() {
             .catch(() => {
                 setPrimeLinked(false);
             });
+    }, []);
+
+    const primeLicenseUnlocked = isValidPrimeLicenseKey(primeLicenseKey);
+
+    const applyPrimeLicense = useCallback(() => {
+        const normalized = primeLicenseInput.trim().toUpperCase();
+        if (!isValidPrimeLicenseKey(normalized)) {
+            setPrimeLicenseKey('');
+            window.localStorage.removeItem(PRIME_LICENSE_STORAGE_KEY);
+            return;
+        }
+        setPrimeLicenseInput(normalized);
+        setPrimeLicenseKey(normalized);
+        window.localStorage.setItem(PRIME_LICENSE_STORAGE_KEY, normalized);
+    }, [primeLicenseInput]);
+
+    const clearPrimeLicense = useCallback(() => {
+        setPrimeLicenseInput('');
+        setPrimeLicenseKey('');
+        window.localStorage.removeItem(PRIME_LICENSE_STORAGE_KEY);
     }, []);
 
     useLayoutEffect(() => {
@@ -623,6 +662,66 @@ export default function App() {
                                             Prime package is not linked in this public build. Use <code>npm run dev:prime</code> to preview neon engine locally.
                                         </p>
                                     ) : null}
+                                    {key === 'prime' ? (
+                                        <div
+                                            className={`mt-4 rounded-xl border p-3 ${
+                                                theme === ChartTheme.dark
+                                                    ? 'border-[#3EC5FF]/30 bg-[#040b16]/80 shadow-[inset_0_0_28px_rgba(62,197,255,0.08)]'
+                                                    : 'border-[#3EC5FF]/30 bg-cyan-50/70'
+                                            }`}
+                                        >
+                                            <div className="mb-2 flex items-center justify-between gap-2">
+                                                <span
+                                                    className={`text-[11px] font-semibold uppercase tracking-wider ${
+                                                        theme === ChartTheme.dark ? 'text-[#7dd3fc]' : 'text-[#0c4a6e]'
+                                                    }`}
+                                                >
+                                                    License Settings
+                                                </span>
+                                                <span
+                                                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                                                        primeLicenseUnlocked
+                                                            ? 'bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/40'
+                                                            : theme === ChartTheme.dark
+                                                                ? 'bg-amber-950/40 text-amber-300 ring-1 ring-amber-500/35'
+                                                                : 'bg-amber-100 text-amber-800 ring-1 ring-amber-300'
+                                                    }`}
+                                                >
+                                                    {primeLicenseUnlocked ? 'Unlocked' : 'Evaluation'}
+                                                </span>
+                                            </div>
+                                            <div className="flex flex-col gap-2 sm:flex-row">
+                                                <input
+                                                    value={primeLicenseInput}
+                                                    onChange={(e) => setPrimeLicenseInput(e.target.value.toUpperCase())}
+                                                    placeholder="TUP-PRIME-XXXXXXXX"
+                                                    className={`w-full rounded-lg border px-3 py-2 text-xs font-mono outline-none ring-[#3EC5FF]/40 focus:ring-2 ${
+                                                        theme === ChartTheme.dark
+                                                            ? 'border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500'
+                                                            : 'border-slate-300 bg-white text-slate-800'
+                                                    }`}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={applyPrimeLicense}
+                                                    className="rounded-lg bg-[#3EC5FF] px-3 py-2 text-xs font-semibold text-black transition hover:bg-[#65d5ff]"
+                                                >
+                                                    Apply
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={clearPrimeLicense}
+                                                    className={`rounded-lg border px-3 py-2 text-xs font-semibold ${
+                                                        theme === ChartTheme.dark
+                                                            ? 'border-white/15 text-slate-300 hover:bg-white/10'
+                                                            : 'border-slate-300 text-slate-700 hover:bg-slate-100'
+                                                    }`}
+                                                >
+                                                    Clear
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : null}
                                 </div>
                             </div>
 
@@ -632,7 +731,11 @@ export default function App() {
                                         ? (theme === ChartTheme.dark ? 'h-[550px] border-[#3EC5FF]/20 shadow-[inset_0_0_40px_rgba(62,197,255,0.05)]' : 'h-[550px] border-[#3EC5FF]/30 shadow-[inset_0_0_20px_rgba(62,197,255,0.02)]') 
                                         : (theme === ChartTheme.dark ? 'h-[500px] border-white/10' : 'h-[500px] border-slate-200')
                                 }`}>
-                                    <Cmp ref={tierRefCallbacks[key]} {...sharedProps} />
+                                    <Cmp
+                                        ref={tierRefCallbacks[key]}
+                                        {...sharedProps}
+                                        {...(key === 'prime' ? {licenseKey: primeLicenseUnlocked ? primeLicenseKey : null} : {})}
+                                    />
                                 </div>
                             </div>
                         </section>

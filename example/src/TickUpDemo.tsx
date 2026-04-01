@@ -289,8 +289,7 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
     useEffect(() => {
         const enabled = String((import.meta as any).env?.VITE_TICKUP_PRIME ?? '') === '1';
         if (!enabled) return;
-        const moduleId = '@tickup/prime';
-        import(/* @vite-ignore */ moduleId)
+        import('@tickup/prime')
             .then((m: any) => {
                 if (m?.createTickUpPrimeEngine && m?.getTickUpPrimeThemePatch) {
                     setPrimeBridge({
