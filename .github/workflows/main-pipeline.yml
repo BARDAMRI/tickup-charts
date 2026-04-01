@@ -12,13 +12,10 @@ permissions:
 
 jobs:
   publish:
-    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -29,53 +26,27 @@ jobs:
       - name: Install dependencies
         run: npm ci 
 
-      - name: Configure git identity
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Bump version and push
-        run: |
-          npm version patch -m "chore: release v%s [skip ci]" --force
-          git push --follow-tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build package
-        run: npm run build
-
-      - name: Diagnostics before publish
-        run: |
-          echo "Registry: $(npm config get registry)"
-          echo "Node: $(node -v)"
-          echo "npm: $(npm -v)"
-          echo "Package: $(npm pkg get name | tr -d '\"')@$(npm pkg get version | tr -d '\"')"
-          echo "Trusted publishing mode: OIDC (no NPM_TOKEN required)"
-
-      - name: Publish to npm
+      - name: Build & Publish to NPM
         run: |
           npm run build
           npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # OIDC ישתמש בזה אוטומטית
 
   deploy:
     needs: [publish]
-    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository (latest main with new version)
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: main 
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            example/package-lock.json
 
       - name: Create Mock Prime for CI
         run: |
@@ -106,17 +77,9 @@ jobs:
           
       - name: Trigger Prime Repository Sync
         if: success()
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
-          PRIME_REPO: ${{ vars.PRIME_REPO || format('{0}/tickup-prime', github.repository_owner) }}
         run: |
-          if [ -z "$GH_PAT" ]; then
-            echo "::warning::GH_PAT is not configured; skipping Prime dispatch."
-            exit 0
-          fi
-
-          curl --fail-with-body -sS -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token $GH_PAT" \
-            "https://api.github.com/repos/${PRIME_REPO}/dispatches" \
-            -d '{"event_type":"core_updated"}'
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GH_PAT }}" \
+          https://api.github.com/repos/BARDAMRI/tickup-prime/dispatches \
+          -d '{"event_type": "core_updated"}'
