@@ -1,5 +1,5 @@
 import { r as reactExports, j as jsxRuntimeExports, c as clientExports } from './vendor-react-D0COmpux.js';
-import { P as Pt, f as ft, _ as __vitePreload, Y as Yt, V as Vt, I as It, e as eo, y as yt, v, z as zQ, r as ro, a as ao, t as to, n as no, i as io, N as Nt, b as rn } from './vendor-tickup-core-BSg2uQ4S.js';
+import { P as Pt, f as ft, _ as __vitePreload, Y as Yt, V as Vt, I as It, t as to, y as yt, v, X as XQ, i as io, B as Bo, n as no, r as ro, a as ao, N as Nt, b as rn } from './vendor-tickup-core-DFd_ZGhM.js';
 import { M as Moon, S as Sun, B as BookOpen, Z as Zap, L as Layers, P as Pencil, a as MousePointer2, T as TrendingUp, G as GitBranch, b as Magnet, E as Eraser, C as ChartCandlestick, c as ChartArea, d as ChartLine, F as Flame, e as Play, f as Pause, R as RefreshCw } from './vendor-lucide-BUwdCf2e.js';
 
 true&&(function polyfill() {
@@ -1201,7 +1201,7 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
                       {
                         className: `relative h-[min(75vh,48rem)] min-h-[22rem] w-full overflow-hidden rounded-xl border ${isPageDark ? "border-white/10 bg-[#06080d]" : "border-slate-200 bg-white"}`,
                         children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                          eo,
+                          to,
                           {
                             ref: chartRef,
                             themeVariant: shellTheme,
@@ -1265,7 +1265,7 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
                               }
                             ),
                             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[200px] w-full", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                              eo,
+                              to,
                               {
                                 themeVariant: shellTheme,
                                 onThemeVariantChange: setThemePreference,
@@ -1806,31 +1806,31 @@ const TIER_ROWS = [
     key: "pulse",
     title: "TickUp Pulse",
     blurb: "Minimal embed — price plot and axes only (no toolbars). Pure data.",
-    Cmp: to
+    Cmp: no
   },
   {
     key: "flow",
     title: "TickUp Flow",
     blurb: "Analysis — top bar & settings; no drawing tools sidebar.",
-    Cmp: no
+    Cmp: ro
   },
   {
     key: "command",
     title: "TickUp Command",
     blurb: "Full trader UI — drawings, modals, programmatic API.",
-    Cmp: ro
+    Cmp: io
   },
   {
     key: "desk",
     title: "TickUp Desk",
     blurb: "Broker-style — same as Command; attribution always on.",
-    Cmp: io
+    Cmp: ao
   },
   {
     key: "prime",
     title: "TickUp Prime",
     blurb: "Prime teaser lane. Link @tickup/prime locally to activate neon rendering.",
-    Cmp: ao,
+    Cmp: Bo,
     lux: true
   }
 ];
@@ -2102,7 +2102,7 @@ function App() {
     const last = intervals[intervals.length - 1];
     tickCountRef.current += 1;
     const n = tickCountRef.current;
-    const result = n % 5 !== 0 ? api.applyLiveData(jitterLastBar(last), zQ.mergeByTime) : api.applyLiveData(makeNextBar(last, INTERVAL_SEC), zQ.append);
+    const result = n % 5 !== 0 ? api.applyLiveData(jitterLastBar(last), XQ.mergeByTime) : api.applyLiveData(makeNextBar(last, INTERVAL_SEC), XQ.append);
     if (result.intervals.length) {
       setSeries(result.intervals);
     }
@@ -2373,7 +2373,7 @@ Wire onSymbolSearch to load data for this symbol.`);
                         )
                       ] }),
                       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[320px]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        ro,
+                        io,
                         {
                           ...sharedProps,
                           chartOptions: coreComparisonOptions
@@ -2386,7 +2386,7 @@ Wire onSymbolSearch to load data for this symbol.`);
                         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "rounded-full bg-[#5A48DE]/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-violet-300", children: "Neon + VWAP" })
                       ] }),
                       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[320px]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        ao,
+                        Bo,
                         {
                           ...sharedProps,
                           chartOptions: primeComparisonOptions,
