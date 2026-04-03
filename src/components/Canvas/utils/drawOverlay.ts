@@ -201,24 +201,6 @@ function rollingStd(values: (number | null)[], period: number): (number | null)[
     return out;
 }
 
-function computeVWAP(intervals: Interval[]): (number | null)[] {
-    const out: (number | null)[] = Array(intervals.length).fill(null);
-    let cumPV = 0, cumV = 0;
-    for (let i = 0; i < intervals.length; i++) {
-        const it: any = intervals[i];
-        const v = it?.v;
-        if (v == null || !Number.isFinite(Number(v))) {
-            out[i] = null;
-            continue;
-        }
-        const typical = (it.h + it.l + it.c) / 3;
-        cumPV += typical * v;
-        cumV += v;
-        out[i] = cumV === 0 ? null : (cumPV / cumV);
-    }
-    return out;
-}
-
 export function computeSeriesBySpec(intervals: Interval[], spec: OverlayCalcSpec): (number | null)[] {
     const acc = priceAccessor((spec as any).price);
     switch (spec.kind) {
@@ -237,7 +219,8 @@ export function computeSeriesBySpec(intervals: Interval[], spec: OverlayCalcSpec
         case OverlayKind.wma:
             return computeWMA(intervals.map(acc), Math.max(1, (spec as any).period ?? 20));
         case OverlayKind.vwap:
-            return computeVWAP(intervals);
+            // Standard Edition: VWAP overlay slot does not compute a series in this package.
+            return intervals.map(() => null);
         case OverlayKind.bbands_mid: {
             const period = Math.max(1, (spec as any).period ?? 20);
             return computeSMA(intervals.map(acc), period);

@@ -31,6 +31,9 @@ const Bar = styled.div<{$variant: ChartTheme}>`
 `;
 
 const Meta = styled.span<{$variant: ChartTheme}>`
+    display: inline !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     font-size: 10px;
     line-height: 1.2;
     color: ${({$variant}) =>
@@ -53,7 +56,9 @@ export type TickUpAttributionProps = {
 export function TickUpAttribution({themeVariant, productLabel, className}: TickUpAttributionProps) {
     return (
         <Bar $variant={themeVariant} className={className} data-tickup-attribution>
-            {productLabel ? <Meta $variant={themeVariant}>{productLabel}</Meta> : null}
+            <Meta $variant={themeVariant}>
+                Powered by TickUp{productLabel ? ` · ${productLabel}` : ''}
+            </Meta>
             <TickUpMark variant={themeVariant} height={22} aria-hidden />
         </Bar>
     );

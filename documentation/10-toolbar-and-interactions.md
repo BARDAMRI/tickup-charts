@@ -2,57 +2,44 @@
 
 ## Compact symbol strip (no top bar)
 
-When **`showTopBar`** is **`false`**, there is no symbol text field in the toolbar. If the host passes a non-empty **`symbol`** (after trim) or, when `symbol` is omitted, a non-empty **`defaultSymbol`**, the stage renders a **single read-only row** above the plot showing that ticker. Styling follows **`chartOptions.base.style.axes`** (font, text color, line color for a bottom border) and **`base.style.backgroundColor`**.
+When **`showTopBar`** is **`false`**, there is no symbol field in the toolbar. If **`symbol`** (trimmed) or **`defaultSymbol`** (when `symbol` omitted) is non-empty, a **read-only strip** appears above the plot. Styling follows **`chartOptions.base.style.axes`** and **`base.style.backgroundColor`**.
 
-- Used automatically by **`TickUpPulse`** when you set `symbol` / `defaultSymbol`.
-- Same behavior for **`TickUpHost`** / **`TickUpStage`** with `showTopBar={false}`.
-
-If the resolved string is empty, no strip is shown (minimal embed stays plot + axes only).
+- Automatic on **`TickUpPulse`** with `symbol` / `defaultSymbol`.  
+- Same for **`TickUpHost`** / **`TickUpStage`** with `showTopBar={false}`.
 
 ## Floating settings (no top bar)
 
-If the stage is configured with **`showTopBar: false`** and **`showSettingsBar: true`**, a **floating gear** appears over the plot area (position depends on Y-axis side) to open the same settings modal. **Pulse** keeps **`showSettingsBar` false**, so there is no gear unless you use a custom host layout.
+With **`showTopBar: false`** and **`showSettingsBar: true`**, a **floating gear** opens the settings modal. Pulse defaults omit the gear unless you enable it on a custom host.
 
 ## Top bar (Flow, Command, Desk)
 
-Typical controls (some may hide on very narrow widths):
-
 | Control | Action |
 |---------|--------|
-| **Symbol** field | Edit ticker; Enter / search button triggers `onSymbolSearch` if provided. |
-| **Search** | Focus/select symbol or run `onSymbolSearch`. If the handler returns **`false`** or a **rejected Promise**, the field reverts to the last good symbol and `onSymbolChange` runs with that value (see [Props & chart options](./05-props-and-chart-options.md)). |
-| **Interval** selector | Searchable, categorized dropdown (Minutes, Hours, Days, etc.). Triggers `onIntervalSearch` if provided. |
-| **Chart type** | Dropdown: Candlestick, Line, Area, Bar (menu is portaled for correct hit-testing). |
+| **Symbol** | Edit ticker; search runs `onSymbolSearch`. |
+| **Interval** | Dropdown; `onIntervalSearch` for async loads. |
+| **Chart type** | Candlestick, line, area, bar. |
 | **Settings** | Opens [settings modal](./09-settings-modal.md). |
-| **Snapshot** | Captures chart region or main canvas to PNG (implementation may use `captureChartRegionToPngDataUrl`). |
+| **Snapshot** | PNG export. |
 | **Range** | `fitVisibleRangeToData`. |
-| **Export** | CSV download of series. |
-| **Refresh** | `onRefreshRequest` callback. |
-| **Theme** | Toggles **shell** light/dark (**`GlobalStyle`**, settings modal chrome). Notify the app via **`onThemeVariantChange`** on **`TickUpHost`**; keep **`themeVariant`** controlled in sync. Plot styling still follows **`chartOptions`** — align **`base.theme`** (and use **`getTickUpPrimeThemePatch`** / **`createTickUpPrimeEngine`** for Prime) so grid, axes, and watermarks match. See [Props & chart options](./05-props-and-chart-options.md) and [Prime engine](https://github.com/BARDAMRI/tickup-prime/blob/main/documentation/15-prime-engine-and-pro-roadmap.md). |
+| **Export** | CSV of series (trimmed to Standard Tier length). |
+| **Refresh** | `onRefreshRequest`. |
+| **Theme** | Shell light/dark; sync **`themeVariant`** with **`onThemeVariantChange`**. Align **`chartOptions.base.theme`** for plot readability. |
 
-## Interval selection & search flow
+## Interval search flow
 
-The top bar features a searchable **Interval Selection Dropdown** that handles a large variety of timeframes categorized by duration (Short-term Intraday to Long-term Monthly).
-
-### `onIntervalSearch` (Async Data-Feed Replacement)
-
-When the user selects a new interval from the dropdown:
-
-1.  The chart enters a **searching state**.
-2.  If provided, the **`onIntervalSearch(newTf)`** handler is invoked.
-3.  The handler can perform asynchronous operations (e.g., fetching new historical data for the requested timeframe).
-4.  **Success**: If the handler returns `true` (or a Promise resolving to `true`), the UI commits to the new interval.
-5.  **Failure/Revert**: If the handler returns `false` or rejects, the UI **reverts** to the previous "committed" interval automatically, preventing the user from being stuck on an invalid data state.
+1. User picks a new interval.  
+2. Chart may enter a searching state.  
+3. **`onIntervalSearch(newTf)`** runs if provided.  
+4. Return **`true`** (or resolve `true`) to commit; **`false`** or reject to revert.
 
 ```tsx
 <TickUpHost
   onIntervalSearch={async (tf) => {
     try {
-        await myDataFeed.switchTo(tf);
-        return true; // Commit the UI change
-    } catch (e) {
-        showErrorToast(`Failed to load ${tf}`);
-        return false; // Revert the UI to the old timeframe
+      await myDataFeed.switchTo(tf);
+      return true;
+    } catch {
+      return false;
     }
   }}
 />
@@ -60,34 +47,28 @@ When the user selects a new interval from the dropdown:
 
 ## Pan & zoom
 
-With default mode (no draw tool active), wheel and drag behaviors follow the chart stage configuration (pan/zoom on the main plot). **Select** and **edit** modes use a **default** cursor and intentionally **do not** pan on drag so clicks hit-test shapes. Drawing modes use crosshair/drag semantics appropriate to the tool.
+In default navigation mode, wheel and drag pan/zoom the plot. **Select** / **edit** avoid pan-on-drag for hit-testing. Drawing modes use tool-specific cursors.
 
 ## Crosshair & tooltip
 
-When enabled in options or settings:
+When enabled: crosshair lines, optional value labels, candle tooltip (OHLC / change / volume).
 
-- **Crosshair** — Vertical and horizontal lines following the pointer.  
-- **Crosshair values** — Time label near the bottom track, price label near the Y-axis side.  
-- **Candle tooltip** — Compact OHLC / change / volume panel (grid layout on small charts; scrollable cap).
-
-Branding: low-opacity **TickUp watermark** (bundled **transparent** PNGs; strength depends on plot **`base.theme`**) is drawn inside the plot/histogram buffers (not a separate footer), unless disabled via **`showAttribution`** (**Desk** forces on).
+**Watermark:** low-opacity TickUp mark in plot/histogram (bundled assets), unless disabled via **`showAttribution`** (**Desk** forces on).
 
 ## Keyboard
 
-- **Escape** — Clears in-progress polyline points, exits active draw tools (except select/edit), and returns toward neutral navigation.
+- **Escape** — Clear in-progress polyline, exit draw tools toward navigation.
 
 ## Canvas stack (conceptual)
 
-From back to front: main OHLC (and grid, session shading, watermark), optional histogram, persistent drawings layer, interaction/hover/crosshair layer. Histogram opacity and height ratio come from `chartOptions.base.style.histogram`.
+Main OHLC (grid, sessions, watermark), histogram, drawings, hover/crosshair.
 
 ## Copy
 
-Selected axis or formatted numbers may normalize to clipboard-friendly representation when copying from the app (formatting service integration).
+Selected text may be normalized for clipboard-friendly numbers (shell integration).
 
-### Pro Tip
+---
 
-Prime users get the most value from interaction-heavy views where precision drawing and premium rendering run together under active market feeds.
+## Tier comparison: TickUp Prime
 
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+**TickUp Prime** adds commercial interaction and rendering upgrades. **TickUp Core** covers the behaviors above. **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** · **[Showcase](https://bardamri.github.io/tickup-charts/)**

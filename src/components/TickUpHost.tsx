@@ -396,7 +396,7 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
     }, [chartOptions, coreTierLimited]);
 
     useEffect(() => {
-        if (!coreTierLimited) {
+        if (!attributionOn) {
             return;
         }
         const enforceAttributionVisibility = () => {
@@ -417,7 +417,7 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
             attributeFilter: ['style', 'class'],
         });
         return () => observer.disconnect();
-    }, [coreTierLimited]);
+    }, [attributionOn]);
 
     useEffect(() => {
         if (!coreTierLimited) return;

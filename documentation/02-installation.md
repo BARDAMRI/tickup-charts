@@ -8,32 +8,34 @@
 
 These are **peer dependencies**; your app must install them.
 
-## npm
+## npm (open-source package)
 
 ```bash
 npm install tickup
 ```
 
-With peer dependencies in a single command:
+With peers in one command:
 
 ```bash
 npm install tickup react react-dom styled-components
 ```
 
+The **`tickup`** package on npm is **TickUp Core** (Standard Edition, MIT).
+
 ## TypeScript
 
-Types ship with the package (`dist/index.d.ts`). Enable `strict` as usual; import types from `tickup`.
+Types ship with the package (`dist/index.d.ts`). Enable `strict` as usual; import types from `tickup` or `tickup/full`.
 
 ## Bundler notes
 
-- **ESM** entry: `tickup` → `dist/index.es.js`  
-- **CJS** entry: `dist/index.cjs.js`  
+- **ESM** — `tickup` → `dist/tickup.es.js` (per your build config)  
+- **CJS** — `dist/tickup.cjs.js`  
 
-Vite, Webpack, and Next.js typically resolve the correct format automatically.
+Vite, Webpack, and Next.js usually resolve the correct format automatically.
 
 ## Styled-components
 
-TickUp uses styled-components for layout and themed UI. Ensure your app wraps the tree appropriately (e.g. single `ThemeProvider` if you use one globally; TickUp does not require a specific theme object for its internal styled components).
+TickUp uses styled-components for layout and themed UI. Your app can use a global `ThemeProvider`; TickUp does not require a specific theme object for its internal styled components.
 
 ## Verify
 
@@ -41,16 +43,14 @@ TickUp uses styled-components for layout and themed UI. Ensure your app wraps th
 import { TickUpCommand } from 'tickup/full';
 
 export function SmokeTest() {
-  return <TickUpCommand style={{ height: 400 }} />;
+  return <TickUpCommand style={{ height: 400 }} intervalsArray={[]} />;
 }
 ```
 
-You still need to pass `intervalsArray` (can be `[]` for an empty chart). See [Quick start](./03-quick-start.md).
+See [Quick start](./03-quick-start.md) for a full data example.
 
-### Pro Tip
+---
 
-Start with the MIT core install for development, then upgrade to TickUp Prime in production environments that require advanced visuals and commercial Pro tooling.
+## Tier comparison: TickUp Prime
 
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+**TickUp Prime** is a **separate** commercial product. Documentation and install paths are on **[github.com/BARDAMRI/tickup-prime](https://github.com/BARDAMRI/tickup-prime)**. Try the **[showcase](https://bardamri.github.io/tickup-charts/)** before committing.

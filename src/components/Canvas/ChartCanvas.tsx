@@ -124,8 +124,6 @@ interface ChartCanvasProps {
     windowSpread: WindowSpreadOptions;
     /** Draw bundled TickUp marks inside plot / histogram (no DOM footer). */
     showBrandWatermark?: boolean;
-    /** Prime-licensed sessions bypass source-level history limits. */
-    isPrimeLicensed?: boolean;
     /** Matches chart `base.theme` for choosing light / dark / grey mark artwork. */
     brandTheme?: ChartTheme;
 }
@@ -157,7 +155,6 @@ const ChartCanvasInner: React.ForwardRefRenderFunction<ChartCanvasHandle, ChartC
         parentContainerRef,
         windowSpread,
         showBrandWatermark = true,
-        isPrimeLicensed = false,
         brandTheme = ChartTheme.light,
     },
     ref
@@ -192,8 +189,12 @@ const ChartCanvasInner: React.ForwardRefRenderFunction<ChartCanvasHandle, ChartC
         mode === Mode.none || mode === Mode.select || mode === Mode.editShape;
     /** Pan/zoom only in default mode so Select/Edit can click shapes without starting a drag. */
     const isPanZoomMode = mode === Mode.none;
-    const {renderContext, intervalSeconds} = useChartData(
-        intervalsArray, isPrimeLicensed, visibleRange, hoverPoint, canvasSizes.width, canvasSizes.height
+    const {renderContext, intervalSeconds, effectiveIntervals} = useChartData(
+        intervalsArray,
+        visibleRange,
+        hoverPoint,
+        canvasSizes.width,
+        canvasSizes.height
     );
 
     const reseedDraftShape = useCallback(() => {
@@ -736,7 +737,7 @@ const ChartCanvasInner: React.ForwardRefRenderFunction<ChartCanvasHandle, ChartC
     usePanAndZoom(
         hoverCanvasRef,
         isPanZoomMode,
-        intervalsArray,
+        effectiveIntervals,
         visibleRange,
         setVisibleRange,
         intervalSeconds,
@@ -811,7 +812,7 @@ const ChartCanvasInner: React.ForwardRefRenderFunction<ChartCanvasHandle, ChartC
 
         if (renderContext) {
             const mouseTime = xToTime(point.x, renderContext.canvasWidth, renderContext.visibleRange);
-            const candle = intervalsArray.find(
+            const candle = effectiveIntervals.find(
                 c => mouseTime >= c.t && mouseTime < c.t + intervalSeconds
             );
             if (candle?.t !== hoveredCandle?.t) {

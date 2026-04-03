@@ -16,9 +16,7 @@
 
 ### `chartOptions` (deep partial merge)
 
-Type: `DeepPartial<ChartOptions>`. Merged with library defaults (`DEFAULT_GRAPH_OPTIONS`). **Important:** pass a **stable reference** (`useMemo`) when the object does not meaningfully change, so internal state (e.g. chart type from the toolbar) is not overwritten by a new empty `{}` every render.
-
-When you **do** change options intentionally, any deep change triggers a merge into current state.
+Type: `DeepPartial<ChartOptions>`. Merged with library defaults (`DEFAULT_GRAPH_OPTIONS`). Pass a **stable** reference (`useMemo`) when values do not change every render, so toolbar-driven state is not overwritten by a new `{}` each time.
 
 ### Layout (only without `productId`)
 
@@ -26,55 +24,47 @@ When you **do** change options intentionally, any deep change triggers a merge i
 |------|---------|
 | `showSidebar` | Drawing tools column. |
 | `showTopBar` | Symbol + chart controls row. |
-| `showSettingsBar` | Gear and related controls in the top cluster. |
+| `showSettingsBar` | Gear and related controls. |
 
 ### Toolbar / host hooks
 
 | Prop | Purpose |
 |------|---------|
-| `symbol` | Controlled symbol string (toolbar input when the top bar is shown). |
-| `defaultSymbol` | Initial symbol when `symbol` is **omitted** (uncontrolled). Ignored for display once `symbol` is passed. |
-| `onSymbolChange` | Fired when the user edits the symbol in the **top bar** (Flow, Command, Desk). |
-| `onSymbolSearch` | Search submit (button or Enter) when the top bar is present. Return **`false`** or **reject** the returned `Promise` if loading the symbol failed — the input reverts to the last successfully displayed ticker and **`onSymbolChange`** is invoked with that previous value so controlled state stays consistent. Return **`true`** or **`undefined`** on success. |
-| `onRefreshRequest` | User hit Refresh in toolbar. |
+| `symbol` | Controlled symbol (top bar when shown). |
+| `defaultSymbol` | Initial symbol when `symbol` is **omitted**. |
+| `onSymbolChange` | Top-bar symbol edits (Flow, Command, Desk). |
+| `onSymbolSearch` | Search submit; return **`false`** or **reject** to revert input. |
+| `onRefreshRequest` | User chose Refresh. |
 
-**When the top bar is hidden** (e.g. **Pulse**, or `showTopBar: false` on `TickUpHost`):
-
-- There is no editable symbol control; use React state and pass **`symbol`** (or **`defaultSymbol`** only) from the host.
-- If the resolved text is non-empty (trimmed controlled value, else trimmed `defaultSymbol`), a **read-only symbol strip** is rendered above the chart. Empty string hides it.
-
-`getChartContext()` still reports the same symbol metadata for introspection.
+**Top bar hidden** (e.g. Pulse): use **`symbol`** / **`defaultSymbol`** for the compact strip; see [Toolbar & interactions](./10-toolbar-and-interactions.md).
 
 ### Other
 
 | Prop | Purpose |
 |------|---------|
-| `productId` | Lock layout to a tier (`pulse` \| `flow` \| `command` \| `desk` \| `prime`). |
-| `showAttribution` | In-chart TickUp watermark (default true; forced on for Desk). Uses transparent bundled marks. |
-| `licenseKey` | For **`productId: 'prime'`**: non-empty value hides the eval strip. |
-| `themeVariant` | Shell **light** \| **dark** — when set, the host is **controlled**; keep it in sync with your app state and update from **`onThemeVariantChange`** when the user toggles theme in the toolbar. |
-| `defaultThemeVariant` | Initial shell theme when **`themeVariant`** is omitted (uncontrolled). Default **`light`**. |
-| `onThemeVariantChange` | Called when the user toggles light/dark from the settings toolbar; use with **`themeVariant`** for controlled mode or alone to observe toggles in uncontrolled mode. |
+| `productId` | Lock layout (`pulse` \| `flow` \| `command` \| `desk` \| `prime`). |
+| `showAttribution` | In-chart TickUp watermark (Desk forces on). |
+| `licenseKey` | For `productId: 'prime'`: evaluation vs licensed chrome (Prime product). |
+| `themeVariant` / `defaultThemeVariant` / `onThemeVariantChange` | Shell light/dark. |
 
 ### Shell vs chart theme
 
-- **`themeVariant` / `defaultThemeVariant` / `onThemeVariantChange`** drive **`GlobalStyle`** (page background), settings-modal chrome, and related shell UI — not the plot alone.
-- Plot colors still come from **`chartOptions`** (`base.theme`, `base.style`, …). Keep them **consistent** with the shell (e.g. light shell + `base.theme: 'light'`) so axes, grid, and watermarks stay readable.
-- For the **Prime** renderer (`base.engine: 'prime'`), use **`getTickUpPrimeThemePatch('light' | 'dark')`** or **`createTickUpPrimeEngine(theme)`** with **`ref.setEngine`** so the merged patch matches your host theme. **`TickUpPrime`** alone applies the **dark** Prime plot; see [Prime engine & Pro roadmap](https://github.com/BARDAMRI/tickup-prime/blob/main/documentation/15-prime-engine-and-pro-roadmap.md).
+- Shell props drive **`GlobalStyle`**, settings modal chrome, and toolbar surfaces.
+- Plot colors come from **`chartOptions`** (`base.theme`, `base.style`, …). Align shell and chart theme for readable grid and watermarks.
 
 ## `ChartOptions` structure (high level)
 
 ```ts
 ChartOptions = {
   base: {
-    engine?,             // 'standard' | 'prime' — canvas profile; prime + base.theme 'light' uses light Prime palette & toolbars (see doc 15)
-    chartType,           // Candlestick | Line | Area | Bar
+    engine?,             // rendering profile key (Standard Edition defaults to Canvas 2D)
+    chartType,
     theme,
     showOverlayLine,
     showHistogram,
-    showCrosshair,       // hover cross lines
-    showCrosshairValues, // time/price labels on crosshair
-    showCandleTooltip,   // OHLC hover panel
+    showCrosshair,
+    showCrosshairValues,
+    showCandleTooltip,
     style: { candles, line, area, bar, histogram, grid, overlay, axes, drawings, showGrid, backgroundColor },
     overlays?, overlayKinds?,
   },
@@ -84,34 +74,28 @@ ChartOptions = {
 
 ### Interaction flags (`base`)
 
-- **`showCrosshair`** — Vertical + horizontal guide lines in default navigation mode.  
-- **`showCrosshairValues`** — Labels for cursor time (along bottom) and price (along Y-axis side). Requires crosshair enabled.  
-- **`showCandleTooltip`** — Corner panel with date, O/H/L/C, change, volume.
-
-These can be toggled from the **Settings** modal (Chart Style → Hover) when using the full shell.
+- **`showCrosshair`** — Guide lines in navigation mode.  
+- **`showCrosshairValues`** — Time/price labels (requires crosshair).  
+- **`showCandleTooltip`** — OHLC / change / volume panel.
 
 ### Axes & formatting
 
-Under `base.style.axes`: locale, language, decimals, currency, date format, timezone, **trading sessions**, **holidays**, exchange, notation, tick size, conversion/display currency fields, etc. See [i18n & axes](./13-internationalization-and-axes.md).
+Under `base.style.axes`: locale, decimals, currency, sessions, holidays, etc. See [i18n & axes](./13-internationalization-and-axes.md).
 
 ### Overlays / indicators
 
-- **`base.showOverlayLine`** — Master switch for drawing indicator lines on the plot.  
-- **`base.overlays`** — `OverlayWithCalc[]` (recommended for explicit periods).  
-- **`base.overlayKinds`** — Shorthand list of kinds with library default parameters.
+- **`base.showOverlayLine`** — Draw indicator lines.  
+- **`base.overlays`** — `OverlayWithCalc[]` (recommended).  
+- **`base.overlayKinds`** — Shorthand list.
 
-See [Overlays & indicators](./12-overlays-and-indicators.md).
+Standard Tier: **three** overlays maximum. See [Overlays & indicators](./12-overlays-and-indicators.md).
 
 ### Drawings default style
 
-Under `base.style.drawings`: line color, width, line style, fill, and **selected** state styling.
+`base.style.drawings`: line, fill, selection styling.
 
-See also existing reference: [`docs/Documentation/ChartStyleOptions.md`](../docs/Documentation/ChartStyleOptions.md) if present for extra detail; defaults live in `src/components/DefaultData.ts`.
+---
 
-### Pro Tip
+## Tier comparison: TickUp Prime
 
-Keep your `chartOptions` stable in core, then layer Prime engine patches for premium rendering without changing your component contracts.
-
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+**TickUp Prime** documents optional engine patches and commercial styling. **TickUp Core** integration does not require them. **[Prime docs](https://github.com/BARDAMRI/tickup-prime)** · **[Showcase](https://bardamri.github.io/tickup-charts/)**

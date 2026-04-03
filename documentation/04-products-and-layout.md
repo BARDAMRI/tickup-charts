@@ -10,20 +10,16 @@ Import from **`tickup/full`**:
 | `TickUpFlow` | `flow` | No | Yes | Yes |
 | `TickUpCommand` | `command` | Yes | Yes | Yes |
 | `TickUpDesk` | `desk` | Yes | Yes | Yes (branding on) |
-| `TickUpPrimeTier` | `prime` | Yes | Yes | Yes |
 
-Props types: `TickUpPulseProps`, `TickUpFlowProps`, etc. Product components **omit** `showSidebar`, `showTopBar`, and `showSettingsBar` from their public props; those are fixed per tier.
+Product components **omit** `showSidebar`, `showTopBar`, and `showSettingsBar` from public props; those are fixed per tier.
 
-### Prime tier vs Prime engine
+A **`TickUpPrimeTier`** shell exists for **evaluating** the separate Prime product (license/evaluation chrome). Standard Tier data and indicator guardrails in this open-source package still apply unless you integrate a fully licensed Prime deployment.
 
-- **`TickUpPrimeTier`** — Same chrome as **Command**; shows an **evaluation strip** when **`licenseKey`** is unset.  
-- **`TickUpPrime`** (engine) — Visual profile: **`chartOptions.base.engine: 'prime'`** or **`ref.setEngine(TickUpPrime)`** (dark plot). For a **light** Prime plot, use **`getTickUpPrimeThemePatch('light')`** / **`createTickUpPrimeEngine('light')`**. Usable on **any** tier. See [Prime engine & Pro roadmap](https://github.com/BARDAMRI/tickup-prime/blob/main/documentation/15-prime-engine-and-pro-roadmap.md).
+## Symbol on Pulse (no top bar)
 
-### Symbol on Pulse (no top bar)
+**Pulse** has no symbol field in the toolbar. If you pass a non-empty **`symbol`** (controlled) or **`defaultSymbol`**, the stage shows a **compact read-only symbol strip** above the plot. If both resolve to empty after trim, the strip is hidden.
 
-**Pulse** has no symbol field in the toolbar. If you pass a non-empty **`symbol`** (controlled) or **`defaultSymbol`** (fallback when `symbol` is omitted), the stage shows a **compact read-only symbol strip** above the plot (same typography/colors as axis styling). If both resolve to empty after trim, the strip is hidden. See [Toolbar & interactions](./10-toolbar-and-interactions.md).
-
-The same strip appears for **`TickUpHost`** / **`TickUpStage`** whenever **`showTopBar`** is `false` and a symbol string is available — not only for Pulse.
+The same strip appears for **`TickUpHost`** / **`TickUpStage`** when **`showTopBar`** is `false` and a symbol string is available.
 
 ## Custom layout: `TickUpHost`
 
@@ -40,7 +36,7 @@ import { TickUpHost } from 'tickup/full';
 />;
 ```
 
-Then you control which chrome appears. Settings saved in the modal still respect **locked** layout when `productId` is set on other variants.
+You control which chrome appears. Settings from the modal still respect **locked** layout when `productId` is set on product variants.
 
 ## Desk specifics
 
@@ -48,12 +44,10 @@ Then you control which chrome appears. Settings saved in the modal still respect
 
 ## Mode provider
 
-The shell wraps children in **`ModeProvider`** internally. If you use **`TickUpStage`** alone (advanced), wrap with `ModeProvider` yourself. See [Exports & advanced](./11-exports-and-advanced.md).
+The shell wraps children in **`ModeProvider`**. If you use **`TickUpStage`** alone, wrap with **`ModeProvider`** yourself. See [Exports & advanced](./11-exports-and-advanced.md).
 
-### Pro Tip
+---
 
-Prime tiers are ideal when you need a product-ready trader layout with premium visuals and minimal custom chrome development.
+## Tier comparison: TickUp Prime
 
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+**TickUp Prime** adds a commercial shell, WebGL-class rendering, and expanded limits. Details: **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** · **[Showcase](https://bardamri.github.io/tickup-charts/)**

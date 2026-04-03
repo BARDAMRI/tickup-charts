@@ -1,41 +1,40 @@
-# TickUp Charts documentation
+# TickUp Core documentation
 
-Complete guides for integrating and operating the TickUp Charts React charting library.
+Integration guides for **TickUp Core** (Standard Edition): the MIT open-source React charting library shipped as the **`tickup`** npm package.
 
-The **npm package** has **`tickup`** (default — `TickUpStage` and chart helpers) and **`tickup/full`** (e.g. `TickUpCommand`, `TickUpHost`, extended exports). Product-focused guides import from **`tickup/full`**.
+## Package entries
 
-Published tarballs **include this `documentation/` folder** and the sibling **`legal/`** policy templates (see root `package.json` **`files`**) so links in **[14-legal-and-policies.md](./14-legal-and-policies.md)** resolve under `node_modules/tickup/`. Type declarations ship in **`dist/*.d.ts`**. This documentation covers the open-source core package.
+- **`tickup`** — `TickUpStage`, types, overlays, live-data helpers, and drawing utilities.
+- **`tickup/full`** — Product shells (`TickUpCommand`, `TickUpHost`, …), extended exports, and optional engine profile types for advanced setups.
 
-The **reference example app** in [`../example/`](../example/) (Vite + React) exercises all product tiers, `chartOptions`, the compact symbol strip on Pulse, host symbol callbacks, and the imperative ref API; see [`../example/README.md`](../example/README.md). The example app itself is **not** published to npm.
+Published tarballs include this **`documentation/`** folder and sibling **`legal/`** templates (see root **`package.json`** **`files`**). Type declarations ship under **`dist/*.d.ts`**.
+
+The **example app** in [`../example/`](../example/) (Vite + React) demonstrates hosts, `chartOptions`, and the imperative ref API; it is **not** published to npm.
 
 ## Contents
 
 | # | Guide | Description |
 |---|--------|-------------|
-| 1 | [Introduction](./01-introduction.md) | Overview, package scope, and Prime upgrade path |
-| 2 | [Glossary](./01-glossary.md) | Terms: intervals, ranges, products, placements, etc. |
-| 3 | [Installation](./02-installation.md) | Peer dependencies, package install, styled-components |
-| 4 | [Quick start](./03-quick-start.md) | Minimal embed, ref, controlled data |
-| 5 | [Products & layout](./04-products-and-layout.md) | Pulse, Flow, Command, Desk; toolbars (public line) |
-| 6 | [Props & chart options](./05-props-and-chart-options.md) | `TickUpHost`, `chartOptions`, shell theme + chart theme |
-| 7 | [Imperative API](./06-imperative-api.md) | Ref handle: shapes, data, **`getVisibleRanges()`**, **`getCanvasSize()`**, view, context |
-| 8 | [Data & live updates](./07-data-and-live-updates.md) | `intervalsArray`, `applyLiveData`, merge helpers |
-| 9 | [Drawings & shapes](./08-drawings-and-shapes.md) | Toolbar tools, select/edit, programmatic shapes & patches |
-| 10 | [Settings modal](./09-settings-modal.md) | In-app settings categories and persistence |
-| 11 | [Toolbar & interactions](./10-toolbar-and-interactions.md) | Chart type, snapshot, crosshair, tooltip, pan/zoom |
-| 12 | [Exports & advanced](./11-exports-and-advanced.md) | Full export list, `TickUpStage`, branding, init/update |
-| 13 | [Overlays & indicators](./12-overlays-and-indicators.md) | SMA/EMA/VWAP/Bollinger, `overlays` / `overlayKinds` |
-| 14 | [i18n & axes](./13-internationalization-and-axes.md) | Locale, RTL, currency, sessions, grid |
-| 15 | [Legal & policies](./14-legal-and-policies.md) | Terms of Service, Privacy, Acceptable Use templates (`legal/`) |
+| 1 | [Introduction](./01-introduction.md) | Scope of TickUp Core (Standard Tier) |
+| 2 | [Glossary](./01-glossary.md) | Intervals, ranges, products, placements |
+| 3 | [Installation](./02-installation.md) | Peers, install, bundlers |
+| 4 | [Quick start](./03-quick-start.md) | Minimal embed and data flow |
+| 5 | [Products & layout](./04-products-and-layout.md) | Pulse, Flow, Command, Desk |
+| 6 | [Props & chart options](./05-props-and-chart-options.md) | `TickUpHost`, `chartOptions` |
+| 7 | [Imperative API](./06-imperative-api.md) | Ref handle: data, view, drawings |
+| 8 | [Data & live updates](./07-data-and-live-updates.md) | `intervalsArray`, `applyLiveData`, guardrails |
+| 9 | [Drawings & shapes](./08-drawings-and-shapes.md) | Toolbar tools and programmatic shapes |
+| 10 | [Settings modal](./09-settings-modal.md) | In-app settings categories |
+| 11 | [Toolbar & interactions](./10-toolbar-and-interactions.md) | Symbol strip, pan/zoom, snapshot |
+| 12 | [Exports & advanced](./11-exports-and-advanced.md) | Public export surface |
+| 13 | [Overlays & indicators](./12-overlays-and-indicators.md) | Standard Tier overlays |
+| 14 | [i18n & axes](./13-internationalization-and-axes.md) | Locale, RTL, sessions |
+| 15 | [Legal & policies](./14-legal-and-policies.md) | Policy templates in `legal/` |
 
-## Older material
+Legacy notes may appear under [`../docs/`](../docs/). **Authoritative integration reference** is this folder.
 
-Additional notes and legacy pages may still live under [`../docs/`](../docs/) (roadmap, contributing, design). The **authoritative integration reference** is this `documentation/` folder.
+---
 
-### Pro Tip
+## Tier comparison: TickUp Prime
 
-Use this docs hub for core integration, then evaluate TickUp Prime for teams that require premium rendering profiles and commercial-grade analysis workflows.
-
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+**TickUp Core** (this package) is the **Standard Edition**: Canvas 2D, a **2,000**-candle cap, **1 Hz** live-update throttling on Standard shells, and **three** overlay indicators. For WebGL rendering, unlimited history, and expanded tooling, see **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[live showcase](https://bardamri.github.io/tickup-charts/)**.

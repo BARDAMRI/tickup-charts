@@ -1,45 +1,36 @@
 # Settings modal
 
-The gear icon in the top toolbar (when enabled) opens the **Chart Settings** modal. Values apply to the current chart instance and merge into internal `chartOptions` state on **Save**.
+The gear icon (when enabled) opens **Chart Settings**. Values apply on **Save** and merge into internal `chartOptions`.
 
-**Shell theme:** modal framing and surfaces follow **`TickUpHost`** **`themeVariant`** (controlled) or **`defaultThemeVariant`** (uncontrolled), the same as **`GlobalStyle`** — see [Props & chart options](./05-props-and-chart-options.md). Changing colors inside the modal affects **`chartOptions`**, not the outer app theme unless you also update props.
+**Shell theme:** modal chrome follows **`TickUpHost`** **`themeVariant`** / **`defaultThemeVariant`** — see [Props & chart options](./05-props-and-chart-options.md). In-modal color edits change **`chartOptions`**, not the outer app theme unless you mirror them in props.
 
 ## Categories
 
 | Category | What users can change |
 |----------|------------------------|
-| **Chart Style** | Histogram on/off, grid on/off, **hover**: candle tooltip, crosshair lines, crosshair time & price labels |
-| **Axes** | Y-axis side (left/right), number of Y ticks |
-| **Time** | 12-hour vs 24-hour time display |
-| **Layout** | Show side toolbar, show top bar (hidden when product chrome is **locked** by `productId`) |
-| **Colors** | Background, axis text, bull/bear (and related histogram/bar colors), line chart color |
-| **Drawing shapes** | Default line/fill/selection styles for new drawings |
-| **Regional** | Locale, language (with sensible defaults linkage) |
-| **Financial** | Currency code, use-currency toggle, currency display mode, number notation, tick size, min/max fraction & significant digits, auto precision, unit + placement |
+| **Chart Style** | Histogram, grid, hover: tooltip, crosshair, crosshair labels |
+| **Axes** | Y-axis side, number of Y ticks |
+| **Time** | 12h vs 24h |
+| **Layout** | Side toolbar, top bar (hidden when product chrome is locked) |
+| **Colors** | Background, axis text, bull/bear, line color |
+| **Drawing shapes** | Default styles for new drawings |
+| **Regional** | Locale, language |
+| **Financial** | Currency, notation, tick size, precision, units |
 
 ## Locked layout (product tiers)
 
-For `TickUpPulse`, `TickUpFlow`, `TickUpCommand`, and `TickUpDesk`, toolbar visibility is fixed by the product. The Layout section either hides the toggles or explains that chrome is product-controlled (`lockToolbarLayout` on the modal).
+For `TickUpPulse`, `TickUpFlow`, `TickUpCommand`, and `TickUpDesk`, toolbar visibility is fixed. The Layout section reflects product control.
 
 ## Persistence
 
-The modal does **not** persist to `localStorage` by default. The host app can:
+The modal does **not** write `localStorage` by default. Persist merged options from your app store or `getChartContext()` if needed.
 
-- Read merged options from `getChartContext()` / custom hooks, or  
-- Re-hydrate `chartOptions` prop on next mount from your own store.
+## Related `chartOptions`
 
-## Related options in code
+`showCandleTooltip`, `showCrosshair`, `showCrosshairValues`, `showHistogram`, `showGrid`, axes, colors, drawings — see [Props & chart options](./05-props-and-chart-options.md).
 
-Several toggles map to `chartOptions.base` and `base.style`:
+---
 
-- `showCandleTooltip`, `showCrosshair`, `showCrosshairValues`  
-- `showHistogram`, `showGrid`  
-- Axes, colors, drawings defaults as described in [Props & chart options](./05-props-and-chart-options.md).
+## Tier comparison: TickUp Prime
 
-### Pro Tip
-
-Use settings parity between Standard and Prime during QA, then enable Prime-only visual profiles per workspace or account tier.
-
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+Commercial Prime builds may add settings categories. **TickUp Core** behavior is defined by the sections above. **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** · **[Showcase](https://bardamri.github.io/tickup-charts/)**

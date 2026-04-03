@@ -1,23 +1,21 @@
 # Overlays and indicators
 
-Technical indicator lines are drawn **on top of** the main series when overlays are enabled in chart options.
+Indicator lines draw **on top of** the main series when overlays are enabled.
+
+## Standard Tier guardrails
+
+- **Count** — At most **three** simultaneous overlay studies. Requesting more triggers a toast and options are capped (see host behavior).  
+- **Data window** — Calculations use the same **2,000**-bar window as the chart (see [Data & live updates](./07-data-and-live-updates.md)).
 
 ## Enable drawing
 
-Set **`base.showOverlayLine`** to `true` (via `chartOptions` or defaults). Style defaults for stroke live under **`base.style.overlay`** (`lineColor`, `lineWidth`, `lineStyle`: solid | dashed | dotted).
+Set **`base.showOverlayLine`** to `true`. Styles live under **`base.style.overlay`** (`lineColor`, `lineWidth`, `lineStyle`).
 
-## Two configuration styles
+## Configuration styles
 
-### 1. `base.overlays` — full control (`OverlayWithCalc[]`)
+### 1. `base.overlays` — `OverlayWithCalc[]`
 
-Each entry combines:
-
-- **Style** — line color, width, style (merged with defaults).  
-- **`calc`** — an `OverlayCalcSpec` describing the math (see below).  
-- **`connectNulls`** (optional) — draw through gaps in computed values (default true in helpers).  
-- **`useCenterX`** (optional) — plot at bar center vs edge (default true in helpers).
-
-Build entries with exported helpers:
+Each entry: **style**, **`calc`** (`OverlayCalcSpec`), optional **`connectNulls`**, **`useCenterX`**.
 
 ```ts
 import {
@@ -37,37 +35,34 @@ const overlays: OverlayWithCalc[] = [
 
 ### 2. `base.overlayKinds` — shorthand
 
-An array of **`OverlayKind`** string keys (or calc specs in the type definition; the renderer maps kinds through the same `overlay()` factory with **default periods**, e.g. SMA/EMA/WMA period 20, Bollinger period 20 / stddev 2). Useful for quick demos; prefer **`overlays`** for explicit periods and prices.
+Array of **`OverlayKind`** keys with library default parameters. Prefer **`overlays`** for explicit periods.
 
 ## Calculation kinds (`OverlayCalcSpec`)
 
 | Kind | Role |
 |------|------|
-| `OverlayPriceKey` (`close`, `open`, `high`, `low`) | Raw price series. |
-| `sma`, `ema`, `wma` | Moving averages; `period` + optional `price` key. |
-| `vwap` | Volume-weighted average price (uses interval volume when present). |
-| `bbands_mid`, `bbands_upper`, `bbands_lower` | Bollinger mid/upper/lower; `period`, optional `stddev`, optional `price`. |
+| `OverlayPriceKey` | Raw price series (`close`, `open`, `high`, `low`). |
+| `sma`, `ema`, `wma` | Moving averages; `period` + optional `price`. |
+| `vwap` | In **TickUp Core**, the VWAP slot does **not** compute a series (no line drawn). Use other overlays for analysis in Standard Edition. |
+| `bbands_*` | Bollinger bands; `period`, optional `stddev`, optional `price`. |
 
-## Exported API (from `tickup`)
+## Exported API (`tickup`)
 
 | Export | Role |
 |--------|------|
-| `OverlaySpecs` | Factory for calc specs. |
-| `withOverlayStyle` | Curried builder: shared style → many overlays. |
-| `overlay(kindOrSpec?, style?, extras?)` | Single `OverlayWithCalc` with defaults. |
+| `OverlaySpecs` | Calc factories. |
+| `withOverlayStyle` | Shared style → many overlays. |
+| `overlay(...)` | Single `OverlayWithCalc` with defaults. |
 | `OverlayKind`, `OverlayPriceKey` | Enums. |
-| Types: `OverlayWithCalc`, `OverlaySeries`, `OverlayOptions` | Typing and advanced use. |
 
-Lower-level functions such as `computeSeriesBySpec`, `drawOverlays`, `drawOverlay` exist in source for maintainers; the **supported host integration path** is configuring **`chartOptions.base.overlays`** / **`overlayKinds`** and **`showOverlayLine`**.
+Lower-level functions (`computeSeriesBySpec`, …) exist for maintainers; hosts should configure **`chartOptions`**.
 
 ## Chart types
 
-Overlays are wired in **candlestick**, **line**, **area**, and **bar** draw paths when `showOverlayLine` is true.
+Overlays apply to candlestick, line, area, and bar when `showOverlayLine` is true.
 
-### Pro Tip
+---
 
-Prime indicator packs are designed for desks that need richer multi-study analysis than the standard open-source baseline.
+## Tier comparison: TickUp Prime
 
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+**TickUp Prime** includes expanded indicator and analysis features. **TickUp Core** provides the overlay system and limits above. **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** · **[Showcase](https://bardamri.github.io/tickup-charts/)**

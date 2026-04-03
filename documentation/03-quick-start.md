@@ -1,10 +1,6 @@
 # Quick start
 
-### Prime Preview
-![The "Hero" Prime Neon](../assets/showcase/hero-prime-neon.png)
-*Luxury rendering and neon effects enabled via `@tickup/prime`.*
-
-TickUp Charts is **React-first**: embed **`TickUpHost`**, **`TickUpStage`**, or product components (`TickUpCommand`, …). There is **no** imperative `TickUpCore(container)` class — use props + refs (e.g. **`ref.setEngine(TickUpPrime)`** for **dark** Prime, or **`createTickUpPrimeEngine('light')`** when the shell is light). See [Prime engine & Pro roadmap](https://github.com/BARDAMRI/tickup-prime/blob/main/documentation/15-prime-engine-and-pro-roadmap.md).
+**TickUp Core** is **React-first**: embed **`TickUpHost`**, **`TickUpStage`**, or a **product** component (`TickUpCommand`, …). Configure the chart with **props** and **`chartOptions`**; drive streaming data with **refs** (`applyLiveData`, etc.).
 
 ## 1. Render a product component
 
@@ -32,15 +28,13 @@ export function App() {
 }
 ```
 
-`TickUpCommand` is the full-trader layout. For a minimal plot only, use **`TickUpPulse`** (same props, different chrome). Pass **`symbol`** or **`defaultSymbol`** so the ticker appears in a **compact strip** above the chart (Pulse has no top-bar symbol field). See [Products & layout](./04-products-and-layout.md) and [Toolbar & interactions](./10-toolbar-and-interactions.md).
+`TickUpCommand` is the full-trader layout. For plot + axes only, use **`TickUpPulse`**. Pass **`symbol`** or **`defaultSymbol`** so the ticker appears in the **compact strip** when there is no top bar (Pulse). See [Products & layout](./04-products-and-layout.md).
 
-## 2. Give the chart a sized parent
+## 2. Size the container
 
-The chart fills its container. Use explicit `height` (and usually `width` or flex) on a wrapper `div`.
+The chart fills its parent. Set **`height`** (and usually **`width`** or flex) on a wrapper `div`.
 
-## 3. Updating data from React state
-
-Control the series with props:
+## 3. Control data from React state
 
 ```tsx
 const [bars, setBars] = useState<Interval[]>(initial);
@@ -48,7 +42,7 @@ const [bars, setBars] = useState<Interval[]>(initial);
 <TickUpCommand ref={chartRef} intervalsArray={bars} />;
 ```
 
-When `intervalsArray` changes reference or content, the stage syncs. For streaming updates without replacing the whole array, prefer the **imperative** API below.
+The stage normalizes incoming data to **Standard Tier** limits (see [Data & live updates](./07-data-and-live-updates.md)).
 
 ## 4. Imperative live updates
 
@@ -60,11 +54,9 @@ const r = chartRef.current?.applyLiveData(
 if (r && !r.ok) console.warn(r.errors);
 ```
 
-See [Data & live updates](./07-data-and-live-updates.md).
-
 ## 5. Optional: `chartOptions`
 
-Pass a **stable** object (e.g. `useMemo`) so you do not reset internal UI state on every render:
+Pass a **stable** object (`useMemo`) so internal UI state is not reset every render:
 
 ```tsx
 const options = useMemo(
@@ -82,13 +74,11 @@ See [Props & chart options](./05-props-and-chart-options.md).
 
 ## Next
 
-- [Products & layout](./04-products-and-layout.md) — choose the right tier  
-- [Imperative API](./06-imperative-api.md) — full ref surface  
+- [Products & layout](./04-products-and-layout.md)  
+- [Imperative API](./06-imperative-api.md)  
 
-### Pro Tip
+---
 
-Use the same host integration from this guide with Prime enabled to unlock premium rendering profiles without rewriting your app shell.
+## Tier comparison: TickUp Prime
 
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+Optional **engine profiles** and commercial features are documented with **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)**. This quick start covers **TickUp Core** (Standard Edition) only. **[Showcase](https://bardamri.github.io/tickup-charts/)**

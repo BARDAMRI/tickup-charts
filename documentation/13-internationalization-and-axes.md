@@ -2,63 +2,53 @@
 
 ## Locale and language
 
-Axis labels, dates, and many settings strings follow **`chartOptions.base.style.axes`**:
+Axis labels and many strings follow **`chartOptions.base.style.axes`**:
 
 | Field | Role |
 |-------|------|
-| `locale` | BCP 47 tag (e.g. `en-US`, `he-IL`). Drives date/number formatting and default direction. |
-| `language` | UI language key for built-in labels (toolbar tooltips, settings, etc.). |
+| `locale` | BCP 47 tag (e.g. `en-US`, `he-IL`). |
+| `language` | UI language key for built-in labels. |
 
-The in-app **Settings → Regional** category updates these fields. The library ships multiple locale presets (decimal/thousands separators, date patterns, default currency, **RTL** vs LTR) in internal locale tables.
+**Settings → Regional** updates these fields. The library ships locale presets (separators, date patterns, default currency, **RTL** vs LTR).
 
 ### RTL
 
-When the active locale defaults specify `direction: 'rtl'`, toolbar and settings layout flip appropriately (`dir` on toolbars/modals).
+When the active locale specifies `direction: 'rtl'`, toolbar and modal layout flip (`dir` on containers).
 
 ## Numeric and currency display
 
-Axes support:
-
-- Fraction digits, min/max significant digits, `tickSize`, `autoPrecision`  
-- `currency`, `useCurrency`, `currencyDisplay`  
-- `numberNotation`: `standard` | `scientific` | `compact`  
-- `unit` / `unitPlacement`  
-- Optional **`displayCurrency`** / **`conversionRate`** for converted display (host-defined semantics)
+Axes support fraction digits, significant digits, `tickSize`, `autoPrecision`, `currency`, `useCurrency`, `currencyDisplay`, `numberNotation`, `unit` / `unitPlacement`, optional **`displayCurrency`** / **`conversionRate`** (host-defined).
 
 ## Time axis
 
-- **`timezone`** — string such as `UTC` or `America/New_York` for session logic and labeling where used.  
-- **`dateFormat`** — pattern consumed by the formatting layer.  
-- Shell prop **`initialTimeFormat12h`** and settings **12-hour toggle** affect time presentation.  
-- **`TimeDetailLevel`** (`Auto` / `Low` / `Medium` / `High`) controls tick density (prop `initialTimeDetailLevel`).
+- **`timezone`** — e.g. `UTC`, `America/New_York`.  
+- **`dateFormat`** — formatting pattern.  
+- **`initialTimeFormat12h`** and settings toggle — 12h vs 24h.  
+- **`TimeDetailLevel`** — tick density (`initialTimeDetailLevel`).
 
 ## Trading sessions and holidays
 
-`axes` options include:
-
-- **`tradingSessions`** — array of `{ dayOfWeek, start, end }` with `start`/`end` as `'HH:mm'` strings; used to **shade off-session** periods on the chart.  
-- **`holidays`** — ISO `YYYY-MM-DD` strings for calendar context (where integrated).  
-- **`exchange`** — display/metadata string.
+- **`tradingSessions`** — `{ dayOfWeek, start, end }` with `HH:mm`; **shades** off-session periods.  
+- **`holidays`** — ISO `YYYY-MM-DD` where integrated.  
+- **`exchange`** — display/metadata.
 
 ## Grid and background
 
-- **`base.style.showGrid`** — toggles grid lines (`grid` sub-style: colors, dash, spacing).  
-- **`base.style.backgroundColor`** — plot background.
+- **`base.style.showGrid`**  
+- **`base.style.backgroundColor`**
 
 ## Y axis layout
 
-- **`axes.yAxisPosition`** — `AxesPosition.left` or `.right`.  
-- **`axes.numberOfYTicks`** — count (also `initialNumberOfYTicks` on the shell).  
-- **`initialYAxisWidth`** / **`initialXAxisHeight`** — layout hints passed into the stage.
+- **`axes.yAxisPosition`** — left or right.  
+- **`axes.numberOfYTicks`**  
+- **`initialYAxisWidth`** / **`initialXAxisHeight`**
 
-## Clipboard (shell behavior)
+## Clipboard (shell)
 
-When users copy selected text, the host shell may **normalize** numbers to a canonical plain form using the same axis parsing rules (implemented inside the chart app wrapper). This is a UX nicety for spreadsheets, not a separate public API export.
+Copying selected text may normalize numbers for spreadsheets (formatting integration).
 
-### Pro Tip
+---
 
-TickUp Prime is the right upgrade path for teams that need production-grade multilingual interfaces with advanced layout and rendering requirements.
+## Tier comparison: TickUp Prime
 
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+Commercial Prime offerings may bundle additional locale or layout packages. **TickUp Core** behavior is as documented above. **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** · **[Showcase](https://bardamri.github.io/tickup-charts/)**

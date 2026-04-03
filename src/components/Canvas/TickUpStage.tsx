@@ -28,7 +28,7 @@ import { Interval } from "../../types/Interval";
 import { ChartOptions, ChartType, TickUpRenderEngine, TimeDetailLevel } from "../../types/chartOptions";
 import { AxesPosition, DeepRequired, windowSpread, ChartTheme } from "../../types/types";
 import { useElementSize } from '../../hooks/useElementSize';
-import { CORE_TICK_THROTTLE_MS, MAX_CORE_CANDLES } from '../../hooks/useChartData';
+import { CORE_TICK_THROTTLE_MS, clampIntervalsToStandardTier } from '../../hooks/useChartData';
 import { findPriceRange, getBarIntervalSeconds } from "./utils/helpers";
 import { IDrawingShape } from "../Drawing/IDrawingShape";
 import {
@@ -181,7 +181,7 @@ export interface TickUpStageProps {
     /** Sync with app chart theme for fullscreen modals */
     themeVariant?: ChartTheme;
     showBrandWatermark?: boolean;
-    /** Prime-licensed sessions bypass core throttles/limits. */
+    /** When true (licensed Prime shell), live interval updates are not 1 Hz–throttled; bar count is still capped in Core. */
     isPrimeLicensed?: boolean;
     /** Search/validation flow for interval changes (e.g. swap data feed). */
     onIntervalSearch?: (tf: string) => void | boolean | Promise<void | boolean>;
@@ -278,10 +278,11 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
     const { setMode } = useMode();
     const containerRef = useRef<HTMLDivElement | null>(null);
     const { ref: canvasAreaRef, size: canvasSizes } = useElementSize<HTMLDivElement>();
+    /** Standard Tier: 1 Hz live updates unless Prime tier holds a valid license. */
     const isCoreTierLimited = !isPrimeLicensed;
     const trimCoreIntervals = useCallback(
-        (rows: Interval[]) => (isCoreTierLimited ? rows.slice(-MAX_CORE_CANDLES) : rows),
-        [isCoreTierLimited]
+        (rows: Interval[]) => clampIntervalsToStandardTier(rows),
+        []
     );
     const [intervals, setIntervals] = useState<Interval[]>(() => trimCoreIntervals(intervalsArray));
     const intervalsRef = useRef<Interval[]>(trimCoreIntervals(intervalsArray));
@@ -1122,7 +1123,6 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
                                 canvasSizes={canvasSizes}
                                 windowSpread={windowSpread}
                                 showBrandWatermark={showBrandWatermark}
-                                isPrimeLicensed={isPrimeLicensed}
                                 brandTheme={chartOptions.base.theme}
                             />
                         )}

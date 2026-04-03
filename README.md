@@ -6,43 +6,44 @@
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/BARDAMRI/tickup-charts/blob/main/LICENSE)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/tickup)](https://bundlephobia.com/package/tickup)
 
-High-performance, canvas-based financial charting engine for React.
+## Standard Edition vs TickUp Prime (Pro)
+
+| | **TickUp Core (Standard Edition)** | **TickUp Prime (Pro)** |
+| :--- | :--- | :--- |
+| **Rendering** | HTML5 Canvas 2D | WebGL 2.0 |
+| **Live updates** | 1 Hz (1 second) throttling | ~60 FPS pipeline |
+| **History depth** | Up to **2,000** candles | Unlimited (product-dependent) |
+| **Indicators** | Up to **3** overlays | Unlimited |
+| **Advanced UX** | — | Magnetic snapping, VWAP Pro, premium visuals |
+| **License** | MIT (this repo) | Commercial |
+
+TickUp **Core** is the MIT **Standard Edition**: a production-quality charting stack for **dashboards**, **internal tools**, and **simple market UIs**. It is intentionally capped so performance stays predictable on typical hardware.
+
+**Power users** and **trading-grade products** should evaluate **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** for WebGL throughput, deep history, and professional interaction tooling. Try it live in the **[Prime Showcase](https://bardamri.github.io/tickup-charts/)**.
 
 ![TickUp Interaction Demo](https://raw.githubusercontent.com/BARDAMRI/tickup-charts/main/assets/showcase/interaction-demo.gif)
 
-## Feature Highlights
+## What you get in Standard Edition
 
-- Canvas 2D rendering optimized for smooth pan/zoom and large data streams.
-- Built-in indicators and overlays for practical market analysis workflows.
-- RTL-ready chart interfaces for multilingual financial products.
-- TypeScript-first API with imperative controls for advanced integrations.
+- Canvas 2D OHLCV charts (candlestick, line, area, bar) with pan, zoom, crosshair, and drawings.
+- TypeScript-first APIs and an imperative ref for live data and snapshots.
+- **Standard Tier guardrails** built into the library: **2,000-bar** series cap, **1 Hz** live-update throttling (unless you use the licensed Prime shell path), and **three** simultaneous overlay indicators—with clear in-app messaging when a limit applies.
+- “**Powered by TickUp**” attribution enforced in Standard layouts (visibility guarded in the host).
 
-## TickUp Lite (Core) vs TickUp Prime
+## Why upgrade to Prime?
 
-| Feature | Standard (MIT) | Prime (Pro) |
-| :--- | :--- | :--- |
-| Engine | ✅ High-Speed Canvas 2D | 🚀 Ultra-Low Latency Rendering |
-| Visuals | ✅ Standard Financial Styles | 💎 Neon Rendering Engine |
-| Indicators | ✅ Core Indicator Set | 💎 Advanced Indicators (Fibonacci, Elliott) |
-| Localization | ✅ LTR Support | 🚀 Full RTL + Professional i18n Workflows |
-| License | ✅ MIT Open Source | 💎 Commercial License |
+- You need **more than 2,000** bars, **faster** than 1 Hz updates, or **more than three** studies without caps.
+- You want **WebGL**-class density and Prime-only interaction and analysis features.
 
-## Prime Evaluation State
+## How to upgrade
 
-When you run the Prime tier without an active license key, TickUp stays fully interactive for evaluation but clearly marks the session:
+1. Read the **[TickUp Prime documentation](https://github.com/BARDAMRI/tickup-prime)**.
+2. Explore the **[Prime Showcase](https://bardamri.github.io/tickup-charts/)**.
+3. Use the **[Prime repository](https://github.com/BARDAMRI/tickup-prime)** for licensing and integration.
 
-- An **Evaluation** badge appears in the Prime shell.
-- The Prime view keeps a visible evaluation/watermark treatment until a valid key is applied.
+## Prime evaluation (separate product)
 
-This makes demos easy while keeping production licensing explicit.
-
-## How to Upgrade
-
-Ready for the Pro/Luxury Prime tier?
-
-1. Explore the Prime offering: [TickUp Prime Repository](https://github.com/BARDAMRI/tickup-prime)
-2. Try the live experience: [Prime Showcase](https://bardamri.github.io/tickup-charts/)
-3. Request a commercial license key for production use.
+The **`TickUpPrimeTier`** shell in this package is for **evaluating** the Prime product shape: evaluation chrome when no license key is set. **Standard Tier guardrails** in this open-source core still apply to data throughput and indicator counts unless you run against a fully licensed Prime deployment.
 
 ## Pricing & Licensing
 
@@ -68,11 +69,11 @@ export function App() {
 
 ## Documentation
 
-- [Documentation Hub](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/README.md)
-- [Quick Start Guide](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/03-quick-start.md)
-- [Imperative API Reference](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/06-imperative-api.md)
-- [Live Data & Updates](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/07-data-and-live-updates.md)
+- [Documentation hub](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/README.md)
+- [Quick start](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/03-quick-start.md)
+- [Imperative API](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/06-imperative-api.md)
+- [Data & live updates](https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/07-data-and-live-updates.md)
 
-## Prime CTA
+## TickUp Prime
 
-Interested in TickUp Prime? Visit the live [Showcase](https://bardamri.github.io/tickup-charts/) to test it now, or review the [Prime repository](https://github.com/BARDAMRI/tickup-prime) for integration details.
+Interested in **TickUp Prime**? Start with the **[Prime documentation](https://github.com/BARDAMRI/tickup-prime)** and try the **[Showcase](https://bardamri.github.io/tickup-charts/)**.

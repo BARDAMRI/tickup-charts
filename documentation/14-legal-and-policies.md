@@ -1,10 +1,10 @@
 # Legal and policies
 
-TickUp ships as **open-source software** (see the **LICENSE** file in the repository root when present) and may also be described, demoed, or offered through **websites, accounts, or hosted services**. **Legal terms for those offerings**—including intellectual property, acceptable use, suspension or termination of access, privacy, and standard limitations of liability—are maintained as **templates** in the repository for you to customize with your lawyer.
+**TickUp Core** is **open-source software** (see the **LICENSE** file in the repository root). Hosted demos or commercial offerings may use separate terms.
 
 ## Where to read the documents
 
-Policy templates ship **next to** this folder in the npm package (`node_modules/tickup/legal/`) and in the Git clone. All files live under **[`../legal/`](../legal/)**:
+Policy templates ship next to this folder in the npm package (`node_modules/tickup/legal/`) and in the Git clone under **[`../legal/`](../legal/)**:
 
 | Document | File |
 |----------|------|
@@ -13,28 +13,26 @@ Policy templates ship **next to** this folder in the npm package (`node_modules/
 | **Privacy Policy** | [`../legal/PRIVACY_POLICY.md`](../legal/PRIVACY_POLICY.md) |
 | **Acceptable Use Policy** | [`../legal/ACCEPTABLE_USE_POLICY.md`](../legal/ACCEPTABLE_USE_POLICY.md) |
 
-## What the Terms of Service cover (summary)
+## Terms of Service (summary)
 
-The Terms of Service template is written so you can:
+The Terms template helps you:
 
-- **Retain ownership** of TickUp branding, product, documentation, and proprietary parts of the Services.
-- **Suspend or terminate** user access, change or discontinue features, and refuse service where appropriate, subject to applicable law and any stricter promises you make elsewhere.
-- Use **standard protections**: disclaimers of warranty, caps on liability, indemnity where appropriate, governing law and venue placeholders, and rules for changes to the terms.
+- **Retain ownership** of branding, product, and documentation.  
+- **Suspend or terminate** access where appropriate, subject to law.  
+- Use **standard protections**: warranty disclaimers, liability caps, indemnity, governing law placeholders.
 
-**Open-source code** released under the repo **LICENSE** is called out separately so the license for that code and the Terms for hosted products can coexist without confusion.
+**Open-source code** under the repo **LICENSE** is called out separately from terms for hosted products.
 
 ## Not legal advice
 
-These markdown files are **starting points**, not a substitute for counsel. Replace all bracketed placeholders (`[Legal Entity Name]`, `[Contact Email]`, `[Jurisdiction]`, etc.) and adapt clauses for your entity, products, and regions before publication.
+These files are **starting points**. Replace bracketed placeholders and adapt with qualified counsel before publication.
 
 ## Older stub
 
-A short legacy note lives in the repo under **`docs/Documentation/Terms_of_Use.md`** (that tree is **not** bundled on npm). [View on GitHub](https://github.com/BARDAMRI/TickUp/blob/main/docs/Documentation/Terms_of_Use.md) — it points here and to **`legal/`**.
+A legacy note may live under **`docs/Documentation/Terms_of_Use.md`** (not bundled on npm).
 
-### Pro Tip
+---
 
-Commercial Prime deployments should always pair technical rollout with the appropriate legal terms and policy templates for hosted services.
+## Tier comparison: TickUp Prime
 
-### Prime Showcase
-
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+Commercial **TickUp Prime** subscriptions should use counsel-approved terms for billing and support. OSS **LICENSE** terms govern this Core package. **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)**

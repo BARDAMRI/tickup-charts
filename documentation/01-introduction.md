@@ -1,15 +1,26 @@
 # Introduction
 
-TickUp is a high-performance React charting library for financial OHLCV workflows, built on Canvas 2D with product-grade UI tiers and an imperative API for real-time updates.
+**TickUp Core** is a React charting library for financial OHLCV workflows. The Standard Edition uses **HTML5 Canvas 2D**, ships under the **MIT** license, and includes product-ready shells (toolbar, settings, drawings) plus an **imperative ref** for streaming data and automation.
 
-You can start with the open-source core package for charting, drawing tools, overlays, and streaming data, then move to the **Prime Engine** as the professional upgrade path when you need premium visual rendering profiles and advanced Pro capabilities.
+Use it for **dashboards**, **admin tools**, and **embedded widgets** where predictable performance and a clear OSS license matter.
 
-For onboarding, continue to [Installation](./02-installation.md) and [Quick start](./03-quick-start.md).
+## Standard Tier guardrails
 
-### Pro Tip
+The library enforces **Standard Tier** limits so behavior stays consistent on typical devices:
 
-TickUp Prime is the fastest path to premium visuals and advanced analysis workflows when your product moves from MVP to production-grade trading UX.
+- **Series length** — At most **2,000** candles are retained for rendering and calculations; older bars are dropped from the tail window.
+- **Live updates** — Streaming merges are **throttled to about 1 second** on Standard product shells (unless you use a licensed Prime-tier host configuration that opts out).
+- **Overlays** — Up to **three** simultaneous indicator overlays; adding a fourth triggers an in-app message and the configuration is capped.
 
-### Prime Showcase
+These are documented in detail in [Data & live updates](./07-data-and-live-updates.md) and [Overlays & indicators](./12-overlays-and-indicators.md).
 
-[Explore the TickUp Prime Showcase](https://bardamri.github.io/tickup-charts/)
+## Next steps
+
+- [Installation](./02-installation.md)  
+- [Quick start](./03-quick-start.md)  
+
+---
+
+## Tier comparison: TickUp Prime
+
+For **WebGL** throughput, **unlimited** history (product-dependent), **unlimited** indicators, and premium interaction features, evaluate **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[showcase](https://bardamri.github.io/tickup-charts/)**.

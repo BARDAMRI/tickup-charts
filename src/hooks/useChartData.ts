@@ -8,18 +8,27 @@ type VisibleRangeInput = TimeRange & Partial<{startIndex: number; endIndex: numb
 export const MAX_CORE_CANDLES = 2000;
 export const CORE_TICK_THROTTLE_MS = 1000;
 
+/**
+ * Standard Tier guardrail: never keep more than MAX_CORE_CANDLES for render or downstream math.
+ * Call sites should use this for every ingest path (props, live merge, history refresh).
+ */
+export function clampIntervalsToStandardTier(intervals: Interval[]): Interval[] {
+    if (intervals.length <= MAX_CORE_CANDLES) {
+        return intervals;
+    }
+    return intervals.slice(-MAX_CORE_CANDLES);
+}
+
 export function useChartData(
     intervalsArray: Interval[],
-    isPrimeLicensed: boolean,
     visibleRange: VisibleRangeInput,
     currentPoint: { x: number; y: number } | null,
     canvasWidth: number,
     canvasHeight: number
-): { renderContext: ChartRenderContext | null; intervalSeconds: number } {
-    // Hard gate at data source: non-Prime sessions never process >2000 bars.
+): { renderContext: ChartRenderContext | null; intervalSeconds: number; effectiveIntervals: Interval[] } {
     const effectiveIntervals = useMemo(
-        () => (isPrimeLicensed ? intervalsArray : intervalsArray.slice(-MAX_CORE_CANDLES)),
-        [intervalsArray, isPrimeLicensed]
+        () => clampIntervalsToStandardTier(intervalsArray),
+        [intervalsArray, intervalsArray.length]
     );
     const intervalSeconds = useMemo(
         () => getBarIntervalSeconds(effectiveIntervals, 3600),
@@ -114,5 +123,5 @@ export function useChartData(
         canvasHeight,
     ]);
 
-    return {renderContext, intervalSeconds};
+    return {renderContext, intervalSeconds, effectiveIntervals};
 }
