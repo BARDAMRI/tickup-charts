@@ -117,7 +117,7 @@ const createLucideIcon = (iconName, iconNode) => {
  */
 
 
-const __iconNode$g = [
+const __iconNode$h = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -127,7 +127,27 @@ const __iconNode$g = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$g);
+const BookOpen = createLucideIcon("book-open", __iconNode$h);
+
+/**
+ * @license lucide-react v0.544.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+const __iconNode$g = [
+  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }],
+  [
+    "path",
+    {
+      d: "M7 11.207a.5.5 0 0 1 .146-.353l2-2a.5.5 0 0 1 .708 0l3.292 3.292a.5.5 0 0 0 .708 0l4.292-4.292a.5.5 0 0 1 .854.353V16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1z",
+      key: "q0gr47"
+    }
+  ]
+];
+const ChartArea = createLucideIcon("chart-area", __iconNode$g);
 
 /**
  * @license lucide-react v0.544.0 - ISC
@@ -138,16 +158,15 @@ const BookOpen = createLucideIcon("book-open", __iconNode$g);
 
 
 const __iconNode$f = [
-  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }],
-  [
-    "path",
-    {
-      d: "M7 11.207a.5.5 0 0 1 .146-.353l2-2a.5.5 0 0 1 .708 0l3.292 3.292a.5.5 0 0 0 .708 0l4.292-4.292a.5.5 0 0 1 .854.353V16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1z",
-      key: "q0gr47"
-    }
-  ]
+  ["path", { d: "M9 5v4", key: "14uxtq" }],
+  ["rect", { width: "4", height: "6", x: "7", y: "9", rx: "1", key: "f4fvz0" }],
+  ["path", { d: "M9 15v2", key: "r5rk32" }],
+  ["path", { d: "M17 3v2", key: "1l2re6" }],
+  ["rect", { width: "4", height: "8", x: "15", y: "5", rx: "1", key: "z38je5" }],
+  ["path", { d: "M17 13v3", key: "5l0wba" }],
+  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }]
 ];
-const ChartArea = createLucideIcon("chart-area", __iconNode$f);
+const ChartCandlestick = createLucideIcon("chart-candlestick", __iconNode$f);
 
 /**
  * @license lucide-react v0.544.0 - ISC
@@ -158,15 +177,10 @@ const ChartArea = createLucideIcon("chart-area", __iconNode$f);
 
 
 const __iconNode$e = [
-  ["path", { d: "M9 5v4", key: "14uxtq" }],
-  ["rect", { width: "4", height: "6", x: "7", y: "9", rx: "1", key: "f4fvz0" }],
-  ["path", { d: "M9 15v2", key: "r5rk32" }],
-  ["path", { d: "M17 3v2", key: "1l2re6" }],
-  ["rect", { width: "4", height: "8", x: "15", y: "5", rx: "1", key: "z38je5" }],
-  ["path", { d: "M17 13v3", key: "5l0wba" }],
-  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }]
+  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }],
+  ["path", { d: "m19 9-5 5-4-4-3 3", key: "2osh9i" }]
 ];
-const ChartCandlestick = createLucideIcon("chart-candlestick", __iconNode$e);
+const ChartLine = createLucideIcon("chart-line", __iconNode$e);
 
 /**
  * @license lucide-react v0.544.0 - ISC
@@ -177,10 +191,16 @@ const ChartCandlestick = createLucideIcon("chart-candlestick", __iconNode$e);
 
 
 const __iconNode$d = [
-  ["path", { d: "M3 3v16a2 2 0 0 0 2 2h16", key: "c24i48" }],
-  ["path", { d: "m19 9-5 5-4-4-3 3", key: "2osh9i" }]
+  [
+    "path",
+    {
+      d: "M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21",
+      key: "g5wo59"
+    }
+  ],
+  ["path", { d: "m5.082 11.09 8.828 8.828", key: "1wx5vj" }]
 ];
-const ChartLine = createLucideIcon("chart-line", __iconNode$d);
+const Eraser = createLucideIcon("eraser", __iconNode$d);
 
 /**
  * @license lucide-react v0.544.0 - ISC
@@ -194,13 +214,12 @@ const __iconNode$c = [
   [
     "path",
     {
-      d: "M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21",
-      key: "g5wo59"
+      d: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z",
+      key: "96xj49"
     }
-  ],
-  ["path", { d: "m5.082 11.09 8.828 8.828", key: "1wx5vj" }]
+  ]
 ];
-const Eraser = createLucideIcon("eraser", __iconNode$c);
+const Flame = createLucideIcon("flame", __iconNode$c);
 
 /**
  * @license lucide-react v0.544.0 - ISC
@@ -211,15 +230,12 @@ const Eraser = createLucideIcon("eraser", __iconNode$c);
 
 
 const __iconNode$b = [
-  [
-    "path",
-    {
-      d: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z",
-      key: "96xj49"
-    }
-  ]
+  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
+  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
+  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
+  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
 ];
-const Flame = createLucideIcon("flame", __iconNode$b);
+const GitBranch = createLucideIcon("git-branch", __iconNode$b);
 
 /**
  * @license lucide-react v0.544.0 - ISC
@@ -230,22 +246,6 @@ const Flame = createLucideIcon("flame", __iconNode$b);
 
 
 const __iconNode$a = [
-  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
-  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
-  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
-  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
-];
-const GitBranch = createLucideIcon("git-branch", __iconNode$a);
-
-/**
- * @license lucide-react v0.544.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-
-
-const __iconNode$9 = [
   [
     "path",
     {
@@ -268,7 +268,28 @@ const __iconNode$9 = [
     }
   ]
 ];
-const Layers = createLucideIcon("layers", __iconNode$9);
+const Layers = createLucideIcon("layers", __iconNode$a);
+
+/**
+ * @license lucide-react v0.544.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+const __iconNode$9 = [
+  ["path", { d: "m12 15 4 4", key: "lnac28" }],
+  [
+    "path",
+    {
+      d: "M2.352 10.648a1.205 1.205 0 0 0 0 1.704l2.296 2.296a1.205 1.205 0 0 0 1.704 0l6.029-6.029a1 1 0 1 1 3 3l-6.029 6.029a1.205 1.205 0 0 0 0 1.704l2.296 2.296a1.205 1.205 0 0 0 1.704 0l6.365-6.367A1 1 0 0 0 8.716 4.282z",
+      key: "nlhkjb"
+    }
+  ],
+  ["path", { d: "m5 8 4 4", key: "j6kj7e" }]
+];
+const Magnet = createLucideIcon("magnet", __iconNode$9);
 
 /**
  * @license lucide-react v0.544.0 - ISC
@@ -431,4 +452,4 @@ const __iconNode = [
 ];
 const Zap = createLucideIcon("zap", __iconNode);
 
-export { BookOpen as B, ChartCandlestick as C, Eraser as E, Flame as F, GitBranch as G, Layers as L, Moon as M, Pencil as P, RefreshCw as R, Sun as S, TrendingUp as T, Zap as Z, MousePointer2 as a, ChartArea as b, ChartLine as c, Play as d, Pause as e };
+export { BookOpen as B, ChartCandlestick as C, Eraser as E, Flame as F, GitBranch as G, Layers as L, Moon as M, Pencil as P, RefreshCw as R, Sun as S, TrendingUp as T, Zap as Z, MousePointer2 as a, Magnet as b, ChartArea as c, ChartLine as d, Play as e, Pause as f };

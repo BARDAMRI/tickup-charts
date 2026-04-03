@@ -1,6 +1,6 @@
 import { r as reactExports, j as jsxRuntimeExports, c as clientExports } from './vendor-react-D0COmpux.js';
-import { P as Pt, f as ft, _ as __vitePreload, Y as Yt, V as Vt, I as It, a as _Q, y as yt, v, z as zQ, A as Ao, e as eo, t as to, n as no, r as ro, N as Nt, b as rn } from './vendor-tickup-core-Bgcz_g6e.js';
-import { M as Moon, S as Sun, B as BookOpen, Z as Zap, L as Layers, P as Pencil, a as MousePointer2, T as TrendingUp, G as GitBranch, E as Eraser, C as ChartCandlestick, b as ChartArea, c as ChartLine, F as Flame, d as Play, e as Pause, R as RefreshCw } from './vendor-lucide-C7AtKZI7.js';
+import { P as Pt, f as ft, _ as __vitePreload, Y as Yt, V as Vt, I as It, e as eo, y as yt, v, z as zQ, r as ro, a as ao, t as to, n as no, i as io, N as Nt, b as rn } from './vendor-tickup-core-BSg2uQ4S.js';
+import { M as Moon, S as Sun, B as BookOpen, Z as Zap, L as Layers, P as Pencil, a as MousePointer2, T as TrendingUp, G as GitBranch, b as Magnet, E as Eraser, C as ChartCandlestick, c as ChartArea, d as ChartLine, F as Flame, e as Play, f as Pause, R as RefreshCw } from './vendor-lucide-BUwdCf2e.js';
 
 true&&(function polyfill() {
   const relList = document.createElement("link").relList;
@@ -1125,6 +1125,31 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
                     /* @__PURE__ */ jsxRuntimeExports.jsx(ToolRailBtn, { isDark: isPageDark, active: activeTool === "line", label: "Trend line", onClick: onToolLine, children: /* @__PURE__ */ jsxRuntimeExports.jsx(TrendingUp, { className: "h-5 w-5" }) }),
                     /* @__PURE__ */ jsxRuntimeExports.jsx(ToolRailBtn, { isDark: isPageDark, active: activeTool === "fib", label: "Fibonacci", onClick: onToolFib, children: /* @__PURE__ */ jsxRuntimeExports.jsx(GitBranch, { className: "h-5 w-5" }) }),
                     /* @__PURE__ */ jsxRuntimeExports.jsx(ToolRailBtn, { isDark: isPageDark, active: activeTool === "ray", label: "Ray (line tool)", onClick: onToolRay, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Layers, { className: "h-5 w-5" }) }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "group relative", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        ToolRailBtn,
+                        {
+                          isDark: isPageDark,
+                          active: false,
+                          label: "Magnet Snapping is a Prime-only feature. Upgrade to enable.",
+                          onClick: () => void 0,
+                          disabled: true,
+                          children: /* @__PURE__ */ jsxRuntimeExports.jsx(Magnet, { className: "h-5 w-5" })
+                        }
+                      ),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `pointer-events-none absolute left-14 top-1/2 z-40 hidden w-56 -translate-y-1/2 rounded-lg border px-2 py-1.5 text-[10px] group-hover:block ${isPageDark ? "border-[#3EC5FF]/35 bg-[#0a1422] text-slate-200" : "border-slate-300 bg-white text-slate-700"}`, children: [
+                        "Magnet Snapping is a Prime-only feature.",
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "button",
+                          {
+                            type: "button",
+                            onClick: () => setPrimeOfferOpen(true),
+                            className: "pointer-events-auto ml-1 font-semibold text-[#3EC5FF] underline",
+                            children: "Upgrade Now"
+                          }
+                        )
+                      ] })
+                    ] }),
                     /* @__PURE__ */ jsxRuntimeExports.jsx(ToolRailBtn, { isDark: isPageDark, active: false, label: "Eraser", onClick: onToolEraser, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Eraser, { className: "h-5 w-5" }) })
                   ]
                 }
@@ -1176,7 +1201,7 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
                       {
                         className: `relative h-[min(75vh,48rem)] min-h-[22rem] w-full overflow-hidden rounded-xl border ${isPageDark ? "border-white/10 bg-[#06080d]" : "border-slate-200 bg-white"}`,
                         children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                          _Q,
+                          eo,
                           {
                             ref: chartRef,
                             themeVariant: shellTheme,
@@ -1240,7 +1265,7 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
                               }
                             ),
                             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[200px] w-full", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                              _Q,
+                              eo,
                               {
                                 themeVariant: shellTheme,
                                 onThemeVariantChange: setThemePreference,
@@ -1400,6 +1425,19 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
                               onAdd: () => void 0,
                               onRemove: () => void 0,
                               supported: false
+                            }
+                          ),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            IndicatorRow,
+                            {
+                              isDark: isPageDark,
+                              label: "VWAP",
+                              active: false,
+                              onAdd: () => void 0,
+                              onRemove: () => void 0,
+                              supported: false,
+                              proOnly: true,
+                              onUpgrade: () => setPrimeOfferOpen(true)
                             }
                           ),
                           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -1589,7 +1627,8 @@ function ToolRailBtn({
   active,
   label,
   onClick,
-  isDark = true
+  isDark = true,
+  disabled = false
 }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     "button",
@@ -1599,7 +1638,8 @@ function ToolRailBtn({
       "aria-label": label,
       "aria-pressed": active,
       onClick,
-      className: `flex h-11 w-11 items-center justify-center rounded-xl border transition-all duration-300 ${active ? "border-[#3EC5FF]/50 bg-[#3EC5FF]/15 text-[#3EC5FF]" : isDark ? "border-transparent text-gray-500 hover:border-white/10 hover:text-[#3EC5FF]" : "border-transparent text-slate-500 hover:border-slate-300 hover:text-[#3EC5FF]"}`,
+      disabled,
+      className: `flex h-11 w-11 items-center justify-center rounded-xl border transition-all duration-300 ${active ? "border-[#3EC5FF]/50 bg-[#3EC5FF]/15 text-[#3EC5FF]" : isDark ? "border-transparent text-gray-500 hover:border-white/10 hover:text-[#3EC5FF]" : "border-transparent text-slate-500 hover:border-slate-300 hover:text-[#3EC5FF]"} ${disabled ? "cursor-not-allowed opacity-55 hover:border-transparent hover:text-current" : ""}`,
       children
     }
   );
@@ -1610,7 +1650,9 @@ function IndicatorRow({
   supported,
   onAdd,
   onRemove,
-  isDark = true
+  isDark = true,
+  proOnly = false,
+  onUpgrade
 }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "li",
@@ -1618,7 +1660,15 @@ function IndicatorRow({
       className: `flex items-center justify-between gap-2 rounded-lg border px-3 py-2 ${isDark ? "border-white/5 bg-black/20" : "border-slate-200 bg-white/80"}`,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `font-mono text-xs ${isDark ? "text-slate-300" : "text-slate-700"}`, children: label }),
-        !supported ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "rounded-md bg-[#5A48DE]/20 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-violet-300", children: "Planned" }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-1", children: [
+        !supported ? proOnly ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            onClick: onUpgrade,
+            className: "rounded-md bg-[#5A48DE]/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-300 ring-1 ring-violet-400/35 hover:bg-[#5A48DE]/35",
+            children: "PRO"
+          }
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "rounded-md bg-[#5A48DE]/20 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-violet-300", children: "Planned" }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-1", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             "button",
             {
@@ -1756,31 +1806,31 @@ const TIER_ROWS = [
     key: "pulse",
     title: "TickUp Pulse",
     blurb: "Minimal embed — price plot and axes only (no toolbars). Pure data.",
-    Cmp: Ao
+    Cmp: to
   },
   {
     key: "flow",
     title: "TickUp Flow",
     blurb: "Analysis — top bar & settings; no drawing tools sidebar.",
-    Cmp: eo
+    Cmp: no
   },
   {
     key: "command",
     title: "TickUp Command",
     blurb: "Full trader UI — drawings, modals, programmatic API.",
-    Cmp: to
+    Cmp: ro
   },
   {
     key: "desk",
     title: "TickUp Desk",
     blurb: "Broker-style — same as Command; attribution always on.",
-    Cmp: no
+    Cmp: io
   },
   {
     key: "prime",
     title: "TickUp Prime",
     blurb: "Prime teaser lane. Link @tickup/prime locally to activate neon rendering.",
-    Cmp: ro,
+    Cmp: ao,
     lux: true
   }
 ];
@@ -1919,6 +1969,7 @@ function App() {
     }
     return (window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? "").trim();
   });
+  const [licenseModalOpen, setLicenseModalOpen] = reactExports.useState(false);
   reactExports.useEffect(() => {
     const mqLight = window.matchMedia("(prefers-color-scheme: light)");
     const handler = (e) => {
@@ -2009,6 +2060,34 @@ function App() {
       }
     }),
     [theme]
+  );
+  const coreComparisonOptions = reactExports.useMemo(
+    () => ({
+      ...standardChartOptions,
+      base: {
+        ...standardChartOptions.base,
+        engine: Vt.standard,
+        showOverlayLine: true,
+        overlayKinds: [{ kind: Yt.ema, period: 21 }]
+      }
+    }),
+    [standardChartOptions]
+  );
+  const primeComparisonOptions = reactExports.useMemo(
+    () => ({
+      ...standardChartOptions,
+      base: {
+        ...standardChartOptions.base,
+        engine: Vt.prime,
+        showOverlayLine: true,
+        overlayKinds: [Yt.vwap, { kind: Yt.ema, period: 34 }],
+        style: {
+          ...standardChartOptions.base.style,
+          backgroundColor: theme === ft.dark ? "#050913" : "#f0f9ff"
+        }
+      }
+    }),
+    [standardChartOptions, theme]
   );
   const pushLiveTick = reactExports.useCallback(() => {
     const api = commandRef.current;
@@ -2199,105 +2278,257 @@ Wire onSymbolSearch to load data for this symbol.`);
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col gap-16", children: TIER_ROWS.map(({ key, title, blurb, Cmp, lux }) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "section",
-            {
-              className: `group relative overflow-hidden rounded-[2rem] border transition-all duration-500 ${lux ? theme === ft.dark ? "border-[#3EC5FF]/30 bg-[#0c121e]/80 shadow-[0_0_80px_-20px_rgba(62,197,255,0.25)] hover:border-[#3EC5FF]/60 hover:shadow-[0_0_100px_-20px_rgba(62,197,255,0.4)]" : "border-[#3EC5FF]/40 bg-white/90 shadow-[0_0_60px_-10px_rgba(62,197,255,0.15)] hover:border-[#3EC5FF]/70 hover:shadow-[0_0_80px_-10px_rgba(62,197,255,0.25)]" : theme === ft.dark ? "border-white/5 bg-white/[0.02] shadow-2xl hover:border-white/10" : "border-slate-200 bg-white shadow-xl hover:border-slate-300"}`,
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `absolute inset-0 z-0 bg-gradient-to-b pointer-events-none ${theme === ft.dark ? "from-white/[0.03] to-transparent" : "from-slate-100 to-transparent"}` }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `relative z-10 flex flex-col gap-2 border-b p-6 lg:flex-row lg:items-center lg:justify-between lg:p-8 ${theme === ft.dark ? "border-white/5" : "border-slate-100"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: `text-2xl font-bold tracking-tight lg:text-3xl ${theme === ft.dark ? "text-white" : "text-slate-900"}`, children: title }),
-                    lux && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 rounded-full bg-[#5A48DE]/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-violet-300 ring-1 ring-violet-400/30", children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(Zap, { className: "h-3 w-3", fill: "currentColor" }),
-                      " Luxury"
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-16", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "section",
+              {
+                className: `rounded-[2rem] border p-5 lg:p-7 ${theme === ft.dark ? "border-white/10 bg-[#0a0f1a]/80" : "border-slate-200 bg-white"}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-4 flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: `text-2xl font-bold tracking-tight ${theme === ft.dark ? "text-white" : "text-slate-900"}`, children: "Choose Your Power" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mt-1 text-sm ${theme === ft.dark ? "text-slate-400" : "text-slate-600"}`, children: "Core is production-ready for standard use. Prime is built for speed, scale, and advanced trader workflows." })
+                  ] }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `overflow-hidden rounded-xl border ${theme === ft.dark ? "border-white/10" : "border-slate-200"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("table", { className: "w-full text-sm", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("thead", { className: theme === ft.dark ? "bg-black/30" : "bg-slate-100", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("th", { className: "px-4 py-3 text-left font-semibold", children: "Capability" }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("th", { className: "px-4 py-3 text-left font-semibold", children: "TickUp Lite (Core)" }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("th", { className: "px-4 py-3 text-left font-semibold", children: "TickUp Prime" })
+                    ] }) }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("tbody", { className: theme === ft.dark ? "divide-y divide-white/10" : "divide-y divide-slate-200", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Live Updates" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "1Hz Updates (Standard)" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "60FPS Real-time" })
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "History" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "2k History" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Unlimited History" })
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Indicator Capacity" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "3 Indicators" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Unlimited Indicators" })
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Engine" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Standard Performance" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "WebGL High-Performance" })
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Drawing UX" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Manual Alignment" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Magnetic Drawing" })
+                      ] })
                     ] })
-                  ] }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mt-2 text-sm lg:text-base ${theme === ft.dark ? "text-slate-400" : "text-slate-600"}`, children: blurb }),
-                  key === "prime" && !primeLinked ? /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: `mt-2 text-xs ${theme === ft.dark ? "text-[#7dd3fc]" : "text-[#0369a1]"}`, children: [
-                    "Prime package is not linked in this public build. Use ",
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("code", { children: "npm run dev:prime" }),
-                    " to preview neon engine locally."
-                  ] }) : null,
-                  key === "prime" ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                    "div",
+                  ] }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 flex justify-end", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
                     {
-                      className: `mt-4 rounded-xl border p-3 ${theme === ft.dark ? "border-[#3EC5FF]/30 bg-[#040b16]/80 shadow-[inset_0_0_28px_rgba(62,197,255,0.08)]" : "border-[#3EC5FF]/30 bg-cyan-50/70"}`,
-                      children: [
-                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-2 flex items-center justify-between gap-2", children: [
-                          /* @__PURE__ */ jsxRuntimeExports.jsx(
-                            "span",
-                            {
-                              className: `text-[11px] font-semibold uppercase tracking-wider ${theme === ft.dark ? "text-[#7dd3fc]" : "text-[#0c4a6e]"}`,
-                              children: "License Settings"
-                            }
-                          ),
-                          /* @__PURE__ */ jsxRuntimeExports.jsx(
-                            "span",
-                            {
-                              className: `rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${primeLicenseUnlocked ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/40" : theme === ft.dark ? "bg-amber-950/40 text-amber-300 ring-1 ring-amber-500/35" : "bg-amber-100 text-amber-800 ring-1 ring-amber-300"}`,
-                              children: primeLicenseUnlocked ? "Unlocked" : "Evaluation"
-                            }
-                          )
-                        ] }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col gap-2 sm:flex-row", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                          "input",
-                          {
-                            value: primeUserIdentifierInput,
-                            onChange: (e) => setPrimeUserIdentifierInput(e.target.value),
-                            placeholder: "user@example.com or account ID",
-                            className: `w-full rounded-lg border px-3 py-2 text-xs outline-none ring-[#3EC5FF]/40 focus:ring-2 ${theme === ft.dark ? "border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500" : "border-slate-300 bg-white text-slate-800"}`
-                          }
-                        ) }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 flex flex-col gap-2 sm:flex-row", children: [
-                          /* @__PURE__ */ jsxRuntimeExports.jsx(
-                            "input",
-                            {
-                              value: primeLicenseInput,
-                              onChange: (e) => setPrimeLicenseInput(e.target.value),
-                              placeholder: "TUP-PRIME-XXXXXXXX",
-                              className: `w-full rounded-lg border px-3 py-2 text-xs font-mono outline-none ring-[#3EC5FF]/40 focus:ring-2 ${theme === ft.dark ? "border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500" : "border-slate-300 bg-white text-slate-800"}`
-                            }
-                          ),
-                          /* @__PURE__ */ jsxRuntimeExports.jsx(
-                            "button",
-                            {
-                              type: "button",
-                              onClick: applyPrimeLicense,
-                              className: "rounded-lg bg-[#3EC5FF] px-3 py-2 text-xs font-semibold text-black transition hover:bg-[#65d5ff]",
-                              children: "Apply"
-                            }
-                          ),
-                          /* @__PURE__ */ jsxRuntimeExports.jsx(
-                            "button",
-                            {
-                              type: "button",
-                              onClick: clearPrimeLicense,
-                              className: `rounded-lg border px-3 py-2 text-xs font-semibold ${theme === ft.dark ? "border-white/15 text-slate-300 hover:bg-white/10" : "border-slate-300 text-slate-700 hover:bg-slate-100"}`,
-                              children: "Clear"
-                            }
-                          )
-                        ] })
-                      ]
+                      type: "button",
+                      onClick: () => setLicenseModalOpen(true),
+                      className: "rounded-lg bg-[#3EC5FF] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#65d5ff]",
+                      children: "Upgrade to Prime"
                     }
-                  ) : null
-                ] }) }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative z-10 p-2 sm:p-4 lg:p-6 pb-0 shadow-inner", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `relative w-full overflow-hidden rounded-xl border ${theme === ft.dark ? "bg-black/50" : "bg-slate-50"} ${lux ? theme === ft.dark ? "h-[550px] border-[#3EC5FF]/20 shadow-[inset_0_0_40px_rgba(62,197,255,0.05)]" : "h-[550px] border-[#3EC5FF]/30 shadow-[inset_0_0_20px_rgba(62,197,255,0.02)]" : theme === ft.dark ? "h-[500px] border-white/10" : "h-[500px] border-slate-200"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Cmp,
-                  {
-                    ref: tierRefCallbacks[key],
-                    ...sharedProps,
-                    ...key === "prime" ? {
-                      licenseKey: primeLicenseUnlocked ? primeLicenseKey : null,
-                      licenseUserIdentifier: primeUserIdentifier || null
-                    } : {}
-                  }
-                ) }) })
-              ]
-            },
-            key
-          )) })
-        ] })
+                  ) })
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "section",
+              {
+                className: `rounded-[2rem] border p-5 lg:p-7 ${theme === ft.dark ? "border-[#3EC5FF]/20 bg-[#08101d]/75" : "border-[#3EC5FF]/30 bg-white"}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: `text-2xl font-bold tracking-tight ${theme === ft.dark ? "text-white" : "text-slate-900"}`, children: "Tier Comparison" }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mt-1 text-sm ${theme === ft.dark ? "text-slate-400" : "text-slate-600"}`, children: "Core is intentionally constrained (candle cap + throttled updates). Prime unlocks neon rendering, VWAP overlays, and smoother live behavior." })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "button",
+                      {
+                        type: "button",
+                        onClick: () => setLicenseModalOpen(true),
+                        className: "rounded-lg bg-[#3EC5FF] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#65d5ff]",
+                        children: "Unlock Prime Features"
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-4 lg:grid-cols-2", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `overflow-hidden rounded-xl border ${theme === ft.dark ? "border-white/10 bg-black/30" : "border-slate-200 bg-slate-50"}`, children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center justify-between border-b px-4 py-2 ${theme === ft.dark ? "border-white/10" : "border-slate-200"}`, children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold", children: "TickUp Core (Lite)" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                          "button",
+                          {
+                            type: "button",
+                            disabled: true,
+                            title: "Magnet Snapping is a Prime-only feature. Upgrade to enable.",
+                            className: `inline-flex cursor-not-allowed items-center gap-1 rounded-md border px-2 py-1 text-xs opacity-60 ${theme === ft.dark ? "border-white/15 text-slate-300" : "border-slate-300 text-slate-600"}`,
+                            children: [
+                              /* @__PURE__ */ jsxRuntimeExports.jsx(Magnet, { className: "h-3.5 w-3.5" }),
+                              "Magnet Snapping"
+                            ]
+                          }
+                        )
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[320px]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        ro,
+                        {
+                          ...sharedProps,
+                          chartOptions: coreComparisonOptions
+                        }
+                      ) })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `overflow-hidden rounded-xl border ${theme === ft.dark ? "border-[#3EC5FF]/25 bg-[#030912]" : "border-[#3EC5FF]/35 bg-cyan-50/60"}`, children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center justify-between border-b px-4 py-2 ${theme === ft.dark ? "border-[#3EC5FF]/20" : "border-[#3EC5FF]/25"}`, children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold", children: "TickUp Prime (Pro/Luxury)" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "rounded-full bg-[#5A48DE]/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-violet-300", children: "Neon + VWAP" })
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[320px]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        ao,
+                        {
+                          ...sharedProps,
+                          chartOptions: primeComparisonOptions,
+                          licenseKey: primeLicenseUnlocked ? primeLicenseKey : null,
+                          licenseUserIdentifier: primeUserIdentifier || null
+                        }
+                      ) })
+                    ] })
+                  ] })
+                ]
+              }
+            ),
+            TIER_ROWS.map(({ key, title, blurb, Cmp, lux }) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "section",
+              {
+                className: `group relative overflow-hidden rounded-[2rem] border transition-all duration-500 ${lux ? theme === ft.dark ? "border-[#3EC5FF]/30 bg-[#0c121e]/80 shadow-[0_0_80px_-20px_rgba(62,197,255,0.25)] hover:border-[#3EC5FF]/60 hover:shadow-[0_0_100px_-20px_rgba(62,197,255,0.4)]" : "border-[#3EC5FF]/40 bg-white/90 shadow-[0_0_60px_-10px_rgba(62,197,255,0.15)] hover:border-[#3EC5FF]/70 hover:shadow-[0_0_80px_-10px_rgba(62,197,255,0.25)]" : theme === ft.dark ? "border-white/5 bg-white/[0.02] shadow-2xl hover:border-white/10" : "border-slate-200 bg-white shadow-xl hover:border-slate-300"}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `absolute inset-0 z-0 bg-gradient-to-b pointer-events-none ${theme === ft.dark ? "from-white/[0.03] to-transparent" : "from-slate-100 to-transparent"}` }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `relative z-10 flex flex-col gap-2 border-b p-6 lg:flex-row lg:items-center lg:justify-between lg:p-8 ${theme === ft.dark ? "border-white/5" : "border-slate-100"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: `text-2xl font-bold tracking-tight lg:text-3xl ${theme === ft.dark ? "text-white" : "text-slate-900"}`, children: title }),
+                      lux && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 rounded-full bg-[#5A48DE]/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-violet-300 ring-1 ring-violet-400/30", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(Zap, { className: "h-3 w-3", fill: "currentColor" }),
+                        " Luxury"
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mt-2 text-sm lg:text-base ${theme === ft.dark ? "text-slate-400" : "text-slate-600"}`, children: blurb }),
+                    key === "prime" && !primeLinked ? /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: `mt-2 text-xs ${theme === ft.dark ? "text-[#7dd3fc]" : "text-[#0369a1]"}`, children: [
+                      "Prime package is not linked in this public build. Use ",
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("code", { children: "npm run dev:prime" }),
+                      " to preview neon engine locally."
+                    ] }) : null,
+                    key === "prime" ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "div",
+                      {
+                        className: `mt-4 rounded-xl border p-3 ${theme === ft.dark ? "border-[#3EC5FF]/30 bg-[#040b16]/80 shadow-[inset_0_0_28px_rgba(62,197,255,0.08)]" : "border-[#3EC5FF]/30 bg-cyan-50/70"}`,
+                        children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-2 flex items-center justify-between gap-2", children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsx(
+                              "span",
+                              {
+                                className: `text-[11px] font-semibold uppercase tracking-wider ${theme === ft.dark ? "text-[#7dd3fc]" : "text-[#0c4a6e]"}`,
+                                children: "License Settings"
+                              }
+                            ),
+                            /* @__PURE__ */ jsxRuntimeExports.jsx(
+                              "span",
+                              {
+                                className: `rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${primeLicenseUnlocked ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/40" : theme === ft.dark ? "bg-amber-950/40 text-amber-300 ring-1 ring-amber-500/35" : "bg-amber-100 text-amber-800 ring-1 ring-amber-300"}`,
+                                children: primeLicenseUnlocked ? "Unlocked" : "Evaluation"
+                              }
+                            )
+                          ] }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            "button",
+                            {
+                              type: "button",
+                              onClick: () => setLicenseModalOpen(true),
+                              className: "w-full rounded-lg bg-[#3EC5FF] px-3 py-2 text-xs font-semibold text-black transition hover:bg-[#65d5ff]",
+                              children: "Open License Modal"
+                            }
+                          )
+                        ]
+                      }
+                    ) : null
+                  ] }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative z-10 p-2 sm:p-4 lg:p-6 pb-0 shadow-inner", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `relative w-full overflow-hidden rounded-xl border ${theme === ft.dark ? "bg-black/50" : "bg-slate-50"} ${lux ? theme === ft.dark ? "h-[550px] border-[#3EC5FF]/20 shadow-[inset_0_0_40px_rgba(62,197,255,0.05)]" : "h-[550px] border-[#3EC5FF]/30 shadow-[inset_0_0_20px_rgba(62,197,255,0.02)]" : theme === ft.dark ? "h-[500px] border-white/10" : "h-[500px] border-slate-200"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Cmp,
+                    {
+                      ref: tierRefCallbacks[key],
+                      ...sharedProps,
+                      ...key === "prime" ? {
+                        licenseKey: primeLicenseUnlocked ? primeLicenseKey : null,
+                        licenseUserIdentifier: primeUserIdentifier || null
+                      } : {}
+                    }
+                  ) }) })
+                ]
+              },
+              key
+            ))
+          ] })
+        ] }),
+        licenseModalOpen ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fixed inset-0 z-[70] flex items-center justify-center bg-black/60 px-4", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `w-full max-w-lg rounded-2xl border p-5 shadow-2xl ${theme === ft.dark ? "border-[#3EC5FF]/30 bg-[#071222] text-slate-100" : "border-[#3EC5FF]/35 bg-white text-slate-900"}`, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 flex items-center justify-between", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-lg font-bold", children: "Unlock Prime Features" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${primeLicenseUnlocked ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/40" : theme === ft.dark ? "bg-amber-950/40 text-amber-300 ring-1 ring-amber-500/35" : "bg-amber-100 text-amber-800 ring-1 ring-amber-300"}`, children: primeLicenseUnlocked ? "Unlocked" : "Evaluation" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mb-4 text-sm ${theme === ft.dark ? "text-slate-300" : "text-slate-600"}`, children: "Enter your Prime user identifier and license key to unlock Pro/Luxury rendering, smoother updates, and unlimited analysis tools." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                value: primeUserIdentifierInput,
+                onChange: (e) => setPrimeUserIdentifierInput(e.target.value),
+                placeholder: "user@example.com or account ID",
+                className: `w-full rounded-lg border px-3 py-2 text-sm outline-none ring-[#3EC5FF]/40 focus:ring-2 ${theme === ft.dark ? "border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500" : "border-slate-300 bg-white text-slate-800"}`
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                value: primeLicenseInput,
+                onChange: (e) => setPrimeLicenseInput(e.target.value),
+                placeholder: "TUP-PRIME-XXXXXXXX",
+                className: `w-full rounded-lg border px-3 py-2 font-mono text-sm outline-none ring-[#3EC5FF]/40 focus:ring-2 ${theme === ft.dark ? "border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500" : "border-slate-300 bg-white text-slate-800"}`
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-4 flex flex-wrap items-center justify-end gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                onClick: clearPrimeLicense,
+                className: `rounded-lg border px-3 py-2 text-xs font-semibold ${theme === ft.dark ? "border-white/15 text-slate-300 hover:bg-white/10" : "border-slate-300 text-slate-700 hover:bg-slate-100"}`,
+                children: "Clear"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                onClick: () => setLicenseModalOpen(false),
+                className: `rounded-lg border px-3 py-2 text-xs font-semibold ${theme === ft.dark ? "border-white/15 text-slate-300 hover:bg-white/10" : "border-slate-300 text-slate-700 hover:bg-slate-100"}`,
+                children: "Close"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                onClick: () => {
+                  applyPrimeLicense();
+                  setLicenseModalOpen(false);
+                },
+                className: "rounded-lg bg-[#3EC5FF] px-3 py-2 text-xs font-semibold text-black transition hover:bg-[#65d5ff]",
+                children: "Apply & Unlock"
+              }
+            )
+          ] })
+        ] }) }) : null
       ]
     }
   );
