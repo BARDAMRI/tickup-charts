@@ -17,7 +17,7 @@ High-performance, canvas-based financial charting engine for React.
 - RTL-ready chart interfaces for multilingual financial products.
 - TypeScript-first API with imperative controls for advanced integrations.
 
-## Standard vs Prime
+## TickUp Lite (Core) vs TickUp Prime
 
 | Feature | Standard (MIT) | Prime (Pro) |
 | :--- | :--- | :--- |
@@ -26,6 +26,23 @@ High-performance, canvas-based financial charting engine for React.
 | Indicators | ✅ Core Indicator Set | 💎 Advanced Indicators (Fibonacci, Elliott) |
 | Localization | ✅ LTR Support | 🚀 Full RTL + Professional i18n Workflows |
 | License | ✅ MIT Open Source | 💎 Commercial License |
+
+## Prime Evaluation State
+
+When you run the Prime tier without an active license key, TickUp stays fully interactive for evaluation but clearly marks the session:
+
+- An **Evaluation** badge appears in the Prime shell.
+- The Prime view keeps a visible evaluation/watermark treatment until a valid key is applied.
+
+This makes demos easy while keeping production licensing explicit.
+
+## How to Upgrade
+
+Ready for the Pro/Luxury Prime tier?
+
+1. Explore the Prime offering: [TickUp Prime Repository](https://github.com/BARDAMRI/tickup-prime)
+2. Try the live experience: [Prime Showcase](https://bardamri.github.io/tickup-charts/)
+3. Request a commercial license key for production use.
 
 ## Pricing & Licensing
 
@@ -58,4 +75,4 @@ export function App() {
 
 ## Prime CTA
 
-Interested in TickUp Prime? Visit the live [Showcase](https://bardamri.github.io/tickup-charts/) to test it now.
+Interested in TickUp Prime? Visit the live [Showcase](https://bardamri.github.io/tickup-charts/) to test it now, or review the [Prime repository](https://github.com/BARDAMRI/tickup-prime) for integration details.

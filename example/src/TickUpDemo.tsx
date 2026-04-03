@@ -782,7 +782,7 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
                         TickUp <span className="text-[#3EC5FF]">Charts</span>
                     </span>
                     <span className={`${isPageDark ? 'text-slate-500' : 'text-slate-500'} hidden text-xs font-semibold uppercase tracking-wider sm:inline`}>
-                        Tick demo
+                        Tick demo · Prime Pro/Luxury
                     </span>
                 </a>
                 <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
@@ -948,13 +948,19 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
                 </p>
                 <p>
                     Toggle <strong className={isPageDark ? 'font-medium text-slate-200' : 'font-medium text-slate-800'}>
-                        Prime
+                        Prime Pro/Luxury
                     </strong>{' '}
                     to compare the neon engine and glass toolbars. This page defaults to{' '}
                     <strong className={isPageDark ? 'font-medium text-slate-200' : 'font-medium text-slate-800'}>
                         light
                     </strong>{' '}
                     for crisp axes and symbol labels; use the sun/moon control for dark mode.
+                </p>
+                <p>
+                    The interactive <strong className={isPageDark ? 'font-medium text-slate-200' : 'font-medium text-slate-800'}>
+                        lock/unlock license flow
+                    </strong>{' '}
+                    is a Prime-only capability and is demonstrated in the Prime tier card in the main tier showcase.
                 </p>
             </section>
 
