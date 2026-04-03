@@ -28,6 +28,7 @@ import { Interval } from "../../types/Interval";
 import { ChartOptions, ChartType, TickUpRenderEngine, TimeDetailLevel } from "../../types/chartOptions";
 import { AxesPosition, DeepRequired, windowSpread, ChartTheme } from "../../types/types";
 import { useElementSize } from '../../hooks/useElementSize';
+import { CORE_TICK_THROTTLE_MS, MAX_CORE_CANDLES } from '../../hooks/useChartData';
 import { findPriceRange, getBarIntervalSeconds } from "./utils/helpers";
 import { IDrawingShape } from "../Drawing/IDrawingShape";
 import {
@@ -180,6 +181,8 @@ export interface TickUpStageProps {
     /** Sync with app chart theme for fullscreen modals */
     themeVariant?: ChartTheme;
     showBrandWatermark?: boolean;
+    /** Prime-licensed sessions bypass core throttles/limits. */
+    isPrimeLicensed?: boolean;
     /** Search/validation flow for interval changes (e.g. swap data feed). */
     onIntervalSearch?: (tf: string) => void | boolean | Promise<void | boolean>;
 }
@@ -270,11 +273,21 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
     onIntervalSearch,
     themeVariant = ChartTheme.dark,
     showBrandWatermark = true,
+    isPrimeLicensed = false,
 }, ref) => {
     const { setMode } = useMode();
     const containerRef = useRef<HTMLDivElement | null>(null);
     const { ref: canvasAreaRef, size: canvasSizes } = useElementSize<HTMLDivElement>();
-    const [intervals, setIntervals] = useState<Interval[]>(intervalsArray);
+    const isCoreTierLimited = !isPrimeLicensed;
+    const trimCoreIntervals = useCallback(
+        (rows: Interval[]) => (isCoreTierLimited ? rows.slice(-MAX_CORE_CANDLES) : rows),
+        [isCoreTierLimited]
+    );
+    const [intervals, setIntervals] = useState<Interval[]>(() => trimCoreIntervals(intervalsArray));
+    const intervalsRef = useRef<Interval[]>(trimCoreIntervals(intervalsArray));
+    const coreThrottleTimerRef = useRef<number | null>(null);
+    const coreThrottlePendingRef = useRef<Interval[] | null>(null);
+    const coreThrottleLastAppliedAtRef = useRef<number>(0);
     const [visibleRange, setVisibleRange] = React.useState<TimeRange & {
         startIndex: number,
         endIndex: number
@@ -296,6 +309,59 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
     const chartViewRef = useRef<HTMLDivElement | null>(null);
     const symbolInputRef = useRef<HTMLInputElement | null>(null);
     const followLatestRef = useRef<boolean>(false);
+
+    useEffect(() => {
+        intervalsRef.current = intervals;
+    }, [intervals]);
+
+    const applyIntervalsState = useCallback(
+        (nextIntervalsRaw: Interval[]) => {
+            const nextIntervals = trimCoreIntervals(nextIntervalsRaw);
+            intervalsRef.current = nextIntervals;
+
+            if (!isCoreTierLimited) {
+                setIntervals(nextIntervals);
+                coreThrottleLastAppliedAtRef.current = Date.now();
+                return;
+            }
+
+            const now = Date.now();
+            const elapsed = now - coreThrottleLastAppliedAtRef.current;
+            if (elapsed >= CORE_TICK_THROTTLE_MS) {
+                setIntervals(nextIntervals);
+                coreThrottleLastAppliedAtRef.current = now;
+                coreThrottlePendingRef.current = null;
+                if (coreThrottleTimerRef.current != null) {
+                    window.clearTimeout(coreThrottleTimerRef.current);
+                    coreThrottleTimerRef.current = null;
+                }
+                return;
+            }
+
+            coreThrottlePendingRef.current = nextIntervals;
+            if (coreThrottleTimerRef.current == null) {
+                const waitMs = CORE_TICK_THROTTLE_MS - elapsed;
+                coreThrottleTimerRef.current = window.setTimeout(() => {
+                    coreThrottleTimerRef.current = null;
+                    const pending = coreThrottlePendingRef.current;
+                    if (!pending) return;
+                    coreThrottlePendingRef.current = null;
+                    setIntervals(pending);
+                    coreThrottleLastAppliedAtRef.current = Date.now();
+                }, waitMs);
+            }
+        },
+        [isCoreTierLimited, trimCoreIntervals]
+    );
+
+    useEffect(
+        () => () => {
+            if (coreThrottleTimerRef.current != null) {
+                window.clearTimeout(coreThrottleTimerRef.current);
+            }
+        },
+        []
+    );
 
 
     const openShapeProperties = useCallback(
@@ -452,50 +518,22 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
     }, [onRefreshRequest, reloadViewToData]);
 
     useLayoutEffect(() => {
-        setIntervals((prev) => {
-            if (prev === intervalsArray) return prev;
-            if (intervalsArray.length === 0) return intervalsArray;
-
-            if (
-                prev.length === intervalsArray.length &&
-                prev.length > 0 &&
-                prev.every((p, i) => p === intervalsArray[i])
-            ) {
-                return prev;
-            }
-
-            if (prev.length === intervalsArray.length && prev.length > 0) {
-                let i = 0;
-                const n = prev.length;
-                while (i < n - 1 && prev[i] === intervalsArray[i]) i++;
-                if (i === n - 1) {
-                    const pl = prev[n - 1];
-                    const nl = intervalsArray[n - 1];
-                    if (pl === nl) return prev;
-                    if (
-                        pl &&
-                        nl &&
-                        pl.t === nl.t &&
-                        pl.o === nl.o &&
-                        pl.h === nl.h &&
-                        pl.l === nl.l &&
-                        pl.c === nl.c &&
-                        (pl.v ?? 0) === (nl.v ?? 0)
-                    ) {
-                        return prev;
-                    }
-                }
-            }
-
-            if (prev.length + 1 === intervalsArray.length) {
-                let i = 0;
-                while (i < prev.length && prev[i] === intervalsArray[i]) i++;
-                if (i === prev.length) return intervalsArray;
-            }
-
-            return intervalsArray;
-        });
-    }, [intervalsArray]);
+        const limitedInput = trimCoreIntervals(intervalsArray);
+        const prev = intervalsRef.current;
+        if (prev === limitedInput) return;
+        if (limitedInput.length === 0) {
+            applyIntervalsState(limitedInput);
+            return;
+        }
+        if (
+            prev.length === limitedInput.length &&
+            prev.length > 0 &&
+            prev.every((p, i) => p === limitedInput[i])
+        ) {
+            return;
+        }
+        applyIntervalsState(limitedInput);
+    }, [intervalsArray, trimCoreIntervals, applyIntervalsState]);
 
     function updateVisibleRange(rangeOrUpdate: TimeRange | ((prev: TimeRange) => TimeRange)) {
         if (!intervals || intervals.length === 0) return;
@@ -664,31 +702,27 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
             setDrawings(prev => prev.filter(s => s.id !== shapeId));
         },
         addInterval(interval: Interval) {
-            setIntervals(prev => {
-                const newIntervals = [...prev, interval];
-                newIntervals.sort((a, b) => a.t - b.t);
-                return newIntervals;
-            });
+            const next = [...intervalsRef.current, interval];
+            next.sort((a, b) => a.t - b.t);
+            applyIntervalsState(next);
         },
         updateInterval(index: number, newInterval: Interval) {
-            setIntervals(prev => {
-                if (index < 0 || index >= prev.length) return prev;
-                const newIntervals = [...prev];
-                newIntervals[index] = newInterval;
-                newIntervals.sort((a, b) => a.t - b.t);
-                return newIntervals;
-            });
+            const prev = intervalsRef.current;
+            if (index < 0 || index >= prev.length) return;
+            const next = [...prev];
+            next[index] = newInterval;
+            next.sort((a, b) => a.t - b.t);
+            applyIntervalsState(next);
         },
         deleteInterval(index: number) {
-            setIntervals(prev => {
-                if (index < 0 || index >= prev.length) return prev;
-                const newIntervals = [...prev];
-                newIntervals.splice(index, 1);
-                return newIntervals;
-            });
+            const prev = intervalsRef.current;
+            if (index < 0 || index >= prev.length) return;
+            const next = [...prev];
+            next.splice(index, 1);
+            applyIntervalsState(next);
         },
         applyLiveData(updates: Interval | Interval[], placement: LiveDataPlacement): LiveDataApplyResult {
-            const result = applyLiveDataMerge(intervals, updates, placement);
+            const result = applyLiveDataMerge(intervalsRef.current, updates, placement);
             if (result.warnings.length) {
                 console.warn('[TickUp] Live data warnings:', result.warnings);
             }
@@ -699,7 +733,7 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
             if (result.errors.length) {
                 console.warn('[TickUp] Live data issues:', result.errors);
             }
-            setIntervals(result.intervals);
+            applyIntervalsState(result.intervals);
             return result;
         },
         fitVisibleRangeToData() {
@@ -935,7 +969,30 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
         closeAlert: () => {
             setAlertState(prev => ({ ...prev, isOpen: false }));
         },
-    }));
+    }), [
+        applyIntervalsState,
+        chartOptions,
+        defaultSymbol,
+        drawings,
+        handleFitVisibleRange,
+        handleRangeSelection,
+        intervals,
+        numberOfYTicks,
+        onIntervalChange,
+        onIntervalSearch,
+        onRangeChange,
+        range,
+        reloadViewToData,
+        selectedIndex,
+        setMode,
+        setSelectedIndex,
+        symbol,
+        themeVariant,
+        timeDetailLevel,
+        timeFormat12h,
+        visiblePriceRange,
+        visibleRange
+    ]);
 
     const compactSymbolLabel = useMemo(() => {
         const fromControlled = symbol !== undefined ? String(symbol).trim() : '';
@@ -1065,6 +1122,7 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
                                 canvasSizes={canvasSizes}
                                 windowSpread={windowSpread}
                                 showBrandWatermark={showBrandWatermark}
+                                isPrimeLicensed={isPrimeLicensed}
                                 brandTheme={chartOptions.base.theme}
                             />
                         )}

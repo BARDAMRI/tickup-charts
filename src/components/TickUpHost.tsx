@@ -39,6 +39,40 @@ import {AlertModal} from './Common/AlertModal';
 
 /** Stable reference when `chartOptions` prop is omitted so sync effect is not fooled by a fresh `{}` each render. */
 const EMPTY_CHART_OPTIONS: DeepPartial<ChartOptions> = {};
+const MAX_CORE_INDICATORS = 3;
+const CORE_INDICATOR_LIMIT_TOAST =
+    'Core tier is limited to 3 indicators. Upgrade to Prime for unlimited analysis.';
+
+function countIndicatorsFromOptions(options: DeepRequired<ChartOptions> | DeepPartial<ChartOptions>): number {
+    const base = (options as any)?.base ?? {};
+    const overlays = Array.isArray(base.overlays) ? base.overlays.length : 0;
+    const overlayKinds = Array.isArray(base.overlayKinds) ? base.overlayKinds.length : 0;
+    return Math.max(overlays, overlayKinds);
+}
+
+function enforceCoreIndicatorCap(options: DeepRequired<ChartOptions>): {
+    options: DeepRequired<ChartOptions>;
+    wasCapped: boolean;
+} {
+    const base: any = options.base ?? {};
+    const overlays: any[] = Array.isArray(base.overlays) ? base.overlays : [];
+    const overlayKinds: any[] = Array.isArray(base.overlayKinds) ? base.overlayKinds : [];
+    const needsCap = overlays.length > MAX_CORE_INDICATORS || overlayKinds.length > MAX_CORE_INDICATORS;
+    if (!needsCap) {
+        return {options, wasCapped: false};
+    }
+    return {
+        options: {
+            ...options,
+            base: {
+                ...options.base,
+                overlays: overlays.slice(0, MAX_CORE_INDICATORS),
+                overlayKinds: overlayKinds.slice(0, MAX_CORE_INDICATORS),
+            },
+        },
+        wasCapped: true,
+    };
+}
 
 /**
  * Imperative API for {@link TickUpHost} and product components
@@ -235,7 +269,6 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
     const showSidebar = hasLockedChrome ? tierLayout.showSidebar : (showSidebarProp ?? tierLayout.showSidebar);
     const showTopBar = hasLockedChrome ? tierLayout.showTopBar : (showTopBarProp ?? tierLayout.showTopBar);
     const showSettingsBar = hasLockedChrome ? tierLayout.showSettingsBar : (showSettingsBarProp ?? tierLayout.showSettingsBar);
-    const attributionOn = productId === TickUpProductId.desk ? true : showAttribution;
 
     const [finalStyleOptions, setStyleOptions] = useState<DeepRequired<ChartOptions>>(() =>
         deepMerge(DEFAULT_GRAPH_OPTIONS, chartOptions)
@@ -261,6 +294,8 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
         message: ''
     });
     const [licenseValid, setLicenseValid] = useState<boolean | null>(null);
+    const [coreLimitToast, setCoreLimitToast] = useState<string | null>(null);
+    const coreLimitToastTimerRef = useRef<number | null>(null);
     const [layoutOptions, setLayoutOptions] = useState({
         showSidebar,
         showTopBar,
@@ -269,6 +304,28 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
     });
 
     const prevExternalChartOptionsRef = useRef(chartOptions);
+    const hasValidPrimeLicense = productId === TickUpProductId.prime && licenseValid === true;
+    const coreTierLimited = !hasValidPrimeLicense;
+    const attributionOn = hasValidPrimeLicense ? showAttribution : true;
+
+    const showCoreIndicatorLimitToast = () => {
+        setCoreLimitToast(CORE_INDICATOR_LIMIT_TOAST);
+        if (coreLimitToastTimerRef.current != null) {
+            window.clearTimeout(coreLimitToastTimerRef.current);
+        }
+        coreLimitToastTimerRef.current = window.setTimeout(() => {
+            setCoreLimitToast(null);
+            coreLimitToastTimerRef.current = null;
+        }, 3200);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (coreLimitToastTimerRef.current != null) {
+                window.clearTimeout(coreLimitToastTimerRef.current);
+            }
+        };
+    }, []);
 
     useEffect(() => {
         let cancelled = false;
@@ -326,9 +383,53 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
         prevExternalChartOptionsRef.current = chartOptions;
         setStyleOptions((prev) => {
             const merged = deepMerge(prev, chartOptions);
+            if (coreTierLimited) {
+                const requestedCount = countIndicatorsFromOptions(merged);
+                const capped = enforceCoreIndicatorCap(merged);
+                if (requestedCount > MAX_CORE_INDICATORS && capped.wasCapped) {
+                    showCoreIndicatorLimitToast();
+                }
+                return deepEqual(capped.options, prev) ? prev : capped.options;
+            }
             return deepEqual(merged, prev) ? prev : merged;
         });
-    }, [chartOptions]);
+    }, [chartOptions, coreTierLimited]);
+
+    useEffect(() => {
+        if (!coreTierLimited) {
+            return;
+        }
+        const enforceAttributionVisibility = () => {
+            const nodes = Array.from(document.querySelectorAll('[data-tickup-attribution]')) as HTMLElement[];
+            nodes.forEach((node) => {
+                node.style.setProperty('display', 'flex', 'important');
+                node.style.setProperty('visibility', 'visible', 'important');
+                node.style.setProperty('opacity', '1', 'important');
+                node.style.setProperty('pointer-events', 'none', 'important');
+            });
+        };
+        enforceAttributionVisibility();
+        const observer = new MutationObserver(() => enforceAttributionVisibility());
+        observer.observe(document.body, {
+            subtree: true,
+            childList: true,
+            attributes: true,
+            attributeFilter: ['style', 'class'],
+        });
+        return () => observer.disconnect();
+    }, [coreTierLimited]);
+
+    useEffect(() => {
+        if (!coreTierLimited) return;
+        setStyleOptions((prev) => {
+            const requestedCount = countIndicatorsFromOptions(prev);
+            const capped = enforceCoreIndicatorCap(prev);
+            if (requestedCount > MAX_CORE_INDICATORS && capped.wasCapped) {
+                showCoreIndicatorLimitToast();
+            }
+            return deepEqual(capped.options, prev) ? prev : capped.options;
+        });
+    }, [coreTierLimited]);
 
     useEffect(() => {
         if (hasLockedChrome) {
@@ -505,7 +606,18 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
         },
         getMainCanvasElement: () => stageRef.current?.getMainCanvasElement?.() ?? null,
         setEngine: (engine: TickUpChartEngine) => {
-            setStyleOptions((prev) => deepMerge(prev, engine.getChartOptionsPatch()));
+            setStyleOptions((prev) => {
+                const merged = deepMerge(prev, engine.getChartOptionsPatch());
+                if (coreTierLimited) {
+                    const requestedCount = countIndicatorsFromOptions(merged);
+                    const capped = enforceCoreIndicatorCap(merged);
+                    if (requestedCount > MAX_CORE_INDICATORS && capped.wasCapped) {
+                        showCoreIndicatorLimitToast();
+                    }
+                    return capped.options;
+                }
+                return merged;
+            });
         },
         setInteractionMode: (mode: Mode) => {
             stageRef.current?.setInteractionMode?.(mode);
@@ -780,6 +892,7 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
                         initialRange={initialRange}
                         themeVariant={themeVariant}
                         showBrandWatermark={attributionOn}
+                        isPrimeLicensed={hasValidPrimeLicense}
                     />
 
                     <SettingsModal
@@ -799,6 +912,29 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
                         message={alertState.message}
                         themeVariant={themeVariant}
                     />
+                    {coreLimitToast ? (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                left: '50%',
+                                bottom: 16,
+                                transform: 'translateX(-50%)',
+                                zIndex: 90,
+                                maxWidth: 560,
+                                borderRadius: 10,
+                                border: '1px solid rgba(245, 158, 11, 0.35)',
+                                background: themeVariant === ChartTheme.dark ? 'rgba(17, 24, 39, 0.95)' : 'rgba(15, 23, 42, 0.92)',
+                                color: '#fbbf24',
+                                padding: '10px 12px',
+                                fontSize: 12,
+                                fontFamily: 'system-ui, sans-serif',
+                                textAlign: 'center',
+                                pointerEvents: 'none',
+                            }}
+                        >
+                            {coreLimitToast}
+                        </div>
+                    ) : null}
                 </div>
             </MainAppWindow>
         </ModeProvider>

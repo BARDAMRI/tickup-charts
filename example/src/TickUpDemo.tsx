@@ -25,6 +25,7 @@ import {
     Layers,
     LineChart,
     Moon,
+    Magnet,
     MousePointer2,
     Pencil,
     Sun,
@@ -987,6 +988,29 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
                     <ToolRailBtn isDark={isPageDark} active={activeTool === 'ray'} label="Ray (line tool)" onClick={onToolRay}>
                         <Layers className="h-5 w-5" />
                     </ToolRailBtn>
+                    <div className="group relative">
+                        <ToolRailBtn
+                            isDark={isPageDark}
+                            active={false}
+                            label="Magnet Snapping is a Prime-only feature. Upgrade to enable."
+                            onClick={() => undefined}
+                            disabled
+                        >
+                            <Magnet className="h-5 w-5" />
+                        </ToolRailBtn>
+                        <div className={`pointer-events-none absolute left-14 top-1/2 z-40 hidden w-56 -translate-y-1/2 rounded-lg border px-2 py-1.5 text-[10px] group-hover:block ${
+                            isPageDark ? 'border-[#3EC5FF]/35 bg-[#0a1422] text-slate-200' : 'border-slate-300 bg-white text-slate-700'
+                        }`}>
+                            Magnet Snapping is a Prime-only feature.
+                            <button
+                                type="button"
+                                onClick={() => setPrimeOfferOpen(true)}
+                                className="pointer-events-auto ml-1 font-semibold text-[#3EC5FF] underline"
+                            >
+                                Upgrade Now
+                            </button>
+                        </div>
+                    </div>
                     <ToolRailBtn isDark={isPageDark} active={false} label="Eraser" onClick={onToolEraser}>
                         <Eraser className="h-5 w-5" />
                     </ToolRailBtn>
@@ -1268,6 +1292,16 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
                                 />
                                 <IndicatorRow
                                     isDark={isPageDark}
+                                    label="VWAP"
+                                    active={false}
+                                    onAdd={() => undefined}
+                                    onRemove={() => undefined}
+                                    supported={false}
+                                    proOnly
+                                    onUpgrade={() => setPrimeOfferOpen(true)}
+                                />
+                                <IndicatorRow
+                                    isDark={isPageDark}
                                     label="MACD"
                                     active={false}
                                     onAdd={() => undefined}
@@ -1436,12 +1470,14 @@ function ToolRailBtn({
     label,
     onClick,
     isDark = true,
+    disabled = false,
 }: {
     children: ReactNode;
     active: boolean;
     label: string;
     onClick: () => void;
     isDark?: boolean;
+    disabled?: boolean;
 }) {
     return (
         <button
@@ -1450,12 +1486,13 @@ function ToolRailBtn({
             aria-label={label}
             aria-pressed={active}
             onClick={onClick}
+            disabled={disabled}
             className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-all duration-300 ${active
                 ? 'border-[#3EC5FF]/50 bg-[#3EC5FF]/15 text-[#3EC5FF]'
                 : isDark
                     ? 'border-transparent text-gray-500 hover:border-white/10 hover:text-[#3EC5FF]'
                     : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-[#3EC5FF]'
-                }`}
+                } ${disabled ? 'cursor-not-allowed opacity-55 hover:border-transparent hover:text-current' : ''}`}
         >
             {children}
         </button>
@@ -1469,6 +1506,8 @@ function IndicatorRow({
     onAdd,
     onRemove,
     isDark = true,
+    proOnly = false,
+    onUpgrade,
 }: {
     label: string;
     active: boolean;
@@ -1476,6 +1515,8 @@ function IndicatorRow({
     onAdd: () => void;
     onRemove: () => void;
     isDark?: boolean;
+    proOnly?: boolean;
+    onUpgrade?: () => void;
 }) {
     return (
         <li
@@ -1484,9 +1525,19 @@ function IndicatorRow({
         >
             <span className={`font-mono text-xs ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>{label}</span>
             {!supported ? (
-                <span className="rounded-md bg-[#5A48DE]/20 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-violet-300">
-                    Planned
-                </span>
+                proOnly ? (
+                    <button
+                        type="button"
+                        onClick={onUpgrade}
+                        className="rounded-md bg-[#5A48DE]/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-300 ring-1 ring-violet-400/35 hover:bg-[#5A48DE]/35"
+                    >
+                        PRO
+                    </button>
+                ) : (
+                    <span className="rounded-md bg-[#5A48DE]/20 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-violet-300">
+                        Planned
+                    </span>
+                )
             ) : (
                 <div className="flex gap-1">
                     <button

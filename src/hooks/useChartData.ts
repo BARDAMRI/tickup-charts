@@ -5,21 +5,29 @@ import {ChartRenderContext} from "../types/chartOptions";
 import {getBarIntervalSeconds} from "../components/Canvas/utils/helpers";
 
 type VisibleRangeInput = TimeRange & Partial<{startIndex: number; endIndex: number}>;
+export const MAX_CORE_CANDLES = 2000;
+export const CORE_TICK_THROTTLE_MS = 1000;
 
 export function useChartData(
     intervalsArray: Interval[],
+    isPrimeLicensed: boolean,
     visibleRange: VisibleRangeInput,
     currentPoint: { x: number; y: number } | null,
     canvasWidth: number,
     canvasHeight: number
 ): { renderContext: ChartRenderContext | null; intervalSeconds: number } {
+    // Hard gate at data source: non-Prime sessions never process >2000 bars.
+    const effectiveIntervals = useMemo(
+        () => (isPrimeLicensed ? intervalsArray : intervalsArray.slice(-MAX_CORE_CANDLES)),
+        [intervalsArray, isPrimeLicensed]
+    );
     const intervalSeconds = useMemo(
-        () => getBarIntervalSeconds(intervalsArray, 3600),
-        [intervalsArray]
+        () => getBarIntervalSeconds(effectiveIntervals, 3600),
+        [effectiveIntervals]
     );
 
     const visibleCandles = useMemo<IndexRangePair>(() => {
-        const n = intervalsArray.length;
+        const n = effectiveIntervals.length;
         if (!n || intervalSeconds <= 0 || visibleRange == null) {
             return {startIndex: 0, endIndex: 0};
         }
@@ -40,7 +48,7 @@ export function useChartData(
         ) {
             return {startIndex: si, endIndex: ei};
         }
-        const firstTime = intervalsArray[0]!.t;
+        const firstTime = effectiveIntervals[0]!.t;
         const startIndex = Math.floor((start - firstTime) / intervalSeconds);
         const endIndex = Math.ceil((end - firstTime) / intervalSeconds);
         return {
@@ -48,7 +56,7 @@ export function useChartData(
             endIndex: Math.min(n - 1, endIndex),
         };
     }, [
-        intervalsArray,
+        effectiveIntervals,
         intervalSeconds,
         visibleRange.start,
         visibleRange.end,
@@ -58,13 +66,13 @@ export function useChartData(
 
     const visiblePriceRange: PriceRange = (() => {
         const { startIndex, endIndex } = visibleCandles;
-        if (startIndex >= endIndex || !intervalsArray.length) {
+        if (startIndex >= endIndex || !effectiveIntervals.length) {
             return { min: 0, max: 100, range: 100 };
         }
         let min = Infinity;
         let max = -Infinity;
         for (let i = startIndex; i <= endIndex; i++) {
-            const c = intervalsArray[i];
+            const c = effectiveIntervals[i];
             if (!c) continue;
             if (c.l < min) min = c.l;
             if (c.h > max) max = c.h;
@@ -84,7 +92,7 @@ export function useChartData(
             return null;
         }
         return {
-            allIntervals: intervalsArray,
+            allIntervals: effectiveIntervals,
             visibleStartIndex: visibleCandles.startIndex,
             visibleEndIndex: visibleCandles.endIndex,
             visiblePriceRange,
@@ -94,7 +102,7 @@ export function useChartData(
             canvasHeight,
         };
     }, [
-        intervalsArray,
+        effectiveIntervals,
         visibleCandles.startIndex,
         visibleCandles.endIndex,
         visiblePriceRange.min,

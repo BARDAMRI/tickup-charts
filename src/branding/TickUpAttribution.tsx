@@ -4,7 +4,9 @@ import {ChartTheme} from '../types/types';
 import {TickUpMark} from './TickUpMark';
 
 const Bar = styled.div<{$variant: ChartTheme}>`
-    display: flex;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     align-items: center;
     justify-content: flex-end;
     flex-shrink: 0;
