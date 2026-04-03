@@ -62,10 +62,10 @@ jobs:
 
       - name: Create Mock Prime for CI
         run: |
-          mkdir -p ../tickup-prime-final
-          echo '{"name": "@tickup/prime", "version": "1.0.0", "main": "index.js", "types": "index.d.ts"}' > ../tickup-prime-final/package.json
-          echo "export const TickUpPrime = null; export const createTickUpPrimeEngine = (t) => null; export const getTickUpPrimeThemePatch = (t) => ({});" > ../tickup-prime-final/index.js
-          echo "export declare const TickUpPrime: any; export declare const createTickUpPrimeEngine: (t: any) => any; export declare const getTickUpPrimeThemePatch: (t: any) => any;" > ../tickup-prime-final/index.d.ts
+          mkdir -p ../tickup-prime-final/dist
+          echo '{"name": "@tickup/prime", "version": "1.0.0", "main": "index.js", "module": "index.js", "types": "index.d.ts", "exports": {".": {"import": "./index.js", "require": "./index.js", "types": "./index.d.ts"}}}' > ../tickup-prime-final/dist/package.json
+          echo "export const TickUpPrime = null; export const createTickUpPrimeEngine = (t) => null; export const getTickUpPrimeThemePatch = (t) => ({}); export const validateLicense = async () => false;" > ../tickup-prime-final/dist/index.js
+          echo "export declare const TickUpPrime: any; export declare const createTickUpPrimeEngine: (t: any) => any; export declare const getTickUpPrimeThemePatch: (t: any) => any; export declare const validateLicense: (key?: string | null, userIdentifier?: string | null) => Promise<boolean>;" > ../tickup-prime-final/dist/index.d.ts
 
       - name: Install dependencies (Root & Example)
         run: |

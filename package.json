@@ -32,7 +32,7 @@
     "dev": "vite",
     "build": "tsc && npm run build:lib && npx tsc --emitDeclarationOnly",
     "build:example": "npm run build && npm install --no-audit --no-fund --prefix example && npm run build --prefix example",
-    "prime:link-local": "if [ -f ../tickup-prime-final/dist/package.json ]; then npm install --no-save ../tickup-prime-final/dist; else npm install --no-save ../tickup-prime-final; fi",
+    "prime:link-local": "if [ -f ../tickup-prime-final/tickup-prime-1.0.0.tgz ]; then npm install --no-save ../tickup-prime-final/tickup-prime-1.0.0.tgz; elif [ -f ../tickup-prime-final/dist/package.json ]; then npm install --no-save ../tickup-prime-final/dist; else npm install --no-save ../tickup-prime-final; fi",
     "build:lib": "TICKUP_LIB_ENTRY=index vite build && TICKUP_LIB_ENTRY=full vite build",
     "prepublishOnly": "npm run build",
     "preview": "vite preview",

@@ -148,8 +148,12 @@ export type TickUpHostProps = {
      * Forced on for `productId="desk"`. Default true. Set false to disable branding.
      */
     showAttribution?: boolean;
-    /** For `productId="prime"`: non-empty value hides the eval strip. */
+    /** For `productId="prime"`: candidate key passed into Prime validation. */
     licenseKey?: string | null;
+    /** Optional user/account identifier paired with the Prime license key. */
+    licenseUserIdentifier?: string | null;
+    /** Optional override for Prime validation result. */
+    licenseValidationOverride?: boolean;
     /**
      * Shell **light** / **dark** (toolbar, settings modal chrome, `GlobalStyle` page background).
      * When set, the host is **controlled**: update this prop when {@link onThemeVariantChange} fires
@@ -212,6 +216,8 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
         onSymbolSearch,
         productId,
         licenseKey,
+        licenseUserIdentifier,
+        licenseValidationOverride,
         showAttribution = true,
         themeVariant: themeVariantProp,
         defaultThemeVariant = ChartTheme.light,
@@ -254,6 +260,7 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
         title: '',
         message: ''
     });
+    const [licenseValid, setLicenseValid] = useState<boolean | null>(null);
     const [layoutOptions, setLayoutOptions] = useState({
         showSidebar,
         showTopBar,
@@ -262,6 +269,55 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
     });
 
     const prevExternalChartOptionsRef = useRef(chartOptions);
+
+    useEffect(() => {
+        let cancelled = false;
+        if (productId !== TickUpProductId.prime) {
+            setLicenseValid(null);
+            return () => {
+                cancelled = true;
+            };
+        }
+
+        const key = licenseKey?.trim();
+        const userId = licenseUserIdentifier?.trim() || null;
+        if (!key) {
+            setLicenseValid(false);
+            return () => {
+                cancelled = true;
+            };
+        }
+
+        if (typeof licenseValidationOverride === 'boolean') {
+            setLicenseValid(licenseValidationOverride);
+            return () => {
+                cancelled = true;
+            };
+        }
+
+        const moduleId = '@tickup/prime';
+        import(/* @vite-ignore */ moduleId)
+            .then((m: any) => {
+                if (cancelled) return;
+                if (typeof m?.validateLicense === 'function') {
+                    return Promise.resolve(m.validateLicense(key, userId)).then((result: unknown) => {
+                        if (!cancelled) {
+                            setLicenseValid(Boolean(result));
+                        }
+                    });
+                }
+                setLicenseValid(true);
+            })
+            .catch(() => {
+                if (!cancelled) {
+                    setLicenseValid(true);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [productId, licenseKey, licenseUserIdentifier, licenseValidationOverride]);
 
     useEffect(() => {
         if (deepEqual(chartOptions, prevExternalChartOptionsRef.current)) {
@@ -657,7 +713,7 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
         } as DeepPartial<ChartOptions>);
     }, [finalStyleOptions, themeVariant]);
 
-    const primeTierEval = productId === TickUpProductId.prime && !licenseKey;
+    const primeTierEval = productId === TickUpProductId.prime && !licenseValid;
 
     return (
         <ModeProvider>

@@ -9,7 +9,7 @@
     "build": "tsc -p tsconfig.app.json && vite build",
     "vercel-build": "npm run build",
     "build:prime": "npm run prime:link-local && VITE_TICKUP_PRIME=1 sh -c 'tsc -p tsconfig.app.json && vite build'",
-    "prime:link-local": "if [ -f ../../tickup-prime-final/dist/package.json ]; then npm install --no-save ../../tickup-prime-final/dist; else npm install --no-save ../../tickup-prime-final; fi",
+    "prime:link-local": "if [ -f ../../tickup-prime-final/tickup-prime-1.0.0.tgz ]; then npm install --no-save --prefix .. ../../tickup-prime-final/tickup-prime-1.0.0.tgz && npm install --no-save ../../tickup-prime-final/tickup-prime-1.0.0.tgz; elif [ -f ../../tickup-prime-final/dist/package.json ]; then npm install --no-save --prefix .. ../../tickup-prime-final/dist && npm install --no-save ../../tickup-prime-final/dist; else npm install --no-save --prefix .. ../../tickup-prime-final && npm install --no-save ../../tickup-prime-final; fi",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -121,11 +121,7 @@ function jitterLastBar(last: Interval): Interval {
 
 const LIVE_TICK_MS = 900;
 const PRIME_LICENSE_STORAGE_KEY = 'tickup:prime:license-key';
-
-function isValidPrimeLicenseKey(value: string): boolean {
-    const key = value.trim();
-    return /^TUP-PRIME-[A-Z0-9]{8,}$/.test(key);
-}
+const PRIME_USER_STORAGE_KEY = 'tickup:prime:user-identifier';
 
 // ----------------------------------------------------------------------------
 // STRUCTURE
@@ -304,8 +300,19 @@ export default function App() {
         if (typeof window === 'undefined') {
             return '';
         }
-        const persisted = window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? '';
-        return isValidPrimeLicenseKey(persisted) ? persisted : '';
+        return (window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? '').trim();
+    });
+    const [primeUserIdentifierInput, setPrimeUserIdentifierInput] = useState<string>(() => {
+        if (typeof window === 'undefined') {
+            return '';
+        }
+        return window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? '';
+    });
+    const [primeUserIdentifier, setPrimeUserIdentifier] = useState<string>(() => {
+        if (typeof window === 'undefined') {
+            return '';
+        }
+        return (window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? '').trim();
     });
 
     useEffect(() => {
@@ -333,24 +340,31 @@ export default function App() {
             });
     }, []);
 
-    const primeLicenseUnlocked = isValidPrimeLicenseKey(primeLicenseKey);
+    const primeLicenseUnlocked = primeLicenseKey.trim().length > 0;
 
     const applyPrimeLicense = useCallback(() => {
-        const normalized = primeLicenseInput.trim().toUpperCase();
-        if (!isValidPrimeLicenseKey(normalized)) {
+        const normalized = primeLicenseInput.trim();
+        const userIdentifier = primeUserIdentifierInput.trim();
+        if (!normalized) {
             setPrimeLicenseKey('');
             window.localStorage.removeItem(PRIME_LICENSE_STORAGE_KEY);
             return;
         }
         setPrimeLicenseInput(normalized);
         setPrimeLicenseKey(normalized);
+        setPrimeUserIdentifier(userIdentifier);
+        setPrimeUserIdentifierInput(userIdentifier);
         window.localStorage.setItem(PRIME_LICENSE_STORAGE_KEY, normalized);
-    }, [primeLicenseInput]);
+        window.localStorage.setItem(PRIME_USER_STORAGE_KEY, userIdentifier);
+    }, [primeLicenseInput, primeUserIdentifierInput]);
 
     const clearPrimeLicense = useCallback(() => {
         setPrimeLicenseInput('');
         setPrimeLicenseKey('');
+        setPrimeUserIdentifierInput('');
+        setPrimeUserIdentifier('');
         window.localStorage.removeItem(PRIME_LICENSE_STORAGE_KEY);
+        window.localStorage.removeItem(PRIME_USER_STORAGE_KEY);
     }, []);
 
     useLayoutEffect(() => {
@@ -692,8 +706,20 @@ export default function App() {
                                             </div>
                                             <div className="flex flex-col gap-2 sm:flex-row">
                                                 <input
+                                                    value={primeUserIdentifierInput}
+                                                    onChange={(e) => setPrimeUserIdentifierInput(e.target.value)}
+                                                    placeholder="user@example.com or account ID"
+                                                    className={`w-full rounded-lg border px-3 py-2 text-xs outline-none ring-[#3EC5FF]/40 focus:ring-2 ${
+                                                        theme === ChartTheme.dark
+                                                            ? 'border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500'
+                                                            : 'border-slate-300 bg-white text-slate-800'
+                                                    }`}
+                                                />
+                                            </div>
+                                            <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                                                <input
                                                     value={primeLicenseInput}
-                                                    onChange={(e) => setPrimeLicenseInput(e.target.value.toUpperCase())}
+                                                    onChange={(e) => setPrimeLicenseInput(e.target.value)}
                                                     placeholder="TUP-PRIME-XXXXXXXX"
                                                     className={`w-full rounded-lg border px-3 py-2 text-xs font-mono outline-none ring-[#3EC5FF]/40 focus:ring-2 ${
                                                         theme === ChartTheme.dark
@@ -734,7 +760,12 @@ export default function App() {
                                     <Cmp
                                         ref={tierRefCallbacks[key]}
                                         {...sharedProps}
-                                        {...(key === 'prime' ? {licenseKey: primeLicenseUnlocked ? primeLicenseKey : null} : {})}
+                                        {...(key === 'prime'
+                                            ? {
+                                                licenseKey: primeLicenseUnlocked ? primeLicenseKey : null,
+                                                licenseUserIdentifier: primeUserIdentifier || null,
+                                            }
+                                            : {})}
                                     />
                                 </div>
                             </div>
