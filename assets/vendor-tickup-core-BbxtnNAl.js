@@ -1852,7 +1852,7 @@ function bn(A2, e2, t2, n2, r2) {
   });
 }
 function wn(A2) {
-  return A2.length <= 2e3 ? A2 : A2.slice(-2e3);
+  return A2.length <= 5e3 ? A2 : A2.slice(-5e3);
 }
 function yn(A2) {
   return (e2 = {}) => {
@@ -5496,7 +5496,11 @@ function eo(A2) {
   }
 }
 const to = reactExports.forwardRef((A2, e2) => {
-  const { intervalsArray: r2 = [], initialNumberOfYTicks: i2 = 5, initialTimeDetailLevel: a2 = yt.Auto, initialTimeFormat12h: Q2 = false, chartOptions: g2 = $Q, showSidebar: E2, showTopBar: d2, showSettingsBar: C2, onRefreshRequest: I2, symbol: u2, defaultSymbol: f2, onSymbolChange: v2, onSymbolSearch: h2, productId: p2, licenseKey: b2, licenseUserIdentifier: w2, licenseValidationOverride: y2, showAttribution: P2 = true, themeVariant: V2, defaultThemeVariant: x2 = ft.light, onThemeVariantChange: z2, interval: X2, onIntervalChange: M2, range: O2, onRangeChange: q2, initialRange: H2, onIntervalSearch: W2 } = A2, D2 = null != p2, F2 = eo(p2), j2 = D2 ? F2.showSidebar : E2 ?? F2.showSidebar, T2 = D2 ? F2.showTopBar : d2 ?? F2.showTopBar, N2 = D2 ? F2.showSettingsBar : C2 ?? F2.showSettingsBar, [K2, Y2] = reactExports.useState(() => Cn(SQ, g2)), [G2, k2] = reactExports.useState(x2), U2 = void 0 !== V2, Z2 = U2 ? V2 : G2, [L2, R2] = reactExports.useState(null), S2 = reactExports.useRef(null), [J2, $2] = reactExports.useState(false), [_2, AA2] = reactExports.useState({ isOpen: false, title: "", message: "" }), [eA2, tA2] = reactExports.useState(null), [nA2, rA2] = reactExports.useState(null), iA2 = reactExports.useRef(null), [aA2, BA2] = reactExports.useState({ showSidebar: j2, showTopBar: T2, showSettingsBar: N2, timeFormat12h: Q2 }), QA2 = reactExports.useRef(g2), oA2 = p2 === JQ.prime && true === eA2, gA2 = !oA2, EA2 = !oA2 || P2, sA2 = () => {
+  const { intervalsArray: r2 = [], initialNumberOfYTicks: i2 = 5, initialTimeDetailLevel: a2 = yt.Auto, initialTimeFormat12h: Q2 = false, chartOptions: g2 = $Q, showSidebar: E2, showTopBar: d2, showSettingsBar: C2, onRefreshRequest: I2, symbol: u2, defaultSymbol: f2, onSymbolChange: v2, onSymbolSearch: h2, productId: p2, licenseKey: b2, licenseUserIdentifier: w2, licenseValidationOverride: y2, showAttribution: P2 = true, themeVariant: V2, defaultThemeVariant: x2 = ft.light, onThemeVariantChange: z2, interval: X2, onIntervalChange: M2, range: O2, onRangeChange: q2, initialRange: H2, onIntervalSearch: W2 } = A2, D2 = null != p2, F2 = eo(p2), j2 = D2 ? F2.showSidebar : E2 ?? F2.showSidebar, T2 = D2 ? F2.showTopBar : d2 ?? F2.showTopBar, N2 = D2 ? F2.showSettingsBar : C2 ?? F2.showSettingsBar, [K2, Y2] = reactExports.useState(() => {
+    var A3;
+    const e3 = void 0 === (null == (A3 = null == g2 ? void 0 : g2.axes) ? void 0 : A3.numberOfYTicks) ? { axes: { numberOfYTicks: i2 } } : {}, t2 = Cn(SQ, e3);
+    return Cn(t2, g2);
+  }), [G2, k2] = reactExports.useState(x2), U2 = void 0 !== V2, Z2 = U2 ? V2 : G2, [L2, R2] = reactExports.useState(null), S2 = reactExports.useRef(null), [J2, $2] = reactExports.useState(false), [_2, AA2] = reactExports.useState({ isOpen: false, title: "", message: "" }), [eA2, tA2] = reactExports.useState(null), [nA2, rA2] = reactExports.useState(null), iA2 = reactExports.useRef(null), [aA2, BA2] = reactExports.useState({ showSidebar: j2, showTopBar: T2, showSettingsBar: N2, timeFormat12h: Q2 }), QA2 = reactExports.useRef(g2), oA2 = p2 === JQ.prime && true === eA2, gA2 = !oA2, EA2 = !oA2 || P2, sA2 = () => {
     rA2("Core tier is limited to 3 indicators. Upgrade to Prime for unlimited analysis."), null != iA2.current && window.clearTimeout(iA2.current), iA2.current = window.setTimeout(() => {
       rA2(null), iA2.current = null;
     }, 3200);
@@ -5511,7 +5515,7 @@ const to = reactExports.forwardRef((A2, e2) => {
     const e3 = null == b2 ? void 0 : b2.trim(), t2 = (null == w2 ? void 0 : w2.trim()) || null;
     return e3 ? "boolean" == typeof y2 ? (tA2(y2), () => {
       A3 = true;
-    }) : (__vitePreload(() => import('./index-BzPwDpPe.js'),true?[]:void 0).then((n2) => {
+    }) : (__vitePreload(() => import('./vendor-tickup-prime-BzPwDpPe.js'),true?[]:void 0).then((n2) => {
       if (!A3) return "function" == typeof (null == n2 ? void 0 : n2.validateLicense) ? Promise.resolve(n2.validateLicense(e3, t2)).then((e4) => {
         A3 || tA2(Boolean(e4));
       }) : void tA2(true);

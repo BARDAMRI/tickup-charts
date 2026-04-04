@@ -1,5 +1,5 @@
 import { r as reactExports, j as jsxRuntimeExports, c as clientExports } from './vendor-react-D0COmpux.js';
-import { P as Pt, f as ft, _ as __vitePreload, Y as Yt, V as Vt, I as It, t as to, y as yt, v, X as XQ, i as io, B as Bo, n as no, r as ro, a as ao, N as Nt, b as rn } from './vendor-tickup-core-DFd_ZGhM.js';
+import { P as Pt, f as ft, _ as __vitePreload, Y as Yt, V as Vt, I as It, t as to, y as yt, v, i as io, B as Bo, X as XQ, n as no, r as ro, a as ao, N as Nt, b as rn } from './vendor-tickup-core-BbxtnNAl.js';
 import { M as Moon, S as Sun, B as BookOpen, Z as Zap, L as Layers, P as Pencil, a as MousePointer2, T as TrendingUp, G as GitBranch, b as Magnet, E as Eraser, C as ChartCandlestick, c as ChartArea, d as ChartLine, F as Flame, e as Play, f as Pause, R as RefreshCw } from './vendor-lucide-BUwdCf2e.js';
 
 true&&(function polyfill() {
@@ -42,7 +42,7 @@ true&&(function polyfill() {
 
 const LIVE_TICK_MS$1 = 450;
 const LIVE_APPEND_EVERY = 5;
-function simplePRNG$1(seed = 12345) {
+function simplePRNG$2(seed = 12345) {
   let s = seed >>> 0;
   const rand = () => (s = 1664525 * s + 1013904223 >>> 0) / 4294967295;
   return { rand };
@@ -57,7 +57,7 @@ function buildMockIntervals(params) {
     driftPerBar = 0.02,
     vol = 0.55
   } = params;
-  const rng = simplePRNG$1(seed);
+  const rng = simplePRNG$2(seed);
   const out = [];
   let t = startTime;
   let lastClose = startPrice;
@@ -84,7 +84,7 @@ function buildMockIntervals(params) {
   return out;
 }
 function jitterLastBar$1(last, rngSeed = 999001) {
-  const rng = simplePRNG$1((last.t ^ rngSeed) >>> 0);
+  const rng = simplePRNG$2((last.t ^ rngSeed) >>> 0);
   const delta = (rng.rand() - 0.5) * (Math.abs(last.c - last.o) * 0.35 + 0.08);
   const c = +(last.c + delta).toFixed(4);
   const h = +Math.max(last.h, c, last.o).toFixed(4);
@@ -94,7 +94,7 @@ function jitterLastBar$1(last, rngSeed = 999001) {
   return { ...last, c, h, l, v };
 }
 function appendBarAfter(last, intervalSec, rngSeed = 888777) {
-  const rng = simplePRNG$1(last.t + intervalSec + rngSeed >>> 0);
+  const rng = simplePRNG$2(last.t + intervalSec + rngSeed >>> 0);
   const o = last.c;
   const noise = (rng.rand() - 0.5) * 1.1;
   const c = +(o + noise * 0.12).toFixed(4);
@@ -488,9 +488,10 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
     }
   }, []);
   reactExports.useEffect(() => {
-    const enabled = String("1") === "1";
-    if (!enabled) return;
-    __vitePreload(() => import('./index-BzPwDpPe.js'),true?[]:void 0).then((m) => {
+    __vitePreload(() => import('./vendor-tickup-prime-BzPwDpPe.js'),true?[]:void 0).then((m) => {
+      if (m?.TickUpPrime?.id === "prime-shim") {
+        return;
+      }
       if (m?.createTickUpPrimeEngine && m?.getTickUpPrimeThemePatch) {
         setPrimeBridge({
           createTickUpPrimeEngine: m.createTickUpPrimeEngine,
@@ -1582,6 +1583,7 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
     }
   );
 }
+const STANDARD_TIER_BAR_CAP = 5e3;
 function ChartHud({ isDark, primeMode, barCount }) {
   const [fps, setFps] = reactExports.useState(60);
   reactExports.useEffect(() => {
@@ -1617,7 +1619,18 @@ function ChartHud({ isDark, primeMode, barCount }) {
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-slate-500", children: "Bars " }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: isDark ? "text-emerald-300" : "text-emerald-700", children: barCount.toLocaleString() })
-        ] })
+        ] }),
+        !primeMode ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: `mt-2 border-t pt-2 text-[10px] font-bold uppercase leading-tight tracking-wide ${isDark ? "border-white/10 text-amber-300" : "border-slate-200 text-amber-800"}`,
+            children: [
+              "DATA CAPPED AT ",
+              STANDARD_TIER_BAR_CAP.toLocaleString(),
+              " BARS"
+            ]
+          }
+        ) : null
       ]
     }
   );
@@ -1710,6 +1723,623 @@ function DemoSidebarButton({
   );
 }
 
+function simplePRNG$1(seed = 12345) {
+  let s = seed >>> 0;
+  const rand = () => (s = 1664525 * s + 1013904223 >>> 0) / 4294967295;
+  return { rand };
+}
+function makeComparisonIntervals(args) {
+  const {
+    startTime,
+    startPrice,
+    intervalSec,
+    count,
+    seed = 12345,
+    driftPerBar = 0.04,
+    vol = 0.6
+  } = args;
+  const rng = simplePRNG$1(seed);
+  const out = [];
+  let t = startTime;
+  let lastClose = startPrice;
+  for (let i = 0; i < count; i++) {
+    const o = lastClose;
+    const noise = (rng.rand() - 0.5) * 2 * vol;
+    const c = o + driftPerBar + noise;
+    const wigUp = Math.abs((rng.rand() - 0.5) * 2) * (vol * 0.8 + 0.1);
+    const wigDn = Math.abs((rng.rand() - 0.5) * 2) * (vol * 0.8 + 0.1);
+    const h = Math.max(o, c) + wigUp;
+    const l = Math.min(o, c) - wigDn;
+    const baseVol = 1200;
+    const volJitter = (rng.rand() - 0.5) * 2 * 300;
+    const v = Math.max(1, Math.round(baseVol + volJitter));
+    out.push({
+      t,
+      o: +o.toFixed(2),
+      h: +h.toFixed(2),
+      l: +l.toFixed(2),
+      c: +c.toFixed(2),
+      v
+    });
+    lastClose = c;
+    t += intervalSec;
+  }
+  return out;
+}
+
+const COMPARE_INTERVAL_SEC = 300;
+const STANDARD_CAP = 5e3;
+const MOCK_STREAM_BARS = 12e3;
+function ComparisonTelemetry({
+  side,
+  feedBars,
+  renderedBars,
+  fps,
+  hzPhase
+}) {
+  const neon = side === "prime";
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      className: "rounded-xl border px-3 py-2 font-mono text-[10px] leading-relaxed shadow-lg backdrop-blur-md md:text-[11px]",
+      style: {
+        borderColor: "var(--telemetry-border)",
+        backgroundColor: neon ? "var(--telemetry-bg-prime)" : "var(--telemetry-bg-core)",
+        color: "var(--telemetry-value)",
+        boxShadow: neon ? "0 8px 28px -8px rgba(62, 197, 255, 0.12)" : "0 8px 24px -10px rgba(15, 23, 42, 0.1)"
+      },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-1 flex items-center gap-2 border-b pb-1", style: { borderColor: "var(--telemetry-divider)" }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: "text-[9px] font-bold uppercase tracking-[0.2em]",
+            style: { color: neon ? "var(--telemetry-label-prime)" : "var(--telemetry-label-core)" },
+            children: neon ? "Prime pipeline" : "Standard Tier"
+          }
+        ) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { color: "var(--telemetry-muted)" }, children: "Feed (mock) " }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { style: { color: neon ? "var(--telemetry-accent-prime)" : "var(--telemetry-value)" }, children: [
+            feedBars.toLocaleString(),
+            " bars"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { color: "var(--telemetry-muted)" }, children: "Chart series " }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { color: neon ? "var(--telemetry-accent-prime)" : "var(--telemetry-value)" }, children: renderedBars.toLocaleString() }),
+          !neon && renderedBars <= STANDARD_CAP ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ml-1 text-[9px] font-semibold uppercase tracking-wide", style: { color: "var(--telemetry-label-core)" }, children: [
+            " ",
+            "(cap)"
+          ] }) : null
+        ] }),
+        neon ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { color: "var(--telemetry-muted)" }, children: "Target cadence " }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-emerald-600 dark:text-emerald-300", children: [
+            "~",
+            fps,
+            " FPS"
+          ] })
+        ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { color: "var(--telemetry-muted)" }, children: "Heartbeat " }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: "inline-flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)] dark:bg-emerald-400 dark:shadow-[0_0_8px_rgba(52,211,153,0.9)]",
+              style: {
+                animation: "none",
+                opacity: 0.35 + 0.65 * hzPhase,
+                transform: `scale(${0.85 + 0.2 * hzPhase})`
+              }
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-medium text-emerald-800 dark:text-emerald-300/90", children: "1 Hz (Standard)" })
+        ] })
+      ]
+    }
+  );
+}
+function ComparisonLab({
+  theme,
+  onThemeVariantChange,
+  onOpenLicenseModal,
+  primeLicenseKey,
+  primeUserIdentifier,
+  primeEngine
+}) {
+  const isDark = theme === ft.dark;
+  const coreRef = reactExports.useRef(null);
+  const primeRef = reactExports.useRef(null);
+  const [coreRendered, setCoreRendered] = reactExports.useState(0);
+  const [primeRendered, setPrimeRendered] = reactExports.useState(0);
+  const [primeFps, setPrimeFps] = reactExports.useState(60);
+  const [hzPhase, setHzPhase] = reactExports.useState(1);
+  const comparisonIntervals = reactExports.useMemo(
+    () => makeComparisonIntervals({
+      startTime: 17e8,
+      startPrice: 100,
+      intervalSec: COMPARE_INTERVAL_SEC,
+      count: MOCK_STREAM_BARS,
+      seed: 900001,
+      driftPerBar: 0.03,
+      vol: 0.65
+    }),
+    []
+  );
+  const visibleRange = reactExports.useMemo(() => {
+    if (!comparisonIntervals.length) {
+      return { start: 0, end: 1 };
+    }
+    const lastT = comparisonIntervals[comparisonIntervals.length - 1].t;
+    return { start: comparisonIntervals[0].t, end: lastT + COMPARE_INTERVAL_SEC };
+  }, [comparisonIntervals]);
+  const coreOptions = reactExports.useMemo(
+    () => ({
+      base: {
+        engine: Vt.standard,
+        theme,
+        showOverlayLine: true,
+        showHistogram: true,
+        showCrosshair: true,
+        showCrosshairValues: true,
+        overlayKinds: [{ kind: Yt.ema, period: 21 }],
+        style: {
+          backgroundColor: isDark ? "#0b0e14" : "#ffffff",
+          grid: { lineColor: isDark ? "#334155" : "#e2e8f0" },
+          histogram: {
+            bullColor: "rgba(38, 166, 154, 0.5)",
+            bearColor: "rgba(239, 83, 80, 0.5)",
+            opacity: isDark ? 0.9 : 0.6
+          },
+          axes: {
+            lineColor: isDark ? "#334155" : "#e2e8f0",
+            textColor: isDark ? "#94a3b8" : "#475569"
+          }
+        }
+      },
+      axes: { yAxisPosition: It.right }
+    }),
+    [theme, isDark]
+  );
+  const primeOptions = reactExports.useMemo(
+    () => ({
+      base: {
+        ...coreOptions.base,
+        engine: Vt.prime,
+        showOverlayLine: true,
+        overlayKinds: [Yt.vwap, { kind: Yt.ema, period: 34 }],
+        style: {
+          ...coreOptions.base.style,
+          backgroundColor: isDark ? "#050913" : "#f8fafc",
+          grid: isDark || !coreOptions.base.style.grid ? coreOptions.base.style.grid : {
+            ...coreOptions.base.style.grid,
+            lineColor: "rgba(3, 105, 161, 0.1)"
+          }
+        }
+      },
+      axes: { yAxisPosition: It.right }
+    }),
+    [coreOptions.base, isDark]
+  );
+  const pollCounts = reactExports.useCallback(() => {
+    setCoreRendered(coreRef.current?.getViewInfo()?.intervals?.length ?? 0);
+    setPrimeRendered(primeRef.current?.getViewInfo()?.intervals?.length ?? 0);
+  }, []);
+  reactExports.useEffect(() => {
+    pollCounts();
+    const t = window.setInterval(pollCounts, 400);
+    return () => clearInterval(t);
+  }, [pollCounts]);
+  reactExports.useLayoutEffect(() => {
+    if (!primeEngine) return;
+    let cancelled = false;
+    let attempts = 0;
+    const tryBind = () => {
+      if (cancelled) return;
+      const h = primeRef.current;
+      if (h?.setEngine) {
+        h.setEngine(primeEngine);
+        return;
+      }
+      if (attempts++ < 48) {
+        requestAnimationFrame(tryBind);
+      }
+    };
+    const id = requestAnimationFrame(tryBind);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(id);
+    };
+  }, [primeEngine]);
+  reactExports.useEffect(() => {
+    const id = window.setInterval(() => {
+      setHzPhase((p) => p > 0.5 ? 0.2 : 1);
+    }, 1e3);
+    return () => clearInterval(id);
+  }, []);
+  reactExports.useEffect(() => {
+    let frames = 0;
+    let last = performance.now();
+    let raf = 0;
+    const loop = (now) => {
+      frames += 1;
+      const dt = now - last;
+      if (dt >= 500) {
+        setPrimeFps(Math.round(frames * 1e3 / dt));
+        frames = 0;
+        last = now;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  const handleSymbolSearch = reactExports.useCallback(() => {
+    window.alert("Comparison lab: wire your data feed here.");
+  }, []);
+  const sharedHostProps = reactExports.useMemo(
+    () => ({
+      defaultSymbol: "COMPARE",
+      onSymbolSearch: handleSymbolSearch,
+      initialNumberOfYTicks: 8,
+      initialTimeDetailLevel: yt.Medium,
+      initialVisibleTimeRange: visibleRange,
+      themeVariant: theme,
+      onThemeVariantChange,
+      showAttribution: true
+    }),
+    [theme, visibleRange, handleSymbolSearch, onThemeVariantChange]
+  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "main",
+    {
+      className: "mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-8 px-4 py-8 pb-20 lg:px-8",
+      style: { color: "var(--text-primary)" },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "text-center", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "p",
+            {
+              className: "mb-2 text-[11px] font-bold uppercase tracking-[0.35em]",
+              style: { color: "var(--compare-hero-kicker)" },
+              children: "Battleground"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "h1",
+            {
+              className: `mb-3 bg-gradient-to-r bg-clip-text text-3xl font-extrabold tracking-tight text-transparent sm:text-4xl ${isDark ? "from-white via-[#e0f2fe] to-[#3EC5FF]" : "from-slate-900 via-slate-700 to-[#0369a1]"}`,
+              children: "Live Comparison"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mx-auto max-w-2xl text-sm", style: { color: "var(--compare-hero-body)" }, children: [
+            "This view loads the ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { style: { color: "var(--compare-hero-strong)" }, children: "published" }),
+            " TickUp bundles from",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "code",
+              {
+                className: "rounded px-1 text-[11px] font-medium",
+                style: { backgroundColor: "var(--compare-code-bg)", color: "var(--compare-code-text)" },
+                children: "dist/"
+              }
+            ),
+            " ",
+            "— not TypeScript sources — with an isolated",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("strong", { style: { color: "var(--compare-hero-strong)" }, children: [
+              MOCK_STREAM_BARS.toLocaleString(),
+              "-bar"
+            ] }),
+            " mock stream so the Standard ",
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("strong", { style: { color: "var(--telemetry-label-core)" }, children: [
+              STANDARD_CAP.toLocaleString(),
+              "-bar"
+            ] }),
+            " cap is visible next to Prime presentation. Core imports resolve to",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "code",
+              {
+                className: "rounded px-1 text-[11px] font-medium",
+                style: { backgroundColor: "var(--compare-code-bg)", color: "var(--compare-code-text)" },
+                children: "tickup-core-final/dist"
+              }
+            ),
+            "; Prime to",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "code",
+              {
+                className: "rounded px-1 text-[11px] font-medium",
+                style: { backgroundColor: "var(--compare-code-bg)", color: "var(--compare-code-text)" },
+                children: "tickup-prime-final/dist"
+              }
+            ),
+            " ",
+            "(no ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("code", { style: { color: "var(--telemetry-muted)" }, children: "src/" }),
+            ")."
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-6 lg:grid-cols-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "section",
+            {
+              className: "relative overflow-hidden rounded-2xl border",
+              style: {
+                borderColor: "var(--compare-core-border)",
+                backgroundColor: "var(--compare-core-surface)",
+                boxShadow: "var(--compare-core-shadow)"
+              },
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "div",
+                  {
+                    className: "border-b px-3 py-2 text-center text-[10px] font-bold uppercase tracking-widest",
+                    style: {
+                      borderColor: "var(--compare-cap-banner-border)",
+                      backgroundColor: "var(--compare-cap-banner-bg)",
+                      color: "var(--compare-cap-banner-text)"
+                    },
+                    children: [
+                      "DATA CAPPED AT ",
+                      STANDARD_CAP.toLocaleString(),
+                      " BARS"
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "div",
+                  {
+                    className: "flex flex-wrap items-center justify-between gap-2 border-b px-3 py-2",
+                    style: { borderColor: "var(--compare-core-border)" },
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold", style: { color: "var(--compare-hero-strong)" }, children: "TickUp Core (Standard)" }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                        "button",
+                        {
+                          type: "button",
+                          disabled: true,
+                          title: "Magnet snapping is Prime-only in this showcase.",
+                          className: "inline-flex cursor-not-allowed items-center gap-1 rounded-md border px-2 py-1 text-xs opacity-60",
+                          style: { borderColor: "var(--border-default)", color: "var(--text-muted)" },
+                          children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsx(Magnet, { className: "h-3.5 w-3.5" }),
+                            "Magnet"
+                          ]
+                        }
+                      )
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative h-[380px]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    io,
+                    {
+                      ref: coreRef,
+                      ...sharedHostProps,
+                      intervalsArray: comparisonIntervals,
+                      chartOptions: coreOptions
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute bottom-3 left-3 z-20", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    ComparisonTelemetry,
+                    {
+                      side: "core",
+                      feedBars: MOCK_STREAM_BARS,
+                      renderedBars: coreRendered,
+                      fps: 0,
+                      hzPhase
+                    }
+                  ) })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "border-t p-3", style: { borderColor: "var(--compare-core-border)" }, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2 sm:flex-row", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: onOpenLicenseModal,
+                      className: "flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold shadow-md transition hover:brightness-110 active:scale-[0.99]",
+                      style: {
+                        background: "linear-gradient(90deg, var(--accent-neon), #0ea5e9)",
+                        color: "var(--text-on-accent)"
+                      },
+                      children: "Upgrade to Prime"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: onOpenLicenseModal,
+                      className: "flex-1 rounded-lg border px-4 py-2.5 text-sm font-semibold transition active:scale-[0.99] hover:bg-[var(--btn-ghost-hover)]",
+                      style: {
+                        borderColor: "var(--border-strong)",
+                        color: "var(--text-secondary)"
+                      },
+                      children: "Pricing & activation"
+                    }
+                  )
+                ] }) })
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "section",
+            {
+              className: "compare-prime-panel-bg relative overflow-hidden rounded-2xl border",
+              style: {
+                borderColor: "var(--compare-prime-border)",
+                boxShadow: "var(--compare-prime-shadow)"
+              },
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "div",
+                  {
+                    className: "border-b px-3 py-2 text-center text-[10px] font-bold uppercase tracking-widest",
+                    style: {
+                      borderColor: "var(--compare-prime-border)",
+                      backgroundColor: "var(--compare-prime-strip-bg)",
+                      color: "var(--compare-prime-strip-text)"
+                    },
+                    children: "Prime experience · Neon + extended throughput (licensed product)"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "div",
+                  {
+                    className: "flex items-center justify-between border-b px-3 py-2",
+                    style: { borderColor: "var(--compare-prime-border)" },
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold", style: { color: "var(--compare-prime-title)" }, children: "TickUp Prime" }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "span",
+                        {
+                          className: "rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1",
+                          style: {
+                            backgroundColor: "var(--compare-prime-badge-bg)",
+                            color: "var(--compare-prime-badge-text)",
+                            boxShadow: "inset 0 0 0 1px var(--compare-prime-badge-ring)"
+                          },
+                          children: "Neon"
+                        }
+                      )
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative h-[380px]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Bo,
+                    {
+                      ref: primeRef,
+                      ...sharedHostProps,
+                      intervalsArray: comparisonIntervals,
+                      chartOptions: primeOptions,
+                      licenseKey: primeLicenseKey,
+                      licenseUserIdentifier: primeUserIdentifier
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute bottom-3 left-3 z-20", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    ComparisonTelemetry,
+                    {
+                      side: "prime",
+                      feedBars: MOCK_STREAM_BARS,
+                      renderedBars: primeRendered,
+                      fps: primeFps,
+                      hzPhase: 0
+                    }
+                  ) })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "border-t p-3", style: { borderColor: "var(--compare-prime-border)" }, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2 sm:flex-row", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: onOpenLicenseModal,
+                      className: "flex-1 rounded-lg border px-4 py-2.5 text-sm font-semibold transition active:scale-[0.99] hover:bg-[var(--accent-neon-soft)]",
+                      style: {
+                        borderColor: "var(--compare-prime-border)",
+                        color: "var(--compare-prime-strip-text)",
+                        backgroundColor: isDark ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.65)"
+                      },
+                      children: "Commercial license"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: onOpenLicenseModal,
+                      className: "flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition hover:brightness-110 active:scale-[0.99]",
+                      style: {
+                        backgroundColor: "var(--accent-neon)",
+                        color: "var(--text-on-accent)"
+                      },
+                      children: "Open activation modal"
+                    }
+                  )
+                ] }) })
+              ]
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
+
+function PrimeProTelemetry({
+  theme,
+  pickHost
+}) {
+  const [fps, setFps] = reactExports.useState(60);
+  const [renderedBars, setRenderedBars] = reactExports.useState(0);
+  reactExports.useEffect(() => {
+    let raf = 0;
+    let frames = 0;
+    let last = performance.now();
+    const loop = (t) => {
+      frames++;
+      const dt = t - last;
+      if (dt >= 650) {
+        setFps(Math.max(1, Math.round(frames * 1e3 / dt)));
+        frames = 0;
+        last = t;
+        const h = pickHost();
+        setRenderedBars(h?.getViewInfo?.()?.intervals?.length ?? 0);
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [pickHost]);
+  const isDark = theme === ft.dark;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      className: "pointer-events-none absolute right-3 top-3 z-20 flex max-w-[min(92vw,320px)] flex-col gap-1 rounded-xl border px-3 py-2 text-left shadow-xl backdrop-blur-md",
+      style: {
+        borderColor: "var(--prime-pill-border)",
+        backgroundColor: "var(--prime-pill-bg)",
+        color: "var(--text-primary)",
+        boxShadow: isDark ? "0 0 28px rgba(62, 197, 255, 0.15)" : "0 8px 32px -12px rgba(3, 105, 161, 0.12)"
+      },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em]", style: { color: "var(--prime-pill-title)" }, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Zap, { className: "h-3 w-3", fill: "currentColor" }),
+          "Pro Power"
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-[11px] font-semibold leading-snug", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "tabular-nums", style: { color: "var(--prime-pill-fps)" }, children: [
+            fps,
+            " FPS"
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { color: "var(--prime-pill-muted)" }, children: " · " }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { color: "var(--text-secondary)" }, children: "Unlimited history" })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-[10px] font-medium tabular-nums", style: { color: "var(--prime-pill-muted)" }, children: [
+          "Series window: ",
+          renderedBars.toLocaleString(),
+          " bars (live)"
+        ] })
+      ]
+    }
+  );
+}
+
+const SHOWCASE_PRIME_LICENSE_KEY = "TICKUP-PRO-2026-BETA";
+const SHOWCASE_PRIME_USER_ID = "showcase@tickup.demo";
+
+function syncDocumentTheme(theme) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  const mode = theme === ft.dark ? "dark" : "light";
+  root.dataset.theme = mode;
+  root.classList.toggle("dark-theme", mode === "dark");
+  root.classList.toggle("light-theme", mode === "light");
+}
+
 function simplePRNG(seed = 12345) {
   let s = seed >>> 0;
   const rand = () => (s = 1664525 * s + 1013904223 >>> 0) / 4294967295;
@@ -1800,6 +2430,7 @@ function jitterLastBar(last) {
 const LIVE_TICK_MS = 900;
 const PRIME_LICENSE_STORAGE_KEY = "tickup:prime:license-key";
 const PRIME_USER_STORAGE_KEY = "tickup:prime:user-identifier";
+const PRIME_SHOWCASE_BAR_COUNT = 12e3;
 const TIERS_WITH_DEMO_SHAPES = ["command"];
 const TIER_ROWS = [
   {
@@ -1829,7 +2460,7 @@ const TIER_ROWS = [
   {
     key: "prime",
     title: "TickUp Prime",
-    blurb: "Prime teaser lane. Link @tickup/prime locally to activate neon rendering.",
+    blurb: "Production @tickup/prime bundle: WebGL, neon luxury profile, VWAP Pro, magnetic drawing with Pro license, and uncapped history in this lane.",
     Cmp: Bo,
     lux: true
   }
@@ -1947,29 +2578,60 @@ function App() {
   const [primeLinked, setPrimeLinked] = reactExports.useState(false);
   const [primeLicenseInput, setPrimeLicenseInput] = reactExports.useState(() => {
     if (typeof window === "undefined") {
-      return "";
+      return SHOWCASE_PRIME_LICENSE_KEY;
     }
-    return window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? "";
+    return window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? SHOWCASE_PRIME_LICENSE_KEY;
   });
   const [primeLicenseKey, setPrimeLicenseKey] = reactExports.useState(() => {
     if (typeof window === "undefined") {
-      return "";
+      return SHOWCASE_PRIME_LICENSE_KEY;
     }
-    return (window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? "").trim();
+    return (window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? SHOWCASE_PRIME_LICENSE_KEY).trim();
   });
   const [primeUserIdentifierInput, setPrimeUserIdentifierInput] = reactExports.useState(() => {
     if (typeof window === "undefined") {
-      return "";
+      return SHOWCASE_PRIME_USER_ID;
     }
-    return window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? "";
+    return window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? SHOWCASE_PRIME_USER_ID;
   });
   const [primeUserIdentifier, setPrimeUserIdentifier] = reactExports.useState(() => {
     if (typeof window === "undefined") {
-      return "";
+      return SHOWCASE_PRIME_USER_ID;
     }
-    return (window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? "").trim();
+    return (window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? SHOWCASE_PRIME_USER_ID).trim();
   });
   const [licenseModalOpen, setLicenseModalOpen] = reactExports.useState(false);
+  reactExports.useEffect(() => {
+    const syncRoute = () => {
+      const raw = window.location.hash.replace(/^#\/?/, "").toLowerCase();
+      let relPath = window.location.pathname.replace(/\/$/, "") || "/";
+      const base = "/tickup-charts/".replace(/\/$/, "");
+      if (base && base !== "/" && relPath.startsWith(base)) {
+        relPath = relPath.slice(base.length) || "/";
+      }
+      relPath = relPath.replace(/\/$/, "") || "/";
+      const pathCompare = relPath === "/compare" || relPath.endsWith("/compare");
+      if (raw === "compare" || raw === "playground" || pathCompare) {
+        setPage("compare");
+      }
+    };
+    syncRoute();
+    window.addEventListener("hashchange", syncRoute);
+    window.addEventListener("popstate", syncRoute);
+    return () => {
+      window.removeEventListener("hashchange", syncRoute);
+      window.removeEventListener("popstate", syncRoute);
+    };
+  }, []);
+  reactExports.useEffect(() => {
+    if (page === "compare") {
+      if (window.location.hash !== "#/compare") {
+        window.location.hash = "#/compare";
+      }
+    } else if (page === "tiers" && window.location.hash === "#/compare") {
+      window.location.hash = "";
+    }
+  }, [page]);
   reactExports.useEffect(() => {
     const mqLight = window.matchMedia("(prefers-color-scheme: light)");
     const handler = (e) => {
@@ -1978,17 +2640,26 @@ function App() {
     mqLight.addEventListener("change", handler);
     return () => mqLight.removeEventListener("change", handler);
   }, []);
+  reactExports.useEffect(() => {
+    syncDocumentTheme(theme);
+  }, [theme]);
   reactExports.useLayoutEffect(() => {
-    const enabled = String("1") === "1";
-    if (!enabled) return;
-    __vitePreload(() => import('./index-BzPwDpPe.js'),true?[]:void 0).then((m) => {
-      if (m?.TickUpPrime) {
-        setPrimeEngine(m.TickUpPrime);
-        setPrimeLinked(true);
+    let cancelled = false;
+    __vitePreload(() => import('./vendor-tickup-prime-BzPwDpPe.js'),true?[]:void 0).then((m) => {
+      if (cancelled) return;
+      const eng = m.TickUpPrime ?? null;
+      if (eng) {
+        setPrimeEngine(eng);
+        setPrimeLinked(eng.id !== "prime-shim");
+      } else {
+        setPrimeLinked(false);
       }
     }).catch(() => {
-      setPrimeLinked(false);
+      if (!cancelled) setPrimeLinked(false);
     });
+    return () => {
+      cancelled = true;
+    };
   }, []);
   const primeLicenseUnlocked = primeLicenseKey.trim().length > 0;
   const applyPrimeLicense = reactExports.useCallback(() => {
@@ -2061,34 +2732,46 @@ function App() {
     }),
     [theme]
   );
-  const coreComparisonOptions = reactExports.useMemo(
-    () => ({
-      ...standardChartOptions,
-      base: {
-        ...standardChartOptions.base,
-        engine: Vt.standard,
-        showOverlayLine: true,
-        overlayKinds: [{ kind: Yt.ema, period: 21 }]
-      }
+  const primeShowcaseIntervals = reactExports.useMemo(
+    () => makeSimpleIntervals({
+      startTime: 1688e6,
+      startPrice: 100,
+      intervalSec: INTERVAL_SEC,
+      count: PRIME_SHOWCASE_BAR_COUNT,
+      seed: 918273,
+      driftPerBar: 0.03,
+      vol: 0.7
     }),
-    [standardChartOptions]
+    []
   );
-  const primeComparisonOptions = reactExports.useMemo(
+  const primeShowcaseVisibleRange = reactExports.useMemo(() => {
+    if (!primeShowcaseIntervals.length) {
+      return { start: 0, end: 1 };
+    }
+    const lastT = primeShowcaseIntervals[primeShowcaseIntervals.length - 1].t;
+    return { start: primeShowcaseIntervals[0].t, end: lastT + INTERVAL_SEC };
+  }, [primeShowcaseIntervals]);
+  const primeShowcaseChartOptions = reactExports.useMemo(
     () => ({
-      ...standardChartOptions,
       base: {
         ...standardChartOptions.base,
         engine: Vt.prime,
         showOverlayLine: true,
-        overlayKinds: [Yt.vwap, { kind: Yt.ema, period: 34 }],
+        overlayKinds: [Yt.vwap, { kind: Yt.ema, period: 21 }],
         style: {
           ...standardChartOptions.base.style,
-          backgroundColor: theme === ft.dark ? "#050913" : "#f0f9ff"
+          backgroundColor: theme === ft.dark ? "#050913" : "#f8fafc",
+          grid: theme === ft.dark ? standardChartOptions.base.style.grid : {
+            ...standardChartOptions.base.style.grid,
+            lineColor: "rgba(3, 105, 161, 0.11)"
+          }
         }
-      }
+      },
+      axes: standardChartOptions.axes
     }),
     [standardChartOptions, theme]
   );
+  const primeTelemetryPickHost = reactExports.useCallback(() => refs.current.prime, []);
   const pushLiveTick = reactExports.useCallback(() => {
     const api = commandRef.current;
     if (!api?.applyLiveData || !api.getViewInfo) {
@@ -2181,82 +2864,141 @@ Wire onSymbolSearch to load data for this symbol.`);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
-      className: `flex min-h-screen flex-col font-sans transition-colors duration-300 ${theme === ft.dark ? "bg-[#050608] text-slate-200" : "bg-slate-50 text-slate-800"}`,
-      style: { backgroundImage: theme === ft.dark ? "radial-gradient(circle at 50% 10%, rgba(62,197,255,0.06), transparent 50%)" : "radial-gradient(circle at 50% 10%, rgba(62,197,255,0.15), transparent 50%)" },
+      className: "flex min-h-screen flex-col font-sans transition-colors duration-300",
+      style: {
+        backgroundColor: "var(--bg-primary)",
+        color: "var(--text-primary)",
+        backgroundImage: "var(--app-radial)"
+      },
       children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: `sticky top-0 z-50 py-4 px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-b ${theme === ft.dark ? "border-white/5 bg-[#0f121c]/80 backdrop-blur-md" : "border-slate-200 bg-white/80 backdrop-blur-md"}`, children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col leading-tight", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-lg font-extrabold tracking-tight", children: [
-              "TickUp ",
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[#3EC5FF]", children: "Charts" })
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `${theme === ft.dark ? "text-slate-400" : "text-slate-500"} text-xs font-semibold uppercase tracking-wider`, children: "Demo" })
-          ] }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center justify-end gap-3", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "a",
-              {
-                href: "https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/README.md",
-                target: "_blank",
-                rel: "noreferrer",
-                className: `rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${theme === ft.dark ? "border-white/10 bg-black/30 text-slate-300 hover:border-[#3EC5FF]/45 hover:text-white" : "border-slate-200 bg-white/70 text-slate-700 hover:border-[#3EC5FF]/60 hover:text-slate-900"}`,
-                title: "Open documentation (GitHub)",
-                children: "Docs"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "button",
-              {
-                type: "button",
-                onClick: () => setPage((p) => p === "tiers" ? "ticks" : "tiers"),
-                className: `rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${page === "ticks" ? "border-[#3EC5FF]/60 bg-[#3EC5FF]/10 text-[#3EC5FF]" : theme === ft.dark ? "border-white/10 bg-black/30 text-slate-300 hover:border-white/20 hover:text-white" : "border-slate-200 bg-white/70 text-slate-700 hover:border-slate-300 hover:text-slate-900"}`,
-                "aria-pressed": page === "ticks",
-                title: page === "ticks" ? "Back to tier showcase" : "Open tick/axis demo page",
-                children: page === "ticks" ? "Back" : "Tick demo"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center gap-3 rounded-full border p-1.5 pl-4 pr-1.5 shadow-xl ${theme === ft.dark ? "border-white/10 bg-black/40" : "border-slate-200 bg-white/60"}`, children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 pr-2", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "relative flex h-3 w-3", children: [
-                  !livePaused && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `relative inline-flex h-3 w-3 rounded-full ${livePaused ? "bg-amber-500" : "bg-emerald-500"}` })
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "header",
+          {
+            className: "sticky top-0 z-50 flex flex-col items-center justify-between gap-4 border-b px-6 py-4 backdrop-blur-md sm:flex-row lg:px-12",
+            style: {
+              borderColor: "var(--header-border)",
+              backgroundColor: "var(--header-bg)"
+            },
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col leading-tight", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-lg font-extrabold tracking-tight", children: [
+                  "TickUp ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { color: "var(--brand-wordmark)" }, children: "Charts" })
                 ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `text-xs font-semibold uppercase tracking-wider ${theme === ft.dark ? "text-slate-300" : "text-slate-600"}`, children: livePaused ? "Live Paused" : "Live Data API" })
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "button",
-                {
-                  type: "button",
-                  onClick: () => setLivePaused((p) => !p),
-                  className: `flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ${livePaused ? theme === ft.dark ? "bg-amber-500/20 text-amber-500 hover:bg-amber-500/30" : "bg-amber-500/20 text-amber-600 hover:bg-amber-500/30" : theme === ft.dark ? "bg-white/10 text-white hover:bg-white/20" : "bg-black/5 text-slate-800 hover:bg-black/10"}`,
-                  title: livePaused ? "Resume Data" : "Pause Data",
-                  children: livePaused ? /* @__PURE__ */ jsxRuntimeExports.jsx(Play, { className: "h-4 w-4", fill: "currentColor" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Pause, { className: "h-4 w-4", fill: "currentColor" })
-                }
-              ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "button",
-                {
-                  type: "button",
-                  onClick: handleRefreshSeries,
-                  className: `flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ${theme === ft.dark ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white" : "bg-black/5 text-slate-500 hover:bg-black/10 hover:text-slate-900"}`,
-                  title: "Reset Data",
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(RefreshCw, { className: "h-4 w-4" })
-                }
-              ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "button",
-                {
-                  type: "button",
-                  onClick: () => setTheme((t) => t === ft.dark ? ft.light : ft.dark),
-                  className: `flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ${theme === ft.dark ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white" : "bg-black/5 text-amber-500 hover:bg-black/10 hover:text-amber-600"}`,
-                  title: theme === ft.dark ? "Switch to Light Mode" : "Switch to Dark Mode",
-                  children: theme === ft.dark ? /* @__PURE__ */ jsxRuntimeExports.jsx(Sun, { className: "h-4 w-4" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Moon, { className: "h-4 w-4" })
-                }
-              )
-            ] })
-          ] })
-        ] }),
-        page === "ticks" ? /* @__PURE__ */ jsxRuntimeExports.jsx(TickUpDemo, {}) : /* @__PURE__ */ jsxRuntimeExports.jsxs("main", { className: "mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 p-6 lg:gap-16 lg:p-12 mb-20", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs font-semibold uppercase tracking-wider", style: { color: "var(--text-muted)" }, children: "Demo" })
+              ] }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center justify-end gap-3", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "a",
+                  {
+                    href: "https://github.com/BARDAMRI/tickup-charts/blob/main/documentation/README.md",
+                    target: "_blank",
+                    rel: "noreferrer",
+                    className: `rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${theme === ft.dark ? "border-white/10 bg-black/30 text-slate-300 hover:border-[#3EC5FF]/45 hover:text-white" : "border-slate-200 bg-white/70 text-slate-700 hover:border-[#3EC5FF]/60 hover:text-slate-900"}`,
+                    title: "Open documentation (GitHub)",
+                    children: "Docs"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    onClick: () => {
+                      setPage("tiers");
+                      window.location.hash = "";
+                    },
+                    className: `rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${page === "tiers" ? "showcase-nav-pill--active" : theme === ft.dark ? "border-white/10 bg-black/30 text-slate-300 hover:border-white/20 hover:text-white" : "border-slate-200 bg-white/70 text-slate-700 hover:border-slate-300 hover:text-slate-900"}`,
+                    "aria-pressed": page === "tiers",
+                    children: "Showcase"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    onClick: () => setPage("ticks"),
+                    className: `rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${page === "ticks" ? "showcase-nav-pill--active" : theme === ft.dark ? "border-white/10 bg-black/30 text-slate-300 hover:border-white/20 hover:text-white" : "border-slate-200 bg-white/70 text-slate-700 hover:border-slate-300 hover:text-slate-900"}`,
+                    "aria-pressed": page === "ticks",
+                    children: "Tick demo"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    onClick: () => {
+                      setPage("compare");
+                      window.location.hash = "#/compare";
+                    },
+                    className: `rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${page === "compare" ? "showcase-nav-pill--active" : theme === ft.dark ? "border-white/10 bg-black/30 text-slate-300 hover:border-white/20 hover:text-white" : "border-slate-200 bg-white/70 text-slate-700 hover:border-slate-300 hover:text-slate-900"}`,
+                    "aria-pressed": page === "compare",
+                    title: "Core vs Prime — published dist bundles, high-volume mock data",
+                    children: "Core vs Prime"
+                  }
+                ),
+                page !== "compare" ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center gap-3 rounded-full border p-1.5 pl-4 pr-1.5 shadow-xl ${theme === ft.dark ? "border-white/10 bg-black/40" : "border-slate-200 bg-white/60"}`, children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 pr-2", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "relative flex h-3 w-3", children: [
+                      !livePaused && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `relative inline-flex h-3 w-3 rounded-full ${livePaused ? "bg-amber-500" : "bg-emerald-500"}` })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `text-xs font-semibold uppercase tracking-wider ${theme === ft.dark ? "text-slate-300" : "text-slate-600"}`, children: livePaused ? "Live Paused" : "Live Data API" })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: () => setLivePaused((p) => !p),
+                      className: `flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ${livePaused ? theme === ft.dark ? "bg-amber-500/20 text-amber-500 hover:bg-amber-500/30" : "bg-amber-500/20 text-amber-600 hover:bg-amber-500/30" : theme === ft.dark ? "bg-white/10 text-white hover:bg-white/20" : "bg-black/5 text-slate-800 hover:bg-black/10"}`,
+                      title: livePaused ? "Resume Data" : "Pause Data",
+                      children: livePaused ? /* @__PURE__ */ jsxRuntimeExports.jsx(Play, { className: "h-4 w-4", fill: "currentColor" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Pause, { className: "h-4 w-4", fill: "currentColor" })
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: handleRefreshSeries,
+                      className: `flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ${theme === ft.dark ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white" : "bg-black/5 text-slate-500 hover:bg-black/10 hover:text-slate-900"}`,
+                      title: "Reset Data",
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(RefreshCw, { className: "h-4 w-4" })
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      onClick: () => setTheme((t) => t === ft.dark ? ft.light : ft.dark),
+                      className: `flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ${theme === ft.dark ? "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white" : "bg-black/5 text-amber-500 hover:bg-black/10 hover:text-amber-600"}`,
+                      title: theme === ft.dark ? "Switch to Light Mode" : "Switch to Dark Mode",
+                      children: theme === ft.dark ? /* @__PURE__ */ jsxRuntimeExports.jsx(Sun, { className: "h-4 w-4" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Moon, { className: "h-4 w-4" })
+                    }
+                  )
+                ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    onClick: () => setTheme((t) => t === ft.dark ? ft.light : ft.dark),
+                    className: `flex h-9 w-9 items-center justify-center rounded-full border transition-all ${theme === ft.dark ? "border-white/10 bg-black/40 text-slate-300 hover:bg-white/10" : "border-slate-200 bg-white/70 text-amber-600 hover:bg-slate-50"}`,
+                    title: theme === ft.dark ? "Light mode" : "Dark mode",
+                    children: theme === ft.dark ? /* @__PURE__ */ jsxRuntimeExports.jsx(Sun, { className: "h-4 w-4" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Moon, { className: "h-4 w-4" })
+                  }
+                )
+              ] })
+            ]
+          }
+        ),
+        page === "ticks" ? /* @__PURE__ */ jsxRuntimeExports.jsx(TickUpDemo, {}) : page === "compare" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ComparisonLab,
+          {
+            theme,
+            onThemeVariantChange: setTheme,
+            onOpenLicenseModal: () => setLicenseModalOpen(true),
+            primeLicenseKey: primeLicenseUnlocked ? primeLicenseKey : null,
+            primeUserIdentifier: primeUserIdentifier || null,
+            primeEngine
+          }
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("main", { className: "mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 p-6 lg:gap-16 lg:p-12 mb-20", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center pt-8 pb-4", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("h1", { className: "mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-7xl", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `text-transparent bg-clip-text bg-gradient-to-b ${theme === ft.dark ? "from-white to-slate-400" : "from-slate-800 to-slate-500"}`, children: "Next-Gen" }),
@@ -2302,7 +3044,7 @@ Wire onSymbolSearch to load data for this symbol.`);
                       ] }),
                       /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "History" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "2k History" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "5k History (generous cap)" }),
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Unlimited History" })
                       ] }),
                       /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
@@ -2327,97 +3069,108 @@ Wire onSymbolSearch to load data for this symbol.`);
                     {
                       type: "button",
                       onClick: () => setLicenseModalOpen(true),
-                      className: "rounded-lg bg-[#3EC5FF] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#65d5ff]",
+                      className: "rounded-lg px-4 py-2 text-sm font-semibold transition hover:brightness-110 active:scale-[0.99]",
+                      style: { backgroundColor: "var(--accent-neon)", color: "var(--text-on-accent)" },
                       children: "Upgrade to Prime"
                     }
                   ) })
                 ]
               }
             ),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
               "section",
               {
-                className: `rounded-[2rem] border p-5 lg:p-7 ${theme === ft.dark ? "border-[#3EC5FF]/20 bg-[#08101d]/75" : "border-[#3EC5FF]/30 bg-white"}`,
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: `text-2xl font-bold tracking-tight ${theme === ft.dark ? "text-white" : "text-slate-900"}`, children: "Tier Comparison" }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mt-1 text-sm ${theme === ft.dark ? "text-slate-400" : "text-slate-600"}`, children: "Core is intentionally constrained (candle cap + throttled updates). Prime unlocks neon rendering, VWAP overlays, and smoother live behavior." })
-                    ] }),
+                className: `rounded-[2rem] border p-5 lg:p-7 ${theme === ft.dark ? "border-[#3EC5FF]/20 bg-[#08101d]/75 shadow-[0_0_40px_-20px_rgba(62,197,255,0.2)]" : "border-[#3EC5FF]/30 bg-white"}`,
+                children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: `text-2xl font-bold tracking-tight ${theme === ft.dark ? "text-white" : "text-slate-900"}`, children: "Live Comparison" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: `mt-1 max-w-2xl text-sm ${theme === ft.dark ? "text-slate-400" : "text-slate-600"}`, children: [
+                      "Side-by-side benchmarks load the published ",
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: theme === ft.dark ? "text-slate-200" : "text-slate-800", children: "dist/" }),
+                      " bundles (not TypeScript sources) with a high-volume mock stream—see the Standard cap next to Prime presentation, telemetry, and activation flow."
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "button",
+                      {
+                        type: "button",
+                        onClick: () => {
+                          setPage("compare");
+                          window.location.hash = "#/compare";
+                        },
+                        className: "rounded-lg px-4 py-2 text-sm font-semibold shadow-md transition hover:brightness-110 active:scale-[0.99]",
+                        style: {
+                          backgroundColor: "var(--accent-neon)",
+                          color: "var(--text-on-accent)",
+                          boxShadow: "0 8px 28px -8px color-mix(in srgb, var(--accent-neon) 35%, transparent)"
+                        },
+                        children: "Open Live Comparison"
+                      }
+                    ),
                     /* @__PURE__ */ jsxRuntimeExports.jsx(
                       "button",
                       {
                         type: "button",
                         onClick: () => setLicenseModalOpen(true),
-                        className: "rounded-lg bg-[#3EC5FF] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#65d5ff]",
-                        children: "Unlock Prime Features"
+                        className: `rounded-lg border px-4 py-2 text-sm font-semibold transition ${theme === ft.dark ? "border-[#3EC5FF]/40 text-[#7dd3fc] hover:bg-[#3EC5FF]/10" : "border-[#3EC5FF]/50 text-[#0369a1] hover:bg-cyan-50"}`,
+                        children: "License modal"
                       }
                     )
-                  ] }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-4 lg:grid-cols-2", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `overflow-hidden rounded-xl border ${theme === ft.dark ? "border-white/10 bg-black/30" : "border-slate-200 bg-slate-50"}`, children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center justify-between border-b px-4 py-2 ${theme === ft.dark ? "border-white/10" : "border-slate-200"}`, children: [
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold", children: "TickUp Core (Lite)" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                          "button",
-                          {
-                            type: "button",
-                            disabled: true,
-                            title: "Magnet Snapping is a Prime-only feature. Upgrade to enable.",
-                            className: `inline-flex cursor-not-allowed items-center gap-1 rounded-md border px-2 py-1 text-xs opacity-60 ${theme === ft.dark ? "border-white/15 text-slate-300" : "border-slate-300 text-slate-600"}`,
-                            children: [
-                              /* @__PURE__ */ jsxRuntimeExports.jsx(Magnet, { className: "h-3.5 w-3.5" }),
-                              "Magnet Snapping"
-                            ]
-                          }
-                        )
-                      ] }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[320px]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        io,
-                        {
-                          ...sharedProps,
-                          chartOptions: coreComparisonOptions
-                        }
-                      ) })
-                    ] }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `overflow-hidden rounded-xl border ${theme === ft.dark ? "border-[#3EC5FF]/25 bg-[#030912]" : "border-[#3EC5FF]/35 bg-cyan-50/60"}`, children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center justify-between border-b px-4 py-2 ${theme === ft.dark ? "border-[#3EC5FF]/20" : "border-[#3EC5FF]/25"}`, children: [
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold", children: "TickUp Prime (Pro/Luxury)" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "rounded-full bg-[#5A48DE]/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-violet-300", children: "Neon + VWAP" })
-                      ] }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[320px]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        Bo,
-                        {
-                          ...sharedProps,
-                          chartOptions: primeComparisonOptions,
-                          licenseKey: primeLicenseUnlocked ? primeLicenseKey : null,
-                          licenseUserIdentifier: primeUserIdentifier || null
-                        }
-                      ) })
-                    ] })
                   ] })
-                ]
+                ] })
               }
             ),
             TIER_ROWS.map(({ key, title, blurb, Cmp, lux }) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "section",
               {
-                className: `group relative overflow-hidden rounded-[2rem] border transition-all duration-500 ${lux ? theme === ft.dark ? "border-[#3EC5FF]/30 bg-[#0c121e]/80 shadow-[0_0_80px_-20px_rgba(62,197,255,0.25)] hover:border-[#3EC5FF]/60 hover:shadow-[0_0_100px_-20px_rgba(62,197,255,0.4)]" : "border-[#3EC5FF]/40 bg-white/90 shadow-[0_0_60px_-10px_rgba(62,197,255,0.15)] hover:border-[#3EC5FF]/70 hover:shadow-[0_0_80px_-10px_rgba(62,197,255,0.25)]" : theme === ft.dark ? "border-white/5 bg-white/[0.02] shadow-2xl hover:border-white/10" : "border-slate-200 bg-white shadow-xl hover:border-slate-300"}`,
+                className: `group relative overflow-hidden rounded-[2rem] border transition-all duration-500 ${lux ? theme === ft.dark ? "border-[#3EC5FF]/30 bg-[#0c121e]/80 shadow-[0_0_80px_-20px_rgba(62,197,255,0.25)] hover:border-[#3EC5FF]/60 hover:shadow-[0_0_100px_-20px_rgba(62,197,255,0.4)]" : "hover:border-[color:var(--lux-border-light)] border-[color:var(--lux-border-light)] bg-[var(--lux-surface-light)] shadow-[var(--lux-shadow-light)] hover:shadow-[var(--lux-glow-light)]" : theme === ft.dark ? "border-white/5 bg-white/[0.02] shadow-2xl hover:border-white/10" : "border-slate-200 bg-white shadow-xl hover:border-slate-300"}`,
                 children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `absolute inset-0 z-0 bg-gradient-to-b pointer-events-none ${theme === ft.dark ? "from-white/[0.03] to-transparent" : "from-slate-100 to-transparent"}` }),
                   /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `relative z-10 flex flex-col gap-2 border-b p-6 lg:flex-row lg:items-center lg:justify-between lg:p-8 ${theme === ft.dark ? "border-white/5" : "border-slate-100"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
                       /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: `text-2xl font-bold tracking-tight lg:text-3xl ${theme === ft.dark ? "text-white" : "text-slate-900"}`, children: title }),
-                      lux && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 rounded-full bg-[#5A48DE]/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-violet-300 ring-1 ring-violet-400/30", children: [
-                        /* @__PURE__ */ jsxRuntimeExports.jsx(Zap, { className: "h-3 w-3", fill: "currentColor" }),
-                        " Luxury"
-                      ] })
+                      lux && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                        "span",
+                        {
+                          className: "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ring-1",
+                          style: {
+                            backgroundColor: "var(--lux-badge-bg)",
+                            color: "var(--lux-badge-text)",
+                            boxShadow: "inset 0 0 0 1px var(--lux-badge-ring)"
+                          },
+                          children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsx(Zap, { className: "h-3 w-3", fill: "currentColor" }),
+                            " Luxury"
+                          ]
+                        }
+                      )
                     ] }),
                     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mt-2 text-sm lg:text-base ${theme === ft.dark ? "text-slate-400" : "text-slate-600"}`, children: blurb }),
-                    key === "prime" && !primeLinked ? /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: `mt-2 text-xs ${theme === ft.dark ? "text-[#7dd3fc]" : "text-[#0369a1]"}`, children: [
-                      "Prime package is not linked in this public build. Use ",
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("code", { children: "npm run dev:prime" }),
-                      " to preview neon engine locally."
+                    key === "prime" && !primeLinked ? /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: `mt-2 text-xs ${theme === ft.dark ? "text-amber-200/90" : "text-amber-900"}`, children: [
+                      "Prime",
+                      " ",
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "code",
+                        {
+                          className: `rounded px-1 py-0.5 ${theme === ft.dark ? "bg-black/30" : "bg-amber-100/90 text-amber-950"}`,
+                          children: "dist/tickup.es.js"
+                        }
+                      ),
+                      " ",
+                      "not found next to this repo. Build ",
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "tickup-prime-final" }),
+                      " or set",
+                      " ",
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "code",
+                        {
+                          className: `rounded px-1 py-0.5 ${theme === ft.dark ? "bg-black/30" : "bg-amber-100/90 text-amber-950"}`,
+                          children: "VITE_TICKUP_PRIME_SHIM=1"
+                        }
+                      ),
+                      " ",
+                      "for a stub engine."
                     ] }) : null,
                     key === "prime" ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
                       "div",
@@ -2445,7 +3198,8 @@ Wire onSymbolSearch to load data for this symbol.`);
                             {
                               type: "button",
                               onClick: () => setLicenseModalOpen(true),
-                              className: "w-full rounded-lg bg-[#3EC5FF] px-3 py-2 text-xs font-semibold text-black transition hover:bg-[#65d5ff]",
+                              className: "w-full rounded-lg px-3 py-2 text-xs font-semibold transition hover:brightness-110 active:scale-[0.99]",
+                              style: { backgroundColor: "var(--accent-neon)", color: "var(--text-on-accent)" },
                               children: "Open License Modal"
                             }
                           )
@@ -2453,87 +3207,165 @@ Wire onSymbolSearch to load data for this symbol.`);
                       }
                     ) : null
                   ] }) }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative z-10 p-2 sm:p-4 lg:p-6 pb-0 shadow-inner", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `relative w-full overflow-hidden rounded-xl border ${theme === ft.dark ? "bg-black/50" : "bg-slate-50"} ${lux ? theme === ft.dark ? "h-[550px] border-[#3EC5FF]/20 shadow-[inset_0_0_40px_rgba(62,197,255,0.05)]" : "h-[550px] border-[#3EC5FF]/30 shadow-[inset_0_0_20px_rgba(62,197,255,0.02)]" : theme === ft.dark ? "h-[500px] border-white/10" : "h-[500px] border-slate-200"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Cmp,
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative z-10 p-2 sm:p-4 lg:p-6 pb-0 shadow-inner", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "div",
                     {
-                      ref: tierRefCallbacks[key],
-                      ...sharedProps,
-                      ...key === "prime" ? {
-                        licenseKey: primeLicenseUnlocked ? primeLicenseKey : null,
-                        licenseUserIdentifier: primeUserIdentifier || null
-                      } : {}
+                      className: `relative w-full overflow-hidden rounded-xl border ${lux ? theme === ft.dark ? "h-[550px] border-[#3EC5FF]/20 shadow-[inset_0_0_40px_rgba(62,197,255,0.05)] bg-black/50" : "h-[550px] border-[color:var(--lux-border-light)] bg-[var(--bg-elevated)] shadow-[inset_0_0_28px_var(--accent-neon-soft)]" : theme === ft.dark ? "h-[500px] border-white/10 bg-black/50" : "h-[500px] border-slate-200 bg-slate-50"}`,
+                      children: [
+                        key === "prime" ? /* @__PURE__ */ jsxRuntimeExports.jsx(PrimeProTelemetry, { theme, pickHost: primeTelemetryPickHost }) : null,
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          Cmp,
+                          {
+                            ref: tierRefCallbacks[key],
+                            ...sharedProps,
+                            ...key === "prime" ? {
+                              intervalsArray: primeShowcaseIntervals,
+                              initialVisibleTimeRange: primeShowcaseVisibleRange,
+                              chartOptions: primeShowcaseChartOptions,
+                              licenseKey: primeLicenseUnlocked ? primeLicenseKey : null,
+                              licenseUserIdentifier: primeLicenseUnlocked && primeUserIdentifier.trim() ? primeUserIdentifier : primeLicenseUnlocked ? SHOWCASE_PRIME_USER_ID : null
+                            } : {}
+                          }
+                        )
+                      ]
                     }
-                  ) }) })
+                  ) })
                 ]
               },
               key
             ))
           ] })
         ] }),
-        licenseModalOpen ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fixed inset-0 z-[70] flex items-center justify-center bg-black/60 px-4", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `w-full max-w-lg rounded-2xl border p-5 shadow-2xl ${theme === ft.dark ? "border-[#3EC5FF]/30 bg-[#071222] text-slate-100" : "border-[#3EC5FF]/35 bg-white text-slate-900"}`, children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 flex items-center justify-between", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-lg font-bold", children: "Unlock Prime Features" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${primeLicenseUnlocked ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/40" : theme === ft.dark ? "bg-amber-950/40 text-amber-300 ring-1 ring-amber-500/35" : "bg-amber-100 text-amber-800 ring-1 ring-amber-300"}`, children: primeLicenseUnlocked ? "Unlocked" : "Evaluation" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mb-4 text-sm ${theme === ft.dark ? "text-slate-300" : "text-slate-600"}`, children: "Enter your Prime user identifier and license key to unlock Pro/Luxury rendering, smoother updates, and unlimited analysis tools." }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "input",
+        licenseModalOpen ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "fixed inset-0 z-[70] flex items-center justify-center px-4",
+            style: { backgroundColor: "var(--overlay-scrim)" },
+            children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
               {
-                value: primeUserIdentifierInput,
-                onChange: (e) => setPrimeUserIdentifierInput(e.target.value),
-                placeholder: "user@example.com or account ID",
-                className: `w-full rounded-lg border px-3 py-2 text-sm outline-none ring-[#3EC5FF]/40 focus:ring-2 ${theme === ft.dark ? "border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500" : "border-slate-300 bg-white text-slate-800"}`
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "input",
-              {
-                value: primeLicenseInput,
-                onChange: (e) => setPrimeLicenseInput(e.target.value),
-                placeholder: "TUP-PRIME-XXXXXXXX",
-                className: `w-full rounded-lg border px-3 py-2 font-mono text-sm outline-none ring-[#3EC5FF]/40 focus:ring-2 ${theme === ft.dark ? "border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500" : "border-slate-300 bg-white text-slate-800"}`
-              }
-            )
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-4 flex flex-wrap items-center justify-end gap-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "button",
-              {
-                type: "button",
-                onClick: clearPrimeLicense,
-                className: `rounded-lg border px-3 py-2 text-xs font-semibold ${theme === ft.dark ? "border-white/15 text-slate-300 hover:bg-white/10" : "border-slate-300 text-slate-700 hover:bg-slate-100"}`,
-                children: "Clear"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "button",
-              {
-                type: "button",
-                onClick: () => setLicenseModalOpen(false),
-                className: `rounded-lg border px-3 py-2 text-xs font-semibold ${theme === ft.dark ? "border-white/15 text-slate-300 hover:bg-white/10" : "border-slate-300 text-slate-700 hover:bg-slate-100"}`,
-                children: "Close"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "button",
-              {
-                type: "button",
-                onClick: () => {
-                  applyPrimeLicense();
-                  setLicenseModalOpen(false);
+                className: "w-full max-w-lg rounded-2xl border p-5 shadow-2xl",
+                style: {
+                  borderColor: "var(--modal-border)",
+                  backgroundColor: "var(--modal-bg)",
+                  color: "var(--modal-text)"
                 },
-                className: "rounded-lg bg-[#3EC5FF] px-3 py-2 text-xs font-semibold text-black transition hover:bg-[#65d5ff]",
-                children: "Apply & Unlock"
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 flex items-center justify-between", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-lg font-bold", children: "Unlock Prime Features" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${primeLicenseUnlocked ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/40" : theme === ft.dark ? "bg-amber-950/40 text-amber-300 ring-1 ring-amber-500/35" : "bg-amber-100 text-amber-800 ring-1 ring-amber-300"}`, children: primeLicenseUnlocked ? "Unlocked" : "Evaluation" })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-4 text-sm", style: { color: "var(--modal-muted)" }, children: "Enter your Prime user identifier and license key to unlock Pro/Luxury rendering, smoother updates, and unlimited analysis tools." }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "div",
+                    {
+                      className: `mb-4 rounded-xl border p-4 text-sm ${theme === ft.dark ? "border-[#3EC5FF]/25 bg-[#0a1624]/90 text-slate-300" : "border-[#3EC5FF]/30 bg-cyan-50/80 text-slate-700"}`,
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: `mb-2 text-xs font-bold uppercase tracking-widest ${theme === ft.dark ? "text-[#7dd3fc]" : "text-cyan-800"}`, children: "Pricing & licensing" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-3 leading-relaxed", children: "TickUp Core is MIT. Prime is a commercial upgrade for WebGL throughput, deep history, and pro tooling." }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2 text-xs font-semibold", children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            "a",
+                            {
+                              href: "https://github.com/BARDAMRI/tickup-core-final/blob/main/README.md#pricing--licensing",
+                              target: "_blank",
+                              rel: "noreferrer",
+                              className: `rounded-lg border px-3 py-2 transition ${theme === ft.dark ? "border-white/15 hover:bg-white/10" : "border-slate-200 hover:bg-white"}`,
+                              children: "Core (MIT) & upgrade overview →"
+                            }
+                          ),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            "a",
+                            {
+                              href: "https://github.com/BARDAMRI/tickup-prime",
+                              target: "_blank",
+                              rel: "noreferrer",
+                              className: `rounded-lg border px-3 py-2 transition ${theme === ft.dark ? "border-[#3EC5FF]/35 text-[#7dd3fc] hover:bg-[#3EC5FF]/10" : "border-cyan-200 text-cyan-900 hover:bg-cyan-100/60"}`,
+                              children: "TickUp Prime product repo →"
+                            }
+                          )
+                        ] })
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "input",
+                      {
+                        value: primeUserIdentifierInput,
+                        onChange: (e) => setPrimeUserIdentifierInput(e.target.value),
+                        placeholder: "user@example.com or account ID",
+                        className: `w-full rounded-lg border px-3 py-2 text-sm outline-none ring-[#3EC5FF]/40 focus:ring-2 ${theme === ft.dark ? "border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500" : "border-slate-300 bg-white text-slate-800"}`
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "input",
+                      {
+                        value: primeLicenseInput,
+                        onChange: (e) => setPrimeLicenseInput(e.target.value),
+                        placeholder: SHOWCASE_PRIME_LICENSE_KEY,
+                        className: `w-full rounded-lg border px-3 py-2 font-mono text-sm outline-none ring-[#3EC5FF]/40 focus:ring-2 ${theme === ft.dark ? "border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500" : "border-slate-300 bg-white text-slate-800"}`
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-4 flex flex-wrap items-center justify-end gap-2", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "button",
+                      {
+                        type: "button",
+                        onClick: clearPrimeLicense,
+                        className: "rounded-lg border px-3 py-2 text-xs font-semibold transition active:scale-[0.98] hover:bg-[var(--btn-ghost-hover)] active:bg-[var(--btn-ghost-active)]",
+                        style: {
+                          borderColor: "var(--border-default)",
+                          color: "var(--text-secondary)",
+                          backgroundColor: "transparent"
+                        },
+                        children: "Clear"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "button",
+                      {
+                        type: "button",
+                        onClick: () => setLicenseModalOpen(false),
+                        className: "rounded-lg border px-3 py-2 text-xs font-semibold transition active:scale-[0.98] hover:bg-[var(--btn-ghost-hover)] active:bg-[var(--btn-ghost-active)]",
+                        style: {
+                          borderColor: "var(--border-default)",
+                          color: "var(--text-secondary)",
+                          backgroundColor: "transparent"
+                        },
+                        children: "Close"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "button",
+                      {
+                        type: "button",
+                        onClick: () => {
+                          applyPrimeLicense();
+                          setLicenseModalOpen(false);
+                        },
+                        className: "rounded-lg px-3 py-2 text-xs font-semibold transition hover:brightness-110 active:scale-[0.98]",
+                        style: {
+                          backgroundColor: "var(--accent-neon)",
+                          color: "var(--text-on-accent)"
+                        },
+                        children: "Apply & Unlock"
+                      }
+                    )
+                  ] })
+                ]
               }
             )
-          ] })
-        ] }) }) : null
+          }
+        ) : null
       ]
     }
   );
 }
 
+const prefersLight = typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: light)").matches;
+document.documentElement.dataset.theme = prefersLight ? "light" : "dark";
 clientExports.createRoot(document.getElementById("root")).render(
   /* @__PURE__ */ jsxRuntimeExports.jsx(reactExports.StrictMode, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) })
 );
