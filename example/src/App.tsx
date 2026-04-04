@@ -375,9 +375,9 @@ export default function App() {
     useLayoutEffect(() => {
         let cancelled = false;
         import('@tickup/prime')
-            .then((m: {TickUpPrime?: TickUpChartEngine}) => {
+            .then((m: typeof import('@tickup/prime')) => {
                 if (cancelled) return;
-                const eng = m?.TickUpPrime ?? null;
+                const eng = m.TickUpPrime ?? null;
                 if (eng) {
                     setPrimeEngine(eng);
                     setPrimeLinked(eng.id !== 'prime-shim');

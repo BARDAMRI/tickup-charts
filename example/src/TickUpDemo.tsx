@@ -289,7 +289,7 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
 
     useEffect(() => {
         import('@tickup/prime')
-            .then((m: any) => {
+            .then((m) => {
                 if (m?.TickUpPrime?.id === 'prime-shim') {
                     return;
                 }
