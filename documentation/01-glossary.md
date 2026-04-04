@@ -4,18 +4,31 @@ New to financial bars? Read **[Getting started](./00-getting-started.md)** and *
 
 ## Data
 
-- **Interval** — One bar: open, high, low, close, time (`t` in **Unix seconds**), optional volume (`v`). See the `Interval` type.
-- **Series** — Ordered array of intervals, sorted by `t`.
-- **Time range** — Visible X-axis window: `start` and `end` (Unix seconds). Indices `startIndex` / `endIndex` refer to positions in the **loaded** series (after Standard Tier trimming).
-- **Price range** — Visible Y window: min/max prices and `range` span.
+- **OHLC / OHLCV** — **O**pen, **H**igh, **L**ow, **C**lose, optional **V**olume on each **Interval**; see [Interval schema](./17-interval-schema-and-debugging.md).
+- **Interval** — One bar: open, high, low, close, time (`t` in **Unix seconds**), optional volume (`v`). Type: `Interval`.
+- **Series** — Ordered array of intervals, sorted by `t` (often passed as **`intervalsArray`**).
+- **Time range** — Visible X-axis window: `start` and `end` (Unix seconds). Indices `startIndex` / `endIndex` refer to positions in the **loaded** series (after Standard Tier trimming). Type: `TimeRange`; extended view info: `VisibleViewRanges`.
+- **Price range** — Visible Y window: min/max prices and `range` span (`PriceRange`).
+- **Standard Tier** — **TickUp Core** limits: **5,000** bars retained, **~1 Hz** live merge throttle on Standard shells, **three** overlays. See [Data & live updates](./07-data-and-live-updates.md).
 
 ## Chart presentation
 
+- **Candle / candlestick** — A bar shown as **wick + body** when **`ChartType.Candlestick`** is active; colors come from `base.style.candles`.
+- **Bar (OHLC bar mode)** — Vertical OHLC segments when **`ChartType.Bar`** is active (`base.style.bar`).
 - **Chart type** — `ChartType`: candlestick, line, area, or bar.
 - **Theme** — `base.theme` on the chart (`light`, `dark`, `grey`) plus **`TickUpHost`** shell theme via **`themeVariant`** / **`defaultThemeVariant`** / **`onThemeVariantChange`**.
 - **Axes** — Time (X) and price (Y) scales; options under `chartOptions.base.style.axes` and `chartOptions.axes`.
+- **Crosshair** — Hover guides (`showCrosshair`) and optional value labels (`showCrosshairValues`).
+- **Candle tooltip** — Hover panel for OHLC / change / volume (`showCandleTooltip`).
 - **Histogram** — Volume bars below the plot when `showHistogram` is true.
-- **Overlay** — Computed line series drawn on price (see [Overlays & indicators](./12-overlays-and-indicators.md)).
+- **Overlay** — Computed line series drawn on price (`OverlayWithCalc`, `OverlaySeries`); configured with `base.showOverlayLine` and `base.overlays` / `base.overlayKinds` (see [Overlays & indicators](./12-overlays-and-indicators.md)).
+- **OverlayKind** / **OverlayPriceKey** — Enums for indicator kind (`sma`, `ema`, …) and price source (`close`, `open`, …).
+- **TickUpStage** — Low-level React stage: canvases, axes, optional toolbars; import from **`tickup`**. Often wrapped by **`TickUpHost`** or a **product** from **`tickup/full`**.
+
+## Toolbar & time scope
+
+- **Timeframe** — User-facing bar size string (e.g. **`5m`**, **`1h`**) chosen in the toolbar; your app loads **`Interval[]`** for that TF via **`onIntervalSearch`** / controlled **`interval`** prop. Not the same word as the **`Interval`** type (one bar).
+- **Range key** — Preset **visible span** name (`1D`, `1M`, `All`, …, `RangeKey`); distinct from **`TimeRange`** (unix `start`/`end`).
 
 ## Products (shell layout)
 
@@ -32,7 +45,7 @@ Use **`TickUpHost`** **without** `productId` to control `showSidebar` / `showTop
 
 ## Live data
 
-- **Placement** — How bars merge: `replace`, `append`, `prepend`, `mergeByTime` (`LiveDataPlacement`).
+- **Placement** — How bars merge: `replace`, `append`, `prepend`, `mergeByTime` (**`LiveDataPlacement`** enum).
 - **Apply result** — `LiveDataApplyResult`: `ok`, resulting intervals, `errors`, `warnings`.
 
 ## Drawings
@@ -44,12 +57,12 @@ Use **`TickUpHost`** **without** `productId` to control `showSidebar` / `showTop
 
 ## Interaction modes
 
-Toolbar **mode** switches between navigation, draw tools, select, and edit. Pan/zoom applies in default navigation.
+**Mode** — Toolbar / context enum (`Mode.none`, draw tools, `select`, `editShape`, …) from **`ModeContext`**. **Pan** and **wheel zoom** apply in default navigation; see [Toolbar & interactions](./10-toolbar-and-interactions.md).
 
 ## Snapshot / export
 
 - **Main canvas** — OHLC layer only via `getMainCanvasElement`.
-- **Chart region** — PNG of the composed view via `captureChartRegionToPngDataUrl` and toolbar hooks.
+- **Chart region** — PNG of the composed view via **`captureChartRegionToPngDataUrl`** and toolbar hooks; metadata type **`ChartSnapshotMeta`**.
 
 ## Indicators
 
@@ -59,6 +72,15 @@ Overlays configured with `base.showOverlayLine` and `base.overlays` or `base.ove
 
 - **Trading session** — Weekday window (`dayOfWeek` + `HH:mm` start/end) for session shading.
 - **Holiday** — ISO date strings where integrated.
+
+## Branding
+
+- **Attribution** — In-chart **TickUp** watermark / footer (**`TickUpAttribution`**, **`showAttribution`**); **Desk** may force it on.
+- **Watermark** — Low-opacity mark on the plot; placement enum **`TickUpWatermarkPlacement`**.
+
+## Formatting (advanced)
+
+- **PriceMetricKind** — Enum for special axis/tooltip display modes (`basisPoints`, `pnl`, `yield`, `volatility`) used in formatting helpers.
 
 ---
 

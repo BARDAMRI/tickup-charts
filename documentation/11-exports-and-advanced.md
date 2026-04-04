@@ -16,7 +16,9 @@ Published API is split across **`tickup`** and **`tickup/full`**. Undocumented d
 | `GlobalStyle` | Optional global CSS fragment. |
 | `ModeProvider`, `useMode` | Drawing mode context. |
 | `ChartOptions`, `DeepRequired` | Configuration typing. |
-| Plus | Intervals, live-data utils, overlay builders, drawing helpers, snapshot helpers, graph math, enums, shape types. |
+| *Everything else* | **Authoritative table:** [API reference](./16-api-reference.md) → section **“`tickup` package — public exports (`src/index.ts`)”** (every symbol from `src/index.ts`). |
+
+That section lists types, enums (**including `PriceMetricKind`**, **`TickUpWatermarkPlacement`**, **`LiveDataPlacement`**), live-data and snapshot helpers, drawing factories, **`OverlaySpecs` / `overlay`**, graph math (**`timeToX`**, **`lerp`**, …), and optional Prime **styling** engine helpers.
 
 ## `tickup/full` (shells + extended)
 

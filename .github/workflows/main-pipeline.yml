@@ -55,11 +55,20 @@ jobs:
           npm version patch -m "chore: bump version to %s [skip ci]"
           echo "publish_version=$(npm pkg get version | tr -d '\"')" >> "$GITHUB_OUTPUT"
 
+      - name: Verify publish is newer than registry (anti-rollback)
+        run: |
+          npm install --no-save semver@7
+          REG="$(npm view tickup version 2>/dev/null || true)"
+          NEW="$(node -p "require('./package.json').version")"
+          echo "Registry latest: ${REG:-<none>}"
+          echo "Publishing: $NEW"
+          node -e "const semver=require('semver');const reg=process.argv[1]||'';const neu=process.argv[2];if(!semver.gte(neu,'1.0.36')){console.error('Blocked: publish version',neu,'must be >= 1.0.36 (Generous Standard baseline)');process.exit(1)}if(!reg){console.log('No existing version on registry; ok');process.exit(0)}if(!semver.gt(neu,reg)){console.error('Blocked: rollback —',neu,'is not strictly greater than npm latest',reg);process.exit(1)}console.log('ok:',neu,'>',reg)" "$REG" "$NEW"
+
       - name: Push version bump commit/tag
         run: git push --follow-tags
 
       - name: Publish to NPM
-        run: npm publish --access public --provenance
+        run: npm publish --access public --provenance --tag latest
 
   deploy:
     if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip ci]') }}

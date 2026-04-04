@@ -79,3 +79,21 @@ export function App() {
 ## TickUp Prime
 
 Interested in **TickUp Prime**? Start with the **[Prime documentation](https://github.com/BARDAMRI/tickup-prime)** and try the **[Showcase](https://bardamri.github.io/tickup-charts/)**.
+
+## Legacy support
+
+**npm versions below `1.0.36` are deprecated and unsupported.** That line predates the current **Generous Standard** architecture (clean **TickUp Core** vs **Prime** separation, documented Standard Tier guardrails, and security fixes). Do not build new integrations on older tarballs.
+
+**Standard Tier stability:** From **1.0.36** onward, the **5,000-bar** history cap and the **~1 Hz** live-update throttle on Standard shells are **mandatory** parts of the supported Standard Tier model—they keep dashboards predictable and are not optional “suggestions” for production use.
+
+**Deprecate older releases on npm** (run while logged in as a maintainer; repeats are safe):
+
+```bash
+npm deprecate tickup@"< 1.0.36" "Legacy architecture. Please upgrade to v1.0.36+ for stable Core/Prime separation and security patches."
+```
+
+Optional: confirm what npm will match:
+
+```bash
+npm view tickup versions --json
+```

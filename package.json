@@ -1,6 +1,6 @@
 {
   "name": "tickup",
-  "version": "1.0.33",
+  "version": "1.0.36",
   "description": "High-performance React financial charts. Canvas 2D rendering, advanced technical analysis tools, and real-time data streaming.",
   "type": "module",
   "main": "./dist/tickup.cjs.js",
@@ -50,7 +50,8 @@
     "url": "https://github.com/BARDAMRI/tickup-charts/issues"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "latest"
   },
   "engines": {
     "node": ">=22.14.0"

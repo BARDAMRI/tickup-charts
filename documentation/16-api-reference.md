@@ -12,6 +12,115 @@ This page lists **host props** and **`chartOptions`** fields as implemented in *
 
 For behavior and debugging, see [Data & live updates](./07-data-and-live-updates.md), [Interval schema & debugging](./17-interval-schema-and-debugging.md), and [Comparison showcase](./18-comparison-showcase.md).
 
+**Pointer & wheel behavior** on the plot (pan, zoom, double-click, context menu) is documented in [Toolbar & interactions](./10-toolbar-and-interactions.md).
+
+---
+
+## `tickup` package — public exports (`src/index.ts`)
+
+The default **`import … from 'tickup'`** entry re-exports the symbols below. **`tickup/full`** adds shells (`TickUpHost`, products, …); see [Exports & advanced](./11-exports-and-advanced.md).
+
+### Components, context, styling
+
+| Export | Kind | Role |
+|--------|------|------|
+| `TickUpStage` | component | Canvas stage: chart, axes, optional chrome; **`TickUpStageProps`**, **`TickUpStageHandle`**. |
+| `Mode` | enum | Drawing / navigation mode (`none`, draw tools, `select`, …). |
+| `ModeProvider`, `useMode` | React | Context for active mode (required around `TickUpStage` when using toolbar drawing tools). |
+| `GlobalStyle` | styled | Optional global CSS fragment used by full hosts. |
+
+### Branding
+
+| Export | Kind | Role |
+|--------|------|------|
+| `TickUpMark` | component | DOM wordmark; **`TickUpThemeVariant`**. |
+| `TickUpAttribution` | component | Footer attribution strip; **`TickUpAttributionProps`**. |
+| `TickUpWatermarkPlacement` | enum | `center`, corners — placement key for bundled watermark assets (internal draw paths). |
+
+### Data, time, ranges
+
+| Export | Kind | Role |
+|--------|------|------|
+| `Interval` | type | One OHLCV bar (`t` in unix **seconds**). |
+| `TimeRange`, `VisibleViewRanges` | types | Visible time window; view snapshot types for ref APIs. |
+| `ChartDimensionsData` | type | Layout metrics used during render. |
+| `ChartContextInfo` | type | Introspection: symbol, theme, data window, etc. |
+
+### Live data
+
+| Export | Kind | Role |
+|--------|------|------|
+| `LiveDataPlacement` | enum | `replace` \| `append` \| `prepend` \| `mergeByTime`. |
+| `LiveDataApplyResult` | type | Result of merge helpers / `applyLiveData`. |
+| `applyLiveDataMerge` | function | Merge intervals by placement (shared with host ref path). |
+| `normalizeInterval`, `normalizeIntervals` | functions | Coerce / validate a bar shape. |
+| `dedupeByTimePreferLast` | function | Sort + dedupe by `t`. |
+
+### Snapshots (PNG / metadata)
+
+| Export | Kind | Role |
+|--------|------|------|
+| `captureChartRegionToPngDataUrl` | async function | Rasterize chart region to a data URL. |
+| `buildChartSnapshotFileName`, `sanitizeChartSnapshotToken`, `contrastingFooterTextColor` | functions | Filename + token hygiene + readable footer text. |
+| `ChartSnapshotMeta` | type | Metadata block (symbol, visible range, bar counts, …). |
+
+### Drawings
+
+| Export | Kind | Role |
+|--------|------|------|
+| `ShapeType` | enum | Line, rectangle, circle, … |
+| `DrawingSpec`, `DrawingPatch`, `DrawingInput` | types | Specs and patches for programmatic drawings. |
+| `drawingFromSpec`, `applyDrawingPatch`, `isDrawingPatch` | functions | Build / update shapes. |
+| `DrawingSnapshot`, `DrawingQuery`, `DrawingWithZIndex` | types | Query / export drawing state. |
+| `shapeToSnapshot`, `filterDrawingsWithMeta`, `queryDrawingsToSnapshots`, `filterDrawingInstances` | functions | Snapshot and filter helpers. |
+| `ShapeBaseArgs`, `Drawing` | types | Internal shape args / union. |
+| `LineShapeArgs`, `RectangleShapeArgs`, … | types | Per-shape constructor args. |
+| `DrawingStyleOptions`, `DrawingPoint`, `CanvasPoint` | types | Style and geometry primitives. |
+| `IDrawingShape` | type | Instance interface for shapes on canvas. |
+| `generateDrawingShapeId` | function | Stable id factory. |
+
+### Overlays
+
+| Export | Kind | Role |
+|--------|------|------|
+| `OverlayWithCalc`, `OverlaySeries`, `OverlayOptions` | types | Styled calc rows and computed series. |
+| `OverlayKind`, `OverlayPriceKey` | enums | Indicator / price field keys. |
+| `StrokeLineStyle` | enum | `solid` \| `dashed` \| `dotted`. |
+| `OverlaySpecs`, `withOverlayStyle`, `overlay` | functions | Build `OverlayWithCalc` trees (see [Overlays](./12-overlays-and-indicators.md)). |
+
+### Chart options — enums & types
+
+| Export | Kind | Role |
+|--------|------|------|
+| `ChartOptions` | type | `base` + `axes` tree (merged with defaults in hosts). |
+| `DeepRequired` | type | Utility: deep required mapped type. |
+| `AxesPosition`, `ChartTheme` | enums | Y-axis side; `light` \| `dark` \| `grey`. |
+| `AxesUnitPlacement` | enum | `prefix` \| `suffix` for unit strings. |
+| `ChartType` | enum | `Candlestick`, `Line`, `Area`, `Bar`. |
+| `CurrencyDisplay` | enum | How currency appears on ticks (`symbol`, `code`, …). |
+| `NumberNotation` | enum | `standard` \| `scientific` \| `compact`. |
+| **`PriceMetricKind`** | enum | Axis/tooltip **display modes** for special metrics: `basisPoints`, `pnl`, `yield`, `volatility` — used by formatting paths when set (advanced / internal chart labeling). |
+| `TickUpRenderEngine` | enum | `standard` \| `prime` visual profile (see top of this page). |
+| `TimeDetailLevel` | enum | `auto` \| `low` \| `medium` \| `high` time tick density. |
+
+### Engine helpers (optional Prime **styling** patch)
+
+| Export | Kind | Role |
+|--------|------|------|
+| `TickUpChartEngine` | type | Engine profile interface for `setEngine` (full host). |
+| `TickUpPrime`, `TickUpStandardEngine`, `createTickUpPrimeEngine`, `getTickUpPrimeThemePatch` | values | Prime **theme/style** patch builders; Standard Tier data limits still apply in Core. |
+| `TICKUP_PRIME_PRIMARY`, `TICKUP_PRIME_SECONDARY`, `TICKUP_PRIME_TEXT` | constants | Brand palette strings for Prime-styled UI. |
+
+### Coordinate & series math (utilities)
+
+| Export | Role |
+|--------|------|
+| `timeToX`, `xToTime` | Map unix time ↔ horizontal pixel in a visible range. |
+| `priceToY`, `yToPrice` | Map price ↔ vertical pixel in a visible price band. |
+| `xFromStart`, `xFromCenter` | Bar **left** vs **center** X placement for a bar’s `t`. |
+| `lerp` | Linear interpolation between two numbers. |
+| `interpolatedCloseAtTime` | Interpolated **close** along sorted intervals at arbitrary `timeSec`. |
+
 ---
 
 ## `TickUpRenderEngine`

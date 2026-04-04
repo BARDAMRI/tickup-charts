@@ -49,9 +49,55 @@ With **`showTopBar: false`** and **`showSettingsBar: true`**, a **floating gear*
 
 **TickUp Core** caps in-memory history at **5,000** bars and applies about **1 Hz** throttling to rapid live updates on Standard shells, so pan/zoom always works against that window and merge-driven repaints stay bounded. Licensed Prime can opt out of the throttle; the **5,000**-bar cap remains a Core baseline unless you adopt a Prime data path. Details: [Data & live updates](./07-data-and-live-updates.md), [API reference](./16-api-reference.md).
 
-## Pan & zoom
+## Mouse & touch — main chart interactions
 
-In default navigation mode, wheel and drag pan/zoom the plot. **Select** / **edit** avoid pan-on-drag for hit-testing. Drawing modes use tool-specific cursors.
+Behavior below matches the **`usePanAndZoom`** hook and **`ChartCanvas`** handlers in **TickUp Core**. It applies when the stage is in **navigation** mode (`Mode.none` / pan-zoom enabled). In **select**, **edit**, or **draw** modes, **primary-button drag** is reserved for selection and shape placement, not pan.
+
+### Primary button (left click)
+
+| Gesture | Effect |
+|---------|--------|
+| **Drag** | **Pan** along the time axis (horizontal or dominant axis movement). The visible window slides; clamped to the loaded series. |
+
+### Scroll wheel
+
+| Gesture | Effect |
+|---------|--------|
+| **Wheel** (no modifier) | **Pan** — same as dragging, using vertical or dominant wheel delta (trackpads often scroll horizontally). |
+| **Ctrl + wheel** or **⌘ + wheel** (meta) | **Zoom** — shrinks or expands the visible **time** range, anchored roughly under the cursor. Minimum span is a few bar widths. |
+
+There is **no** separate “Y-axis zoom” from the wheel; price scale follows visible candles.
+
+### Right click (context menu)
+
+There is **no** general-purpose browser context menu for the chart surface.
+
+| Condition | Effect |
+|-----------|--------|
+| A **drawing is selected**, the host wires **shape properties**, and the pointer is **on that shape** | **Prevent default** menu and open **shape properties** (same flow as double-click on a shape). |
+| Otherwise | Default browser / OS context menu may appear (not chart-specific). |
+
+### Double click
+
+**Double-click does not reset the visible time range** to full data.
+
+| Mode / target | Effect |
+|---------------|--------|
+| **Polyline** draw tool | **Finish** the polyline and commit the shape. |
+| **Navigation / select / edit** and pointer **on a drawing** (with shape properties wired) | **Select** that shape and open **shape properties**. |
+
+To **fit** or **reset** the view, use the toolbar **Range** control (e.g. fit-to-data), or the imperative API **`fitVisibleRangeToData()`** on the host ref (see [Imperative API](./06-imperative-api.md)).
+
+### Touch & mobile readiness
+
+Pan/zoom on the plot is implemented with **mouse** and **wheel** DOM events (`mousedown` / `mousemove` / `mouseup`, `wheel`). There are **no** dedicated **`touchstart` / `touchmove` / pinch-to-zoom** handlers on the chart canvas.
+
+- **Desktop / laptop** with mouse or trackpad is the **primary** supported interaction model (including **Ctrl/⌘+wheel** zoom).
+- **Phones and tablets** may get **inconsistent** behavior: some browsers synthesize wheel or pan from touch, but **TickUp Core** does not claim full **pinch-to-zoom** or multi-touch chart navigation. For mobile-first apps, plan on **external** controls (buttons, range presets) or a **custom touch layer** if you need reliable gestures.
+
+## Pan & zoom (summary)
+
+In default navigation mode: **primary drag** and **plain wheel** **pan**; **Ctrl/⌘ + wheel** **zooms** time. **Select** / **edit** / **draw** modes change drag behavior as above.
 
 ## Crosshair & tooltip
 
