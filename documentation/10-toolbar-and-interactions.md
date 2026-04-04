@@ -21,7 +21,7 @@ With **`showTopBar: false`** and **`showSettingsBar: true`**, a **floating gear*
 | **Settings** | Opens [settings modal](./09-settings-modal.md). |
 | **Snapshot** | PNG export. |
 | **Range** | `fitVisibleRangeToData`. |
-| **Export** | CSV of series (trimmed to Standard Tier length). |
+| **Export** | CSV of series (**trimmed** to the **5,000**-bar Standard Tier window). |
 | **Refresh** | `onRefreshRequest`. |
 | **Theme** | Shell light/dark; sync **`themeVariant`** with **`onThemeVariantChange`**. Align **`chartOptions.base.theme`** for plot readability. |
 
@@ -44,6 +44,10 @@ With **`showTopBar: false`** and **`showSettingsBar: true`**, a **floating gear*
   }}
 />
 ```
+
+## Standard Tier: what you feel in the UI
+
+**TickUp Core** caps in-memory history at **5,000** bars and applies about **1 Hz** throttling to rapid live updates on Standard shells, so pan/zoom always works against that window and merge-driven repaints stay bounded. Licensed Prime can opt out of the throttle; the **5,000**-bar cap remains a Core baseline unless you adopt a Prime data path. Details: [Data & live updates](./07-data-and-live-updates.md), [API reference](./16-api-reference.md).
 
 ## Pan & zoom
 

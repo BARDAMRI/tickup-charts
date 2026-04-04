@@ -288,10 +288,11 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
     }, []);
 
     useEffect(() => {
-        const enabled = String((import.meta as any).env?.VITE_TICKUP_PRIME ?? '') === '1';
-        if (!enabled) return;
         import('@tickup/prime')
             .then((m: any) => {
+                if (m?.TickUpPrime?.id === 'prime-shim') {
+                    return;
+                }
                 if (m?.createTickUpPrimeEngine && m?.getTickUpPrimeThemePatch) {
                     setPrimeBridge({
                         createTickUpPrimeEngine: m.createTickUpPrimeEngine,
@@ -301,7 +302,7 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
                 }
             })
             .catch(() => {
-                // Public build can run with no prime package linked.
+                /* Sibling Prime dist missing — Turbo stays off. */
             });
     }, [showToastNow]);
 
@@ -1418,6 +1419,9 @@ export default function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRan
     );
 }
 
+/** Standard Tier bar ceiling — keep aligned with `MAX_CORE_CANDLES` in `src/hooks/useChartData.ts`. */
+const STANDARD_TIER_BAR_CAP = 5000;
+
 /** HUD updates FPS in isolation so live OHLC ticks do not re-render this counter via the parent. */
 function ChartHud({ isDark, primeMode, barCount }: { isDark: boolean; primeMode: boolean; barCount: number }) {
     const [fps, setFps] = useState(60);
@@ -1460,6 +1464,15 @@ function ChartHud({ isDark, primeMode, barCount }: { isDark: boolean; primeMode:
                     {barCount.toLocaleString()}
                 </span>
             </div>
+            {!primeMode ? (
+                <div
+                    className={`mt-2 border-t pt-2 text-[10px] font-bold uppercase leading-tight tracking-wide ${
+                        isDark ? 'border-white/10 text-amber-300' : 'border-slate-200 text-amber-800'
+                    }`}
+                >
+                    DATA CAPPED AT {STANDARD_TIER_BAR_CAP.toLocaleString()} BARS
+                </div>
+            ) : null}
         </div>
     );
 }

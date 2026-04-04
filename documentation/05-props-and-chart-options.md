@@ -1,16 +1,18 @@
 # Props & chart options
 
+For **exhaustive tables** (every host prop, `TickUpRenderEngine`, and `chartOptions` field with types, defaults, and Standard Tier notes), see **[API reference](./16-api-reference.md)**. This page is a shorter narrative companion.
+
 ## `TickUpHostProps` / `TickUpHostHandle`
 
 ### Data & view
 
 | Prop | Purpose |
 |------|---------|
-| `intervalsArray` | OHLCV series (`Interval[]`). Default `[]`. |
-| `initialVisibleTimeRange` | Optional `TimeRange` (`start`/`end` unix seconds). |
-| `initialNumberOfYTicks` | Default Y tick count (default 5). |
-| `initialXAxisHeight` | X axis height hint (pixels). |
-| `initialYAxisWidth` | Y axis width hint (pixels). |
+| `intervalsArray` | OHLCV series (`Interval[]`). Default `[]`. Clamped to **5,000** bars (Standard Tier). |
+| `initialVisibleTimeRange` | On the type for API stability; **not wired** in `TickUpHost` today — use ref pan/fit or load data first. |
+| `initialNumberOfYTicks` | Seeds `chartOptions.axes.numberOfYTicks` when that axis field is omitted in `chartOptions` (default **5**). |
+| `initialXAxisHeight` | **Not read** by the host today; layout uses internal constants. |
+| `initialYAxisWidth` | **Not read** by the host today. |
 | `initialTimeDetailLevel` | `TimeDetailLevel` for axis time density. |
 | `initialTimeFormat12h` | 12h vs 24h time formatting. |
 
@@ -89,6 +91,10 @@ Under `base.style.axes`: locale, decimals, currency, sessions, holidays, etc. Se
 - **`base.overlayKinds`** — Shorthand list.
 
 Standard Tier: **three** overlays maximum. See [Overlays & indicators](./12-overlays-and-indicators.md).
+
+### Standard Tier: data volume & live cadence
+
+**TickUp Core** (Standard Tier) keeps at most **5,000** bars in the rendered series and throttles rapid live merges to about **1 Hz** on Standard shells so dashboards stay responsive. If you need deeper history or faster merge cadence without that throttle, evaluate **Prime** (see [Comparison showcase](./18-comparison-showcase.md)).
 
 ### Drawings default style
 

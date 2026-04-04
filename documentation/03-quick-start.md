@@ -1,5 +1,7 @@
 # Quick start
 
+**Brand-new to TickUp?** Use **[Getting started](./00-getting-started.md)** for a from-scratch install and a single-file Hello World.
+
 **TickUp Core** is **React-first**: embed **`TickUpHost`**, **`TickUpStage`**, or a **product** component (`TickUpCommand`, …). Configure the chart with **props** and **`chartOptions`**; drive streaming data with **refs** (`applyLiveData`, etc.).
 
 ## 1. Render a product component
@@ -42,7 +44,7 @@ const [bars, setBars] = useState<Interval[]>(initial);
 <TickUpCommand ref={chartRef} intervalsArray={bars} />;
 ```
 
-The stage normalizes incoming data to **Standard Tier** limits (see [Data & live updates](./07-data-and-live-updates.md)).
+The stage normalizes incoming data to **Standard Tier** limits — **5,000** bars max and about **1 Hz** live merge throttling on Standard shells (see [Data & live updates](./07-data-and-live-updates.md) and [API reference](./16-api-reference.md)).
 
 ## 4. Imperative live updates
 

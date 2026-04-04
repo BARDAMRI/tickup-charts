@@ -2,9 +2,216 @@
 @tailwind components;
 @tailwind utilities;
 
+/* -------------------------------------------------------------------------- */
+/* Global theme tokens — toggled via [data-theme="light"|"dark"] on <html>    */
+/* Contrast targets: primary text ≥ 4.5:1 on --bg-primary (WCAG AA).          */
+/* -------------------------------------------------------------------------- */
+
+[data-theme='light'] {
+    color-scheme: light;
+
+    --bg-primary: #f1f5f9;
+    --bg-secondary: #ffffff;
+    --bg-elevated: #f8fafc;
+    --bg-muted: #e2e8f0;
+
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --text-on-accent: #ffffff;
+
+    --border-subtle: rgba(15, 23, 42, 0.08);
+    --border-default: rgba(15, 23, 42, 0.12);
+    --border-strong: rgba(15, 23, 42, 0.18);
+
+    --accent-neon: #0369a1;
+    --accent-neon-soft: rgba(3, 105, 161, 0.1);
+    --accent-ring: rgba(3, 105, 161, 0.35);
+
+    --header-bg: rgba(255, 255, 255, 0.92);
+    --header-border: rgba(15, 23, 42, 0.08);
+
+    --app-radial: radial-gradient(circle at 50% 8%, rgba(3, 105, 161, 0.07), transparent 52%);
+
+    --overlay-scrim: rgba(15, 23, 42, 0.5);
+    --modal-bg: #ffffff;
+    --modal-border: rgba(3, 105, 161, 0.22);
+    --modal-text: #0f172a;
+    --modal-muted: #475569;
+
+    --btn-ghost-hover: rgba(15, 23, 42, 0.06);
+    --btn-ghost-active: rgba(15, 23, 42, 0.1);
+
+    --brand-wordmark: #0369a1;
+
+    /* Comparison lab — silver / white luxury */
+    --compare-hero-kicker: #0369a1;
+    --compare-hero-body: #475569;
+    --compare-hero-strong: #0f172a;
+    --compare-code-bg: rgba(15, 23, 42, 0.06);
+    --compare-code-text: #0c4a6e;
+
+    --compare-core-surface: #f8fafc;
+    --compare-core-border: rgba(15, 23, 42, 0.1);
+    --compare-core-shadow: 0 12px 40px -18px rgba(15, 23, 42, 0.12);
+
+    --compare-cap-banner-bg: #fefce8;
+    --compare-cap-banner-border: #e9d79a;
+    --compare-cap-banner-text: #713f12;
+
+    --compare-prime-surface-top: #f0f9ff;
+    --compare-prime-surface-bottom: #e0f2fe;
+    --compare-prime-border: rgba(3, 105, 161, 0.2);
+    --compare-prime-shadow: 0 16px 48px -20px rgba(3, 105, 161, 0.18);
+    --compare-prime-strip-bg: rgba(3, 105, 161, 0.08);
+    --compare-prime-strip-text: #0c4a6e;
+    --compare-prime-title: #0f172a;
+    --compare-prime-badge-bg: rgba(79, 70, 229, 0.1);
+    --compare-prime-badge-text: #3730a3;
+    --compare-prime-badge-ring: rgba(79, 70, 229, 0.25);
+
+    --telemetry-border: rgba(15, 23, 42, 0.12);
+    --telemetry-bg-core: rgba(255, 255, 255, 0.94);
+    --telemetry-bg-prime: rgba(255, 255, 255, 0.96);
+    --telemetry-label-core: #b45309;
+    --telemetry-label-prime: #0369a1;
+    --telemetry-muted: #64748b;
+    --telemetry-value: #0f172a;
+    --telemetry-accent-prime: #1d4ed8;
+    --telemetry-divider: rgba(15, 23, 42, 0.1);
+
+    /* Landing Prime tier — premium without neon burn */
+    --lux-surface-light: #fafbfc;
+    --lux-border-light: rgba(3, 105, 161, 0.22);
+    --lux-shadow-light: 0 0 48px -16px rgba(3, 105, 161, 0.14);
+    --lux-glow-light: 0 0 32px -12px rgba(3, 105, 161, 0.12);
+    --lux-badge-bg: rgba(79, 70, 229, 0.12);
+    --lux-badge-text: #3730a3;
+    --lux-badge-ring: rgba(79, 70, 229, 0.28);
+
+    --prime-pill-border: rgba(3, 105, 161, 0.22);
+    --prime-pill-bg: rgba(255, 255, 255, 0.96);
+    --prime-pill-title: #0369a1;
+    --prime-pill-fps: #0369a1;
+    --prime-pill-muted: #64748b;
+}
+
+[data-theme='dark'] {
+    color-scheme: dark;
+
+    --bg-primary: #050608;
+    --bg-secondary: #0f121c;
+    --bg-elevated: #0a0f18;
+    --bg-muted: #1e293b;
+
+    --text-primary: #e2e8f0;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-on-accent: #0f172a;
+
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-default: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.14);
+
+    --accent-neon: #3ec5ff;
+    --accent-neon-soft: rgba(62, 197, 255, 0.14);
+    --accent-ring: rgba(62, 197, 255, 0.45);
+
+    --header-bg: rgba(15, 18, 28, 0.82);
+    --header-border: rgba(255, 255, 255, 0.06);
+
+    --app-radial: radial-gradient(circle at 50% 10%, rgba(62, 197, 255, 0.06), transparent 50%);
+
+    --overlay-scrim: rgba(0, 0, 0, 0.62);
+    --modal-bg: #071222;
+    --modal-border: rgba(62, 197, 255, 0.28);
+    --modal-text: #f1f5f9;
+    --modal-muted: #cbd5e1;
+
+    --btn-ghost-hover: rgba(255, 255, 255, 0.08);
+    --btn-ghost-active: rgba(255, 255, 255, 0.12);
+
+    --brand-wordmark: #3ec5ff;
+
+    --compare-hero-kicker: #7dd3fc;
+    --compare-hero-body: #94a3b8;
+    --compare-hero-strong: #f1f5f9;
+    --compare-code-bg: rgba(255, 255, 255, 0.06);
+    --compare-code-text: #a5f3fc;
+
+    --compare-core-surface: rgba(7, 11, 18, 0.96);
+    --compare-core-border: rgba(255, 255, 255, 0.1);
+    --compare-core-shadow: 0 0 60px -20px rgba(62, 197, 255, 0.22);
+
+    --compare-cap-banner-bg: rgba(180, 83, 9, 0.22);
+    --compare-cap-banner-border: rgba(251, 191, 36, 0.35);
+    --compare-cap-banner-text: #fef3c7;
+
+    --compare-prime-surface-top: #030712;
+    --compare-prime-surface-bottom: #050913;
+    --compare-prime-border: rgba(62, 197, 255, 0.32);
+    --compare-prime-shadow: 0 0 80px -12px rgba(62, 197, 255, 0.38);
+    --compare-prime-strip-bg: rgba(62, 197, 255, 0.1);
+    --compare-prime-strip-text: #a5f3fc;
+    --compare-prime-title: #ffffff;
+    --compare-prime-badge-bg: rgba(139, 92, 246, 0.18);
+    --compare-prime-badge-text: #e9d5ff;
+    --compare-prime-badge-ring: rgba(167, 139, 250, 0.35);
+
+    --telemetry-border: rgba(255, 255, 255, 0.12);
+    --telemetry-bg-core: rgba(0, 0, 0, 0.65);
+    --telemetry-bg-prime: rgba(5, 9, 19, 0.92);
+    --telemetry-label-core: #fde68a;
+    --telemetry-label-prime: #7dd3fc;
+    --telemetry-muted: #94a3b8;
+    --telemetry-value: #f8fafc;
+    --telemetry-accent-prime: #c4b5fd;
+    --telemetry-divider: rgba(255, 255, 255, 0.1);
+
+    --lux-surface-light: transparent;
+    --lux-border-light: rgba(62, 197, 255, 0.3);
+    --lux-shadow-light: 0 0 80px -20px rgba(62, 197, 255, 0.25);
+    --lux-glow-light: 0 0 100px -20px rgba(62, 197, 255, 0.35);
+    --lux-badge-bg: rgba(90, 72, 222, 0.2);
+    --lux-badge-text: #e9d5ff;
+    --lux-badge-ring: rgba(167, 139, 250, 0.3);
+
+    --prime-pill-border: rgba(62, 197, 255, 0.35);
+    --prime-pill-bg: rgba(4, 11, 22, 0.92);
+    --prime-pill-title: #3ec5ff;
+    --prime-pill-fps: #7dd3fc;
+    --prime-pill-muted: #94a3b8;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        color-scheme: dark;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+        color-scheme: light;
+    }
+}
+
 body {
     margin: 0;
     min-height: 100vh;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Focus visibility — matches active accent in both themes */
+[data-theme] :where(button, a, input, textarea, select):focus-visible {
+    outline: 2px solid var(--accent-neon);
+    outline-offset: 2px;
+}
+
+.showcase-nav-pill--active {
+    border-color: color-mix(in srgb, var(--accent-neon) 50%, var(--border-strong));
+    background-color: var(--accent-neon-soft);
+    color: var(--accent-neon);
 }
 
 .glass-panel {
@@ -17,4 +224,12 @@ body {
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     background: rgba(255, 255, 255, 0.78);
+}
+
+.compare-prime-panel-bg {
+    background: linear-gradient(
+        180deg,
+        var(--compare-prime-surface-top) 0%,
+        var(--compare-prime-surface-bottom) 100%
+    );
 }

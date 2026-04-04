@@ -5,7 +5,7 @@ import {ChartRenderContext} from "../types/chartOptions";
 import {getBarIntervalSeconds} from "../components/Canvas/utils/helpers";
 
 type VisibleRangeInput = TimeRange & Partial<{startIndex: number; endIndex: number}>;
-export const MAX_CORE_CANDLES = 2000;
+export const MAX_CORE_CANDLES = 5000;
 export const CORE_TICK_THROTTLE_MS = 1000;
 
 /**

@@ -1,5 +1,7 @@
 # Glossary
 
+New to financial bars? Read **[Getting started](./00-getting-started.md)** and **[Interval schema](./17-interval-schema-and-debugging.md)** first.
+
 ## Data
 
 - **Interval** — One bar: open, high, low, close, time (`t` in **Unix seconds**), optional volume (`v`). See the `Interval` type.
@@ -62,4 +64,4 @@ Overlays configured with `base.showOverlayLine` and `base.overlays` or `base.ove
 
 ## Tier comparison: TickUp Prime
 
-**TickUp Core** uses Canvas 2D and Standard Tier caps. **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** is the commercial upgrade for higher throughput and expanded features—see the **[showcase](https://bardamri.github.io/tickup-charts/)**.
+**TickUp Core** uses Canvas 2D with a **5,000**-candle Standard Tier history cap (plus 1 Hz throttling and three overlays). **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** is the commercial upgrade for higher throughput and expanded features—see the **[showcase](https://bardamri.github.io/tickup-charts/)**.

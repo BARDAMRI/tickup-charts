@@ -4,7 +4,7 @@ Published API is split across **`tickup`** and **`tickup/full`**. Undocumented d
 
 ## Standard Edition scope
 
-**TickUp Core** (this package) is the **Standard Edition**: Canvas 2D rendering, **2,000**-bar history cap, **1 Hz** live-update throttling on Standard shells, and **three** overlay indicators. Optional types and engine helpers in **`tickup/full`** exist for compatibility with advanced or commercial integrations; runtime behavior remains subject to Standard Tier guardrails unless you use a separate licensed Prime deployment.
+**TickUp Core** (this package) is the **Standard Edition**: Canvas 2D rendering, **5,000**-bar history cap (**generous but limited** relative to Prime), **1 Hz** live-update throttling on Standard shells, and **three** overlay indicators. Optional types and engine helpers in **`tickup/full`** exist for compatibility with advanced or commercial integrations; runtime behavior remains subject to Standard Tier guardrails unless you use a separate licensed Prime deployment.
 
 ## `tickup` (default)
 

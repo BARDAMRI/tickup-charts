@@ -15,8 +15,12 @@ import {
     TickUpRenderEngine,
     TimeDetailLevel,
 } from 'tickup/full';
-import {Zap, Play, Pause, RefreshCw, Sun, Moon, Magnet} from 'lucide-react';
+import {Zap, Play, Pause, RefreshCw, Sun, Moon} from 'lucide-react';
 import TickUpDemo from './TickUpDemo';
+import ComparisonLab from './ComparisonLab';
+import {PrimeProTelemetry} from './PrimeProTelemetry';
+import {SHOWCASE_PRIME_LICENSE_KEY, SHOWCASE_PRIME_USER_ID} from './showcaseConstants';
+import {syncDocumentTheme} from './syncDocumentTheme';
 import './index.css';
 
 // ----------------------------------------------------------------------------
@@ -125,6 +129,8 @@ const LIVE_TICK_MS = 900;
 const PRIME_LICENSE_STORAGE_KEY = 'tickup:prime:license-key';
 const PRIME_USER_STORAGE_KEY = 'tickup:prime:user-identifier';
 
+const PRIME_SHOWCASE_BAR_COUNT = 12_000;
+
 // ----------------------------------------------------------------------------
 // STRUCTURE
 // ----------------------------------------------------------------------------
@@ -167,7 +173,7 @@ const TIER_ROWS: {
     {
         key: 'prime',
         title: 'TickUp Prime',
-        blurb: 'Prime teaser lane. Link @tickup/prime locally to activate neon rendering.',
+        blurb: 'Production @tickup/prime bundle: WebGL, neon luxury profile, VWAP Pro, magnetic drawing with Pro license, and uncapped history in this lane.',
         Cmp: TickUpPrimeTier,
         lux: true,
     },
@@ -289,34 +295,68 @@ export default function App() {
         }
         return ChartTheme.dark;
     });
-    const [page, setPage] = useState<'tiers' | 'ticks'>('tiers');
+    const [page, setPage] = useState<'tiers' | 'ticks' | 'compare'>('tiers');
     const [primeEngine, setPrimeEngine] = useState<TickUpChartEngine | null>(null);
     const [primeLinked, setPrimeLinked] = useState(false);
     const [primeLicenseInput, setPrimeLicenseInput] = useState<string>(() => {
         if (typeof window === 'undefined') {
-            return '';
+            return SHOWCASE_PRIME_LICENSE_KEY;
         }
-        return window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? '';
+        return window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? SHOWCASE_PRIME_LICENSE_KEY;
     });
     const [primeLicenseKey, setPrimeLicenseKey] = useState<string>(() => {
         if (typeof window === 'undefined') {
-            return '';
+            return SHOWCASE_PRIME_LICENSE_KEY;
         }
-        return (window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? '').trim();
+        return (window.localStorage.getItem(PRIME_LICENSE_STORAGE_KEY) ?? SHOWCASE_PRIME_LICENSE_KEY).trim();
     });
     const [primeUserIdentifierInput, setPrimeUserIdentifierInput] = useState<string>(() => {
         if (typeof window === 'undefined') {
-            return '';
+            return SHOWCASE_PRIME_USER_ID;
         }
-        return window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? '';
+        return window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? SHOWCASE_PRIME_USER_ID;
     });
     const [primeUserIdentifier, setPrimeUserIdentifier] = useState<string>(() => {
         if (typeof window === 'undefined') {
-            return '';
+            return SHOWCASE_PRIME_USER_ID;
         }
-        return (window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? '').trim();
+        return (window.localStorage.getItem(PRIME_USER_STORAGE_KEY) ?? SHOWCASE_PRIME_USER_ID).trim();
     });
     const [licenseModalOpen, setLicenseModalOpen] = useState(false);
+
+    useEffect(() => {
+        const syncRoute = () => {
+            const raw = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+            let relPath = window.location.pathname.replace(/\/$/, '') || '/';
+            const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+            if (base && base !== '/' && relPath.startsWith(base)) {
+                relPath = relPath.slice(base.length) || '/';
+            }
+            relPath = relPath.replace(/\/$/, '') || '/';
+            const pathCompare =
+                relPath === '/compare' || relPath.endsWith('/compare');
+            if (raw === 'compare' || raw === 'playground' || pathCompare) {
+                setPage('compare');
+            }
+        };
+        syncRoute();
+        window.addEventListener('hashchange', syncRoute);
+        window.addEventListener('popstate', syncRoute);
+        return () => {
+            window.removeEventListener('hashchange', syncRoute);
+            window.removeEventListener('popstate', syncRoute);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (page === 'compare') {
+            if (window.location.hash !== '#/compare') {
+                window.location.hash = '#/compare';
+            }
+        } else if (page === 'tiers' && window.location.hash === '#/compare') {
+            window.location.hash = '';
+        }
+    }, [page]);
 
     useEffect(() => {
         const mqLight = window.matchMedia('(prefers-color-scheme: light)');
@@ -327,20 +367,30 @@ export default function App() {
         return () => mqLight.removeEventListener('change', handler);
     }, []);
 
-    // Optional Prime runtime hook: loads only when local/developer env explicitly enables it.
+    useEffect(() => {
+        syncDocumentTheme(theme);
+    }, [theme]);
+
+    /** Black-box Prime engine: Vite resolves `@tickup/prime` to the sibling package's `dist/tickup.es.js` (never Prime `src/`). */
     useLayoutEffect(() => {
-        const enabled = String((import.meta as any).env?.VITE_TICKUP_PRIME ?? '') === '1';
-        if (!enabled) return;
+        let cancelled = false;
         import('@tickup/prime')
-            .then((m: any) => {
-                if (m?.TickUpPrime) {
-                    setPrimeEngine(m.TickUpPrime);
-                    setPrimeLinked(true);
+            .then((m: {TickUpPrime?: TickUpChartEngine}) => {
+                if (cancelled) return;
+                const eng = m?.TickUpPrime ?? null;
+                if (eng) {
+                    setPrimeEngine(eng);
+                    setPrimeLinked(eng.id !== 'prime-shim');
+                } else {
+                    setPrimeLinked(false);
                 }
             })
             .catch(() => {
-                setPrimeLinked(false);
+                if (!cancelled) setPrimeLinked(false);
             });
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     const primeLicenseUnlocked = primeLicenseKey.trim().length > 0;
@@ -420,35 +470,53 @@ export default function App() {
         [theme]
     );
 
-    const coreComparisonOptions = useMemo(
-        () => ({
-            ...standardChartOptions,
-            base: {
-                ...standardChartOptions.base,
-                engine: TickUpRenderEngine.standard,
-                showOverlayLine: true,
-                overlayKinds: [{kind: OverlayKind.ema, period: 21} as const],
-            },
-        }),
-        [standardChartOptions]
+    const primeShowcaseIntervals = useMemo(
+        () =>
+            makeSimpleIntervals({
+                startTime: 1688000000,
+                startPrice: 100,
+                intervalSec: INTERVAL_SEC,
+                count: PRIME_SHOWCASE_BAR_COUNT,
+                seed: 918273,
+                driftPerBar: 0.03,
+                vol: 0.7,
+            }),
+        []
     );
 
-    const primeComparisonOptions = useMemo(
+    const primeShowcaseVisibleRange = useMemo(() => {
+        if (!primeShowcaseIntervals.length) {
+            return {start: 0, end: 1};
+        }
+        const lastT = primeShowcaseIntervals[primeShowcaseIntervals.length - 1].t;
+        return {start: primeShowcaseIntervals[0].t, end: lastT + INTERVAL_SEC};
+    }, [primeShowcaseIntervals]);
+
+    const primeShowcaseChartOptions = useMemo(
         () => ({
-            ...standardChartOptions,
             base: {
                 ...standardChartOptions.base,
                 engine: TickUpRenderEngine.prime,
                 showOverlayLine: true,
-                overlayKinds: [OverlayKind.vwap, {kind: OverlayKind.ema, period: 34} as const],
+                overlayKinds: [OverlayKind.vwap, {kind: OverlayKind.ema, period: 21} as const],
                 style: {
                     ...standardChartOptions.base.style,
-                    backgroundColor: theme === ChartTheme.dark ? '#050913' : '#f0f9ff',
+                    backgroundColor: theme === ChartTheme.dark ? '#050913' : '#f8fafc',
+                    grid:
+                        theme === ChartTheme.dark
+                            ? standardChartOptions.base.style.grid
+                            : {
+                                  ...standardChartOptions.base.style.grid,
+                                  lineColor: 'rgba(3, 105, 161, 0.11)',
+                              },
                 },
             },
+            axes: standardChartOptions.axes,
         }),
         [standardChartOptions, theme]
     );
+
+    const primeTelemetryPickHost = useCallback(() => refs.current.prime, []);
 
     const pushLiveTick = useCallback(() => {
         const api = commandRef.current;
@@ -550,21 +618,27 @@ export default function App() {
     };
 
     return (
-        <div 
-            className={`flex min-h-screen flex-col font-sans transition-colors duration-300 ${
-                theme === ChartTheme.dark ? 'bg-[#050608] text-slate-200' : 'bg-slate-50 text-slate-800'
-            }`} 
-            style={{ backgroundImage: theme === ChartTheme.dark ? 'radial-gradient(circle at 50% 10%, rgba(62,197,255,0.06), transparent 50%)' : 'radial-gradient(circle at 50% 10%, rgba(62,197,255,0.15), transparent 50%)' }}
+        <div
+            className="flex min-h-screen flex-col font-sans transition-colors duration-300"
+            style={{
+                backgroundColor: 'var(--bg-primary)',
+                color: 'var(--text-primary)',
+                backgroundImage: 'var(--app-radial)',
+            }}
         >
-            <header className={`sticky top-0 z-50 py-4 px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-b ${
-                theme === ChartTheme.dark ? 'border-white/5 bg-[#0f121c]/80 backdrop-blur-md' : 'border-slate-200 bg-white/80 backdrop-blur-md'
-            }`}>
+            <header
+                className="sticky top-0 z-50 flex flex-col items-center justify-between gap-4 border-b px-6 py-4 backdrop-blur-md sm:flex-row lg:px-12"
+                style={{
+                    borderColor: 'var(--header-border)',
+                    backgroundColor: 'var(--header-bg)',
+                }}
+            >
                 <div className="flex items-center">
                     <div className="flex flex-col leading-tight">
                         <div className="text-lg font-extrabold tracking-tight">
-                            TickUp <span className="text-[#3EC5FF]">Charts</span>
+                            TickUp <span style={{color: 'var(--brand-wordmark)'}}>Charts</span>
                         </div>
-                        <div className={`${theme === ChartTheme.dark ? 'text-slate-400' : 'text-slate-500'} text-xs font-semibold uppercase tracking-wider`}>
+                        <div className="text-xs font-semibold uppercase tracking-wider" style={{color: 'var(--text-muted)'}}>
                             Demo
                         </div>
                     </div>
@@ -586,19 +660,54 @@ export default function App() {
                     </a>
                     <button
                         type="button"
-                        onClick={() => setPage((p) => (p === 'tiers' ? 'ticks' : 'tiers'))}
-                        className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                        onClick={() => {
+                            setPage('tiers');
+                            window.location.hash = '';
+                        }}
+                        className={`rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                            page === 'tiers'
+                                ? 'showcase-nav-pill--active'
+                                : theme === ChartTheme.dark
+                                    ? 'border-white/10 bg-black/30 text-slate-300 hover:border-white/20 hover:text-white'
+                                    : 'border-slate-200 bg-white/70 text-slate-700 hover:border-slate-300 hover:text-slate-900'
+                        }`}
+                        aria-pressed={page === 'tiers'}
+                    >
+                        Showcase
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setPage('ticks')}
+                        className={`rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
                             page === 'ticks'
-                                ? 'border-[#3EC5FF]/60 bg-[#3EC5FF]/10 text-[#3EC5FF]'
+                                ? 'showcase-nav-pill--active'
                                 : theme === ChartTheme.dark
                                     ? 'border-white/10 bg-black/30 text-slate-300 hover:border-white/20 hover:text-white'
                                     : 'border-slate-200 bg-white/70 text-slate-700 hover:border-slate-300 hover:text-slate-900'
                         }`}
                         aria-pressed={page === 'ticks'}
-                        title={page === 'ticks' ? 'Back to tier showcase' : 'Open tick/axis demo page'}
                     >
-                        {page === 'ticks' ? 'Back' : 'Tick demo'}
+                        Tick demo
                     </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setPage('compare');
+                            window.location.hash = '#/compare';
+                        }}
+                        className={`rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                            page === 'compare'
+                                ? 'showcase-nav-pill--active'
+                                : theme === ChartTheme.dark
+                                    ? 'border-white/10 bg-black/30 text-slate-300 hover:border-white/20 hover:text-white'
+                                    : 'border-slate-200 bg-white/70 text-slate-700 hover:border-slate-300 hover:text-slate-900'
+                        }`}
+                        aria-pressed={page === 'compare'}
+                        title="Core vs Prime — published dist bundles, high-volume mock data"
+                    >
+                        Core vs Prime
+                    </button>
+                    {page !== 'compare' ? (
                     <div className={`flex items-center gap-3 rounded-full border p-1.5 pl-4 pr-1.5 shadow-xl ${
                     theme === ChartTheme.dark ? 'border-white/10 bg-black/40' : 'border-slate-200 bg-white/60'
                 }`}>
@@ -644,11 +753,34 @@ export default function App() {
                         {theme === ChartTheme.dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                     </button>
                     </div>
+                    ) : (
+                    <button
+                        type="button"
+                        onClick={() => setTheme((t) => t === ChartTheme.dark ? ChartTheme.light : ChartTheme.dark)}
+                        className={`flex h-9 w-9 items-center justify-center rounded-full border transition-all ${
+                            theme === ChartTheme.dark
+                                ? 'border-white/10 bg-black/40 text-slate-300 hover:bg-white/10'
+                                : 'border-slate-200 bg-white/70 text-amber-600 hover:bg-slate-50'
+                        }`}
+                        title={theme === ChartTheme.dark ? 'Light mode' : 'Dark mode'}
+                    >
+                        {theme === ChartTheme.dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                    </button>
+                    )}
                 </div>
             </header>
 
             {page === 'ticks' ? (
                 <TickUpDemo />
+            ) : page === 'compare' ? (
+                <ComparisonLab
+                    theme={theme}
+                    onThemeVariantChange={setTheme}
+                    onOpenLicenseModal={() => setLicenseModalOpen(true)}
+                    primeLicenseKey={primeLicenseUnlocked ? primeLicenseKey : null}
+                    primeUserIdentifier={primeUserIdentifier || null}
+                    primeEngine={primeEngine}
+                />
             ) : (
                 <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 p-6 lg:gap-16 lg:p-12 mb-20">
                 <div className="text-center pt-8 pb-4">
@@ -702,7 +834,7 @@ export default function App() {
                                 </thead>
                                 <tbody className={theme === ChartTheme.dark ? 'divide-y divide-white/10' : 'divide-y divide-slate-200'}>
                                     <tr><td className="px-4 py-3">Live Updates</td><td className="px-4 py-3">1Hz Updates (Standard)</td><td className="px-4 py-3">60FPS Real-time</td></tr>
-                                    <tr><td className="px-4 py-3">History</td><td className="px-4 py-3">2k History</td><td className="px-4 py-3">Unlimited History</td></tr>
+                                    <tr><td className="px-4 py-3">History</td><td className="px-4 py-3">5k History (generous cap)</td><td className="px-4 py-3">Unlimited History</td></tr>
                                     <tr><td className="px-4 py-3">Indicator Capacity</td><td className="px-4 py-3">3 Indicators</td><td className="px-4 py-3">Unlimited Indicators</td></tr>
                                     <tr><td className="px-4 py-3">Engine</td><td className="px-4 py-3">Standard Performance</td><td className="px-4 py-3">WebGL High-Performance</td></tr>
                                     <tr><td className="px-4 py-3">Drawing UX</td><td className="px-4 py-3">Manual Alignment</td><td className="px-4 py-3">Magnetic Drawing</td></tr>
@@ -713,7 +845,8 @@ export default function App() {
                             <button
                                 type="button"
                                 onClick={() => setLicenseModalOpen(true)}
-                                className="rounded-lg bg-[#3EC5FF] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#65d5ff]"
+                                className="rounded-lg px-4 py-2 text-sm font-semibold transition hover:brightness-110 active:scale-[0.99]"
+                                style={{backgroundColor: 'var(--accent-neon)', color: 'var(--text-on-accent)'}}
                             >
                                 Upgrade to Prime
                             </button>
@@ -721,64 +854,48 @@ export default function App() {
                     </section>
                     <section
                         className={`rounded-[2rem] border p-5 lg:p-7 ${
-                            theme === ChartTheme.dark ? 'border-[#3EC5FF]/20 bg-[#08101d]/75' : 'border-[#3EC5FF]/30 bg-white'
+                            theme === ChartTheme.dark
+                                ? 'border-[#3EC5FF]/20 bg-[#08101d]/75 shadow-[0_0_40px_-20px_rgba(62,197,255,0.2)]'
+                                : 'border-[#3EC5FF]/30 bg-white'
                         }`}
                     >
-                        <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                             <div>
                                 <h2 className={`text-2xl font-bold tracking-tight ${theme === ChartTheme.dark ? 'text-white' : 'text-slate-900'}`}>
-                                    Tier Comparison
+                                    Live Comparison
                                 </h2>
-                                <p className={`mt-1 text-sm ${theme === ChartTheme.dark ? 'text-slate-400' : 'text-slate-600'}`}>
-                                    Core is intentionally constrained (candle cap + throttled updates). Prime unlocks neon rendering, VWAP overlays, and smoother live behavior.
+                                <p className={`mt-1 max-w-2xl text-sm ${theme === ChartTheme.dark ? 'text-slate-400' : 'text-slate-600'}`}>
+                                    Side-by-side benchmarks load the published <strong className={theme === ChartTheme.dark ? 'text-slate-200' : 'text-slate-800'}>dist/</strong> bundles
+                                    (not TypeScript sources) with a high-volume mock stream—see the Standard cap next to Prime presentation, telemetry, and activation flow.
                                 </p>
                             </div>
-                            <button
-                                type="button"
-                                onClick={() => setLicenseModalOpen(true)}
-                                className="rounded-lg bg-[#3EC5FF] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#65d5ff]"
-                            >
-                                Unlock Prime Features
-                            </button>
-                        </div>
-                        <div className="grid gap-4 lg:grid-cols-2">
-                            <div className={`overflow-hidden rounded-xl border ${theme === ChartTheme.dark ? 'border-white/10 bg-black/30' : 'border-slate-200 bg-slate-50'}`}>
-                                <div className={`flex items-center justify-between border-b px-4 py-2 ${theme === ChartTheme.dark ? 'border-white/10' : 'border-slate-200'}`}>
-                                    <span className="text-sm font-semibold">TickUp Core (Lite)</span>
-                                    <button
-                                        type="button"
-                                        disabled
-                                        title="Magnet Snapping is a Prime-only feature. Upgrade to enable."
-                                        className={`inline-flex cursor-not-allowed items-center gap-1 rounded-md border px-2 py-1 text-xs opacity-60 ${
-                                            theme === ChartTheme.dark ? 'border-white/15 text-slate-300' : 'border-slate-300 text-slate-600'
-                                        }`}
-                                    >
-                                        <Magnet className="h-3.5 w-3.5" />
-                                        Magnet Snapping
-                                    </button>
-                                </div>
-                                <div className="h-[320px]">
-                                    <TickUpCommand
-                                        {...sharedProps}
-                                        chartOptions={coreComparisonOptions}
-                                    />
-                                </div>
-                            </div>
-                            <div className={`overflow-hidden rounded-xl border ${theme === ChartTheme.dark ? 'border-[#3EC5FF]/25 bg-[#030912]' : 'border-[#3EC5FF]/35 bg-cyan-50/60'}`}>
-                                <div className={`flex items-center justify-between border-b px-4 py-2 ${theme === ChartTheme.dark ? 'border-[#3EC5FF]/20' : 'border-[#3EC5FF]/25'}`}>
-                                    <span className="text-sm font-semibold">TickUp Prime (Pro/Luxury)</span>
-                                    <span className="rounded-full bg-[#5A48DE]/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-violet-300">
-                                        Neon + VWAP
-                                    </span>
-                                </div>
-                                <div className="h-[320px]">
-                                    <TickUpPrimeTier
-                                        {...sharedProps}
-                                        chartOptions={primeComparisonOptions}
-                                        licenseKey={primeLicenseUnlocked ? primeLicenseKey : null}
-                                        licenseUserIdentifier={primeUserIdentifier || null}
-                                    />
-                                </div>
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setPage('compare');
+                                        window.location.hash = '#/compare';
+                                    }}
+                                    className="rounded-lg px-4 py-2 text-sm font-semibold shadow-md transition hover:brightness-110 active:scale-[0.99]"
+                                    style={{
+                                        backgroundColor: 'var(--accent-neon)',
+                                        color: 'var(--text-on-accent)',
+                                        boxShadow: '0 8px 28px -8px color-mix(in srgb, var(--accent-neon) 35%, transparent)',
+                                    }}
+                                >
+                                    Open Live Comparison
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setLicenseModalOpen(true)}
+                                    className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
+                                        theme === ChartTheme.dark
+                                            ? 'border-[#3EC5FF]/40 text-[#7dd3fc] hover:bg-[#3EC5FF]/10'
+                                            : 'border-[#3EC5FF]/50 text-[#0369a1] hover:bg-cyan-50'
+                                    }`}
+                                >
+                                    License modal
+                                </button>
                             </div>
                         </div>
                     </section>
@@ -789,7 +906,7 @@ export default function App() {
                                 lux 
                                     ? (theme === ChartTheme.dark 
                                         ? 'border-[#3EC5FF]/30 bg-[#0c121e]/80 shadow-[0_0_80px_-20px_rgba(62,197,255,0.25)] hover:border-[#3EC5FF]/60 hover:shadow-[0_0_100px_-20px_rgba(62,197,255,0.4)]'
-                                        : 'border-[#3EC5FF]/40 bg-white/90 shadow-[0_0_60px_-10px_rgba(62,197,255,0.15)] hover:border-[#3EC5FF]/70 hover:shadow-[0_0_80px_-10px_rgba(62,197,255,0.25)]')
+                                        : 'hover:border-[color:var(--lux-border-light)] border-[color:var(--lux-border-light)] bg-[var(--lux-surface-light)] shadow-[var(--lux-shadow-light)] hover:shadow-[var(--lux-glow-light)]')
                                     : (theme === ChartTheme.dark
                                         ? 'border-white/5 bg-white/[0.02] shadow-2xl hover:border-white/10'
                                         : 'border-slate-200 bg-white shadow-xl hover:border-slate-300')
@@ -804,15 +921,34 @@ export default function App() {
                                             {title}
                                         </h2>
                                         {lux && (
-                                            <span className="inline-flex items-center gap-1 rounded-full bg-[#5A48DE]/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-violet-300 ring-1 ring-violet-400/30">
+                                            <span
+                                                className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ring-1"
+                                                style={{
+                                                    backgroundColor: 'var(--lux-badge-bg)',
+                                                    color: 'var(--lux-badge-text)',
+                                                    boxShadow: 'inset 0 0 0 1px var(--lux-badge-ring)',
+                                                }}
+                                            >
                                                 <Zap className="h-3 w-3" fill="currentColor" /> Luxury
                                             </span>
                                         )}
                                     </div>
                                     <p className={`mt-2 text-sm lg:text-base ${theme === ChartTheme.dark ? 'text-slate-400' : 'text-slate-600'}`}>{blurb}</p>
                                     {key === 'prime' && !primeLinked ? (
-                                        <p className={`mt-2 text-xs ${theme === ChartTheme.dark ? 'text-[#7dd3fc]' : 'text-[#0369a1]'}`}>
-                                            Prime package is not linked in this public build. Use <code>npm run dev:prime</code> to preview neon engine locally.
+                                        <p className={`mt-2 text-xs ${theme === ChartTheme.dark ? 'text-amber-200/90' : 'text-amber-900'}`}>
+                                            Prime{' '}
+                                            <code
+                                                className={`rounded px-1 py-0.5 ${theme === ChartTheme.dark ? 'bg-black/30' : 'bg-amber-100/90 text-amber-950'}`}
+                                            >
+                                                dist/tickup.es.js
+                                            </code>{' '}
+                                            not found next to this repo. Build <strong>tickup-prime-final</strong> or set{' '}
+                                            <code
+                                                className={`rounded px-1 py-0.5 ${theme === ChartTheme.dark ? 'bg-black/30' : 'bg-amber-100/90 text-amber-950'}`}
+                                            >
+                                                VITE_TICKUP_PRIME_SHIM=1
+                                            </code>{' '}
+                                            for a stub engine.
                                         </p>
                                     ) : null}
                                     {key === 'prime' ? (
@@ -846,7 +982,8 @@ export default function App() {
                                             <button
                                                 type="button"
                                                 onClick={() => setLicenseModalOpen(true)}
-                                                className="w-full rounded-lg bg-[#3EC5FF] px-3 py-2 text-xs font-semibold text-black transition hover:bg-[#65d5ff]"
+                                                className="w-full rounded-lg px-3 py-2 text-xs font-semibold transition hover:brightness-110 active:scale-[0.99]"
+                                                style={{backgroundColor: 'var(--accent-neon)', color: 'var(--text-on-accent)'}}
                                             >
                                                 Open License Modal
                                             </button>
@@ -856,18 +993,35 @@ export default function App() {
                             </div>
 
                             <div className="relative z-10 p-2 sm:p-4 lg:p-6 pb-0 shadow-inner">
-                                <div className={`relative w-full overflow-hidden rounded-xl border ${theme === ChartTheme.dark ? 'bg-black/50' : 'bg-slate-50'} ${
-                                    lux 
-                                        ? (theme === ChartTheme.dark ? 'h-[550px] border-[#3EC5FF]/20 shadow-[inset_0_0_40px_rgba(62,197,255,0.05)]' : 'h-[550px] border-[#3EC5FF]/30 shadow-[inset_0_0_20px_rgba(62,197,255,0.02)]') 
-                                        : (theme === ChartTheme.dark ? 'h-[500px] border-white/10' : 'h-[500px] border-slate-200')
-                                }`}>
+                                <div
+                                    className={`relative w-full overflow-hidden rounded-xl border ${
+                                        lux
+                                            ? theme === ChartTheme.dark
+                                                ? 'h-[550px] border-[#3EC5FF]/20 shadow-[inset_0_0_40px_rgba(62,197,255,0.05)] bg-black/50'
+                                                : 'h-[550px] border-[color:var(--lux-border-light)] bg-[var(--bg-elevated)] shadow-[inset_0_0_28px_var(--accent-neon-soft)]'
+                                            : theme === ChartTheme.dark
+                                              ? 'h-[500px] border-white/10 bg-black/50'
+                                              : 'h-[500px] border-slate-200 bg-slate-50'
+                                    }`}
+                                >
+                                    {key === 'prime' ? (
+                                        <PrimeProTelemetry theme={theme} pickHost={primeTelemetryPickHost} />
+                                    ) : null}
                                     <Cmp
                                         ref={tierRefCallbacks[key]}
                                         {...sharedProps}
                                         {...(key === 'prime'
                                             ? {
+                                                intervalsArray: primeShowcaseIntervals,
+                                                initialVisibleTimeRange: primeShowcaseVisibleRange,
+                                                chartOptions: primeShowcaseChartOptions,
                                                 licenseKey: primeLicenseUnlocked ? primeLicenseKey : null,
-                                                licenseUserIdentifier: primeUserIdentifier || null,
+                                                licenseUserIdentifier:
+                                                    primeLicenseUnlocked && primeUserIdentifier.trim()
+                                                        ? primeUserIdentifier
+                                                        : primeLicenseUnlocked
+                                                          ? SHOWCASE_PRIME_USER_ID
+                                                          : null,
                                             }
                                             : {})}
                                     />
@@ -879,10 +1033,18 @@ export default function App() {
                 </main>
             )}
             {licenseModalOpen ? (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 px-4">
-                    <div className={`w-full max-w-lg rounded-2xl border p-5 shadow-2xl ${
-                        theme === ChartTheme.dark ? 'border-[#3EC5FF]/30 bg-[#071222] text-slate-100' : 'border-[#3EC5FF]/35 bg-white text-slate-900'
-                    }`}>
+                <div
+                    className="fixed inset-0 z-[70] flex items-center justify-center px-4"
+                    style={{backgroundColor: 'var(--overlay-scrim)'}}
+                >
+                    <div
+                        className="w-full max-w-lg rounded-2xl border p-5 shadow-2xl"
+                        style={{
+                            borderColor: 'var(--modal-border)',
+                            backgroundColor: 'var(--modal-bg)',
+                            color: 'var(--modal-text)',
+                        }}
+                    >
                         <div className="mb-3 flex items-center justify-between">
                             <h3 className="text-lg font-bold">Unlock Prime Features</h3>
                             <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
@@ -895,9 +1057,41 @@ export default function App() {
                                 {primeLicenseUnlocked ? 'Unlocked' : 'Evaluation'}
                             </span>
                         </div>
-                        <p className={`mb-4 text-sm ${theme === ChartTheme.dark ? 'text-slate-300' : 'text-slate-600'}`}>
+                        <p className="mb-4 text-sm" style={{color: 'var(--modal-muted)'}}>
                             Enter your Prime user identifier and license key to unlock Pro/Luxury rendering, smoother updates, and unlimited analysis tools.
                         </p>
+                        <div
+                            className={`mb-4 rounded-xl border p-4 text-sm ${
+                                theme === ChartTheme.dark
+                                    ? 'border-[#3EC5FF]/25 bg-[#0a1624]/90 text-slate-300'
+                                    : 'border-[#3EC5FF]/30 bg-cyan-50/80 text-slate-700'
+                            }`}
+                        >
+                            <h4 className={`mb-2 text-xs font-bold uppercase tracking-widest ${theme === ChartTheme.dark ? 'text-[#7dd3fc]' : 'text-cyan-800'}`}>
+                                Pricing & licensing
+                            </h4>
+                            <p className="mb-3 leading-relaxed">
+                                TickUp Core is MIT. Prime is a commercial upgrade for WebGL throughput, deep history, and pro tooling.
+                            </p>
+                            <div className="flex flex-col gap-2 text-xs font-semibold">
+                                <a
+                                    href="https://github.com/BARDAMRI/tickup-core-final/blob/main/README.md#pricing--licensing"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className={`rounded-lg border px-3 py-2 transition ${theme === ChartTheme.dark ? 'border-white/15 hover:bg-white/10' : 'border-slate-200 hover:bg-white'}`}
+                                >
+                                    Core (MIT) & upgrade overview →
+                                </a>
+                                <a
+                                    href="https://github.com/BARDAMRI/tickup-prime"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className={`rounded-lg border px-3 py-2 transition ${theme === ChartTheme.dark ? 'border-[#3EC5FF]/35 text-[#7dd3fc] hover:bg-[#3EC5FF]/10' : 'border-cyan-200 text-cyan-900 hover:bg-cyan-100/60'}`}
+                                >
+                                    TickUp Prime product repo →
+                                </a>
+                            </div>
+                        </div>
                         <div className="space-y-2">
                             <input
                                 value={primeUserIdentifierInput}
@@ -912,7 +1106,7 @@ export default function App() {
                             <input
                                 value={primeLicenseInput}
                                 onChange={(e) => setPrimeLicenseInput(e.target.value)}
-                                placeholder="TUP-PRIME-XXXXXXXX"
+                                placeholder={SHOWCASE_PRIME_LICENSE_KEY}
                                 className={`w-full rounded-lg border px-3 py-2 font-mono text-sm outline-none ring-[#3EC5FF]/40 focus:ring-2 ${
                                     theme === ChartTheme.dark
                                         ? 'border-[#3EC5FF]/35 bg-black/35 text-slate-100 placeholder:text-slate-500'
@@ -924,22 +1118,24 @@ export default function App() {
                             <button
                                 type="button"
                                 onClick={clearPrimeLicense}
-                                className={`rounded-lg border px-3 py-2 text-xs font-semibold ${
-                                    theme === ChartTheme.dark
-                                        ? 'border-white/15 text-slate-300 hover:bg-white/10'
-                                        : 'border-slate-300 text-slate-700 hover:bg-slate-100'
-                                }`}
+                                className="rounded-lg border px-3 py-2 text-xs font-semibold transition active:scale-[0.98] hover:bg-[var(--btn-ghost-hover)] active:bg-[var(--btn-ghost-active)]"
+                                style={{
+                                    borderColor: 'var(--border-default)',
+                                    color: 'var(--text-secondary)',
+                                    backgroundColor: 'transparent',
+                                }}
                             >
                                 Clear
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setLicenseModalOpen(false)}
-                                className={`rounded-lg border px-3 py-2 text-xs font-semibold ${
-                                    theme === ChartTheme.dark
-                                        ? 'border-white/15 text-slate-300 hover:bg-white/10'
-                                        : 'border-slate-300 text-slate-700 hover:bg-slate-100'
-                                }`}
+                                className="rounded-lg border px-3 py-2 text-xs font-semibold transition active:scale-[0.98] hover:bg-[var(--btn-ghost-hover)] active:bg-[var(--btn-ghost-active)]"
+                                style={{
+                                    borderColor: 'var(--border-default)',
+                                    color: 'var(--text-secondary)',
+                                    backgroundColor: 'transparent',
+                                }}
                             >
                                 Close
                             </button>
@@ -949,7 +1145,11 @@ export default function App() {
                                     applyPrimeLicense();
                                     setLicenseModalOpen(false);
                                 }}
-                                className="rounded-lg bg-[#3EC5FF] px-3 py-2 text-xs font-semibold text-black transition hover:bg-[#65d5ff]"
+                                className="rounded-lg px-3 py-2 text-xs font-semibold transition hover:brightness-110 active:scale-[0.98]"
+                                style={{
+                                    backgroundColor: 'var(--accent-neon)',
+                                    color: 'var(--text-on-accent)',
+                                }}
                             >
                                 Apply & Unlock
                             </button>

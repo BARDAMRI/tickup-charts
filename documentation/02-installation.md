@@ -1,5 +1,7 @@
 # Installation
 
+**First time integrating?** Follow the step-by-step **[Getting started — Grand Tour](./00-getting-started.md)** (project setup + Hello World), then return here for peer details.
+
 ## Requirements
 
 - **React** 18 or 19  

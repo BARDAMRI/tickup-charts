@@ -1,5 +1,9 @@
 # Imperative API (ref handle)
 
+Host **props** and **`chartOptions`** field tables: **[API reference](./16-api-reference.md)**.
+
+**Standard Tier:** `applyLiveData`, `addInterval`, and related paths still enforce the **5,000**-bar cap and (on Standard shells) the **~1 Hz** live merge throttle — same as the `intervalsArray` prop path. See [Data & live updates](./07-data-and-live-updates.md).
+
 Use `useRef<TickUpHostHandle>()` and attach `ref` to `TickUpCommand`, `TickUpHost`, or another supported shell.
 
 ## Drawings

@@ -270,9 +270,14 @@ export const TickUpHost = forwardRef<TickUpHostHandle, TickUpHostProps>((props, 
     const showTopBar = hasLockedChrome ? tierLayout.showTopBar : (showTopBarProp ?? tierLayout.showTopBar);
     const showSettingsBar = hasLockedChrome ? tierLayout.showSettingsBar : (showSettingsBarProp ?? tierLayout.showSettingsBar);
 
-    const [finalStyleOptions, setStyleOptions] = useState<DeepRequired<ChartOptions>>(() =>
-        deepMerge(DEFAULT_GRAPH_OPTIONS, chartOptions)
-    );
+    const [finalStyleOptions, setStyleOptions] = useState<DeepRequired<ChartOptions>>(() => {
+        const axesTickFallback: DeepPartial<ChartOptions> =
+            chartOptions?.axes?.numberOfYTicks === undefined
+                ? {axes: {numberOfYTicks: initialNumberOfYTicks}}
+                : {};
+        const withTicks = deepMerge(DEFAULT_GRAPH_OPTIONS, axesTickFallback);
+        return deepMerge(withTicks, chartOptions);
+    });
     const [internalThemeVariant, setInternalThemeVariant] = useState<ChartTheme>(defaultThemeVariant);
     const isThemeControlled = themeVariantProp !== undefined;
     const themeVariant = isThemeControlled ? themeVariantProp! : internalThemeVariant;
