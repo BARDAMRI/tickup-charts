@@ -1,0 +1,34 @@
+{
+  "project": "TickUp Ecosystem",
+  "resolution": "3840x2160",
+  "fps": 60,
+  "quality_profile": "Ultra-High Bitrate",
+  "assets": [
+    {
+      "filename": "scene1_performance_gap.webm",
+      "feature_set": "Core vs Prime performance comparison (1Hz Jitter vs 60FPS Fluidity)",
+      "telemetry": {
+        "core_fps": 1,
+        "core_bars": 5000,
+        "prime_fps": 60,
+        "prime_bars": 12000
+      }
+    },
+    {
+      "filename": "scene2_magnetic_precision.webm",
+      "feature_set": "Magnetic Snap & OHLC Tooltip resolution",
+      "telemetry": {
+        "prime_bars": 12000
+      }
+    },
+    {
+      "filename": "scene3_extreme_zoom.webm",
+      "feature_set": "Fling pan and continuous zoom across full dataset without frame drops",
+      "telemetry": {
+        "prime_fps": 60,
+        "prime_bars": 12000
+      }
+    }
+  ],
+  "execution_notes": "Videos captured with increased frame-pacing and higher buffer allocation to eliminate previous encoding artifacts."
+}

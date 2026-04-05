@@ -1,14 +1,14 @@
 # Contributing to TickUp Charts
 
-Thank you for your interest in this open-source project.
+TickUp Charts is **open source** (MIT). Maintainers treat contributors as **peers**: we review code and docs in good faith, prefer small incremental PRs when possible, and are happy to help you get your first contribution merged—whether that is a one-line doc fix or a careful feature behind a clear issue discussion.
 
 ## How to participate
 
-Reach out or send contributions through any of these channels:
+Pick what fits your style; all of these are legitimate on-ramps:
 
-- **GitHub:** [github.com/BARDAMRI](https://github.com/BARDAMRI/) — open an [issue](https://github.com/BARDAMRI/tickup-charts/issues) or pull request on the [TickUp Charts](https://github.com/BARDAMRI/tickup-charts) repository.
-- **Email:** [bardamri1702@gmail.com](mailto:bardamri1702@gmail.com)
-- **Website:** [bardamri.com](https://bardamri.com)
+- **GitHub** — Open an [issue](https://github.com/BARDAMRI/tickup-charts/issues) (bug, idea, question) or a **pull request** on **[TickUp Charts](https://github.com/BARDAMRI/tickup-charts)**. That is where public review and project history live.
+- **Email (maintainer)** — **[Bar Damri](mailto:bardamri1702@gmail.com)** — [bardamri1702@gmail.com](mailto:bardamri1702@gmail.com). Use this for **security disclosures**, **private coordination**, or when you are unsure whether an idea fits the roadmap and want a quick human answer before investing in a long GitHub thread.
+- **Website** — [bardamri.com](https://bardamri.com)
 
 ## Before you open a PR
 

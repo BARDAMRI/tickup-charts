@@ -4,6 +4,8 @@
 
 This package is the **Standard Edition** (**MIT**). It is aimed at **dashboards**, **admin tools**, and **embedded widgets** where you want a **real chart**, not a screenshot, without building canvas math from scratch.
 
+**Open source:** TickUp Core is developed in the open. If you use it, improve it, or teach others with it, consider **joining the effort**—documentation fixes, reproducible bug reports, and focused pull requests are all valuable. You do not need prior maintainer approval to **open an issue**; for anything sensitive or exploratory, **Bar Damri** is reachable at **[bardamri1702@gmail.com](mailto:bardamri1702@gmail.com)** ([bardamri.com](https://bardamri.com)). Public collaboration happens on **[GitHub](https://github.com/BARDAMRI/tickup-charts/issues)**. See **[Contributing](../CONTRIBUTING.md)** for how to run builds and propose changes.
+
 **New here?** Start with the **[Getting started — Grand Tour](./00-getting-started.md)** (install from zero + Hello World).
 
 ---

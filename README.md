@@ -75,6 +75,21 @@ export function App() {
 - **[OHLC schema & debugging](./documentation/17-interval-schema-and-debugging.md)** — Data format and common “chart not showing” fixes.
 - **[Comparison showcase](./documentation/18-comparison-showcase.md)** — **`#/compare`** to audit Core vs Prime before choosing a tier.
 - [Quick start](./documentation/03-quick-start.md) · [Imperative API](./documentation/06-imperative-api.md) · [Data & live updates](./documentation/07-data-and-live-updates.md)
+- [Contributing](./CONTRIBUTING.md) — how to collaborate on the open-source core.
+
+## Open source & collaborators
+
+**TickUp Core** (this repository and the **`tickup`** package on npm) is **open source** under the **[MIT License](./LICENSE)**. You can study it, ship it in commercial products, fork it, and send improvements back—no permission slip required beyond the license terms.
+
+If you care about **financial UX**, **canvas performance**, **TypeScript APIs**, or **documentation clarity**, you belong here. We welcome **first-time contributors** as much as regulars: open an issue with a question, a repro, or a rough idea; share a small doc fix or a focused PR; or pair on a larger change after a quick discussion in an issue so nobody wastes effort.
+
+**Ways to reach the maintainer (Bar Damri):**
+
+- **Email:** [bardamri1702@gmail.com](mailto:bardamri1702@gmail.com) — best for private questions, security reports, or collaboration proposals before they become public threads.  
+- **Website:** [bardamri.com](https://bardamri.com)  
+- **GitHub:** [Issues & pull requests](https://github.com/BARDAMRI/tickup-charts/issues) on this repo for bugs, features, and code review in the open.
+
+See **[Contributing](./CONTRIBUTING.md)** for branch expectations, build commands, and PR hygiene.
 
 ## TickUp Prime
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  body {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    font-family: Menlo, Monaco, 'Courier New', monospace;
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 20px;
+    margin: 0;
+  }
+  .keyword { color: #569cd6; }
+  .tag { color: #569cd6; }
+  .component { color: #4ec9b0; }
+  .string { color: #ce9178; }
+  .punctuation { color: #d4d4d4; }
+  .operator { color: #d4d4d4; }
+  .property { color: #9cdcfe; }
+  .comment { color: #6a9955; }
+  pre { margin: 0; }
+</style>
+</head>
+<body>
+<pre>
+<span class="keyword">import</span> { <span class="property">TickUpHost</span>, <span class="property">TickUpCoreTier</span> } <span class="keyword">from</span> <span class="string">'tickup'</span><span class="punctuation">;</span>
+<span class="keyword">import</span> { <span class="property">useTelemetry</span> } <span class="keyword">from</span> <span class="string">'./hooks/useTelemetry'</span><span class="punctuation">;</span>
+
+<span class="comment">// The main charting engine host highlighting Prime vs Core separation</span>
+<span class="keyword">export</span> <span class="keyword">function</span> <span class="property">App</span><span class="punctuation">() {</span>
+  <span class="keyword">const</span> <span class="property">telemetry</span> <span class="operator">=</span> <span class="property">useTelemetry</span><span class="punctuation">();</span>
+
+  <span class="keyword">return</span> <span class="punctuation">(</span>
+    <span class="operator">&lt;</span><span class="component">TickUpHost</span>
+      <span class="property">tier</span><span class="operator">=</span><span class="punctuation">{</span><span class="component">TickUpCoreTier</span><span class="punctuation">}</span>
+      <span class="property">intervalsArray</span><span class="operator">=</span><span class="punctuation">{</span><span class="property">mockData</span><span class="punctuation">}</span>
+      <span class="property">onTelemetryUpdate</span><span class="operator">=</span><span class="punctuation">{</span><span class="property">telemetry</span><span class="punctuation">.</span><span class="property">report</span><span class="punctuation">}</span>
+      <span class="property">theme</span><span class="operator">=</span><span class="string">"dark"</span>
+      <span class="property">width</span><span class="operator">=</span><span class="punctuation">{</span><span class="property">800</span><span class="punctuation">}</span>
+      <span class="property">height</span><span class="operator">=</span><span class="punctuation">{</span><span class="property">600</span><span class="punctuation">}</span>
+    <span class="operator">/&gt;</span>
+  <span class="punctuation">);</span>
+<span class="punctuation">}</span>
+</pre>
+</body>
+</html>

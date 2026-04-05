@@ -2,6 +2,26 @@
 
 Integration guides for **TickUp Core** (Standard Edition): the MIT open-source React charting library published as the **`tickup`** npm package.
 
+---
+
+## Open source & collaboration
+
+This project is **open source** (**MIT**). The docs you are reading ship inside the npm tarball on purpose: we want integrators *and* contributors to have the same source of truth.
+
+**You are invited to collaborate.** Whether you spot a typo in a guide, want to harden an edge case in live data, or dream up a better default for axes—we’d rather you **open an issue** or **draft a PR** than assume the door is closed. Small, reviewable changes often merge fastest; bigger ideas benefit from a short issue thread first so maintainers and contributors align.
+
+**Contact the maintainer — Bar Damri**
+
+| Channel | Use for |
+|---------|---------|
+| **[bardamri1702@gmail.com](mailto:bardamri1702@gmail.com)** | Direct questions, security-sensitive reports, or “is this in scope?” before opening a public issue. |
+| **[bardamri.com](https://bardamri.com)** | Background and other work. |
+| **[GitHub Issues / PRs](https://github.com/BARDAMRI/tickup-charts/issues)** | Bugs, features, and code contributions in the open. |
+
+Workflow and local build steps: **[Contributing](../CONTRIBUTING.md)** (repository root).
+
+---
+
 ## Start here (zero-knowledge path)
 
 1. **[Getting started — Grand Tour](./00-getting-started.md)** — Create a React app, install peers, copy-paste **Hello World**, learn the **5k / 1 Hz / 3 overlays** guardrails.  
@@ -29,6 +49,7 @@ The **example app** in [`../example/`](../example/) (Vite + React) demonstrates 
 | 0 | [Getting started](./00-getting-started.md) | Grand Tour: install, Hello World, guardrails |
 | 1 | [Introduction](./01-introduction.md) | What Core is; doc map |
 | — | [Glossary](./01-glossary.md) | Intervals, ranges, products, placements |
+| — | [Contributing](../CONTRIBUTING.md) | Open-source collaboration, PRs, contact |
 | 2 | [Installation](./02-installation.md) | Peers, npm, bundlers |
 | 3 | [Quick start](./03-quick-start.md) | Minimal embed and data flow |
 | 4 | [Products & layout](./04-products-and-layout.md) | Pulse, Flow, Command, Desk, Prime tier |
