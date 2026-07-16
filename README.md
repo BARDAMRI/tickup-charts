@@ -11,10 +11,11 @@
 | | **TickUp Core (Standard Edition)** | **TickUp Prime (Pro)** |
 | :--- | :--- | :--- |
 | **Rendering** | HTML5 Canvas 2D | Hyper-Optimized Canvas 2D |
-| **Live updates** | 1 Hz (1 second) throttling | Unthrottled — commits as fast as your feed sends |
+| **Live updates** | 1 Hz (1 second) throttling | Unthrottled — commits as fast as your feed sends (see Endurance Lab below for measured limits at very large history + high tick rates) |
 | **History depth** | Up to **5,000** candles (generous Standard cap) | Uncapped data capacity — no 5,000-candle limit |
 | **Indicators** | Up to **3** overlays | Unlimited |
 | **Advanced UX** | — | Magnetic snapping, VWAP Pro, premium visuals |
+| **Attribution** | "Powered by TickUp" enforced (visibility guarded in the host) | White-label — `showAttribution={false}` is honored |
 | **License** | MIT (this repo) | Commercial |
 
 TickUp **Core** is the MIT **Standard Edition**: a production-quality charting stack for **dashboards**, **internal tools**, and **simple market UIs**. It uses a **generous but limited** history window (currently **5,000** candles) so performance stays predictable while Prime remains the path for boundless scale.
@@ -22,6 +23,10 @@ TickUp **Core** is the MIT **Standard Edition**: a production-quality charting s
 **Power users** and **trading-grade products** should evaluate **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** for uncapped data capacity, unthrottled live-feed rendering, and professional interaction tooling. Try it live in the **[Prime Showcase](https://bardamri.github.io/tickup-charts/)**.
 
 ![TickUp Interaction Demo](https://raw.githubusercontent.com/BARDAMRI/tickup-charts/main/assets/showcase/interaction-demo.gif)
+
+## Endurance Lab — source of truth for performance claims
+
+Frame-rate, capacity, and resilience numbers in this README and the documentation are not asserted from memory — they come from `example/src/EnduranceLab.tsx`, a stress harness that feeds a 200,000-candle initial payload plus a continuous 50-ticks/sec live feed (with a fraction of ticks deliberately malformed) through the real engine, tracks dropped frames and `performance.memory`, and forces a render-fault recovery cycle. Re-run it (`npm run dev` in `example/`, open the "Endurance Lab" tab) whenever the data pipeline changes, and update any performance claims from that fresh run rather than carrying old numbers forward. The Prime-tier equivalent (uncapped-history stress testing against the real licensed engine) lives in the `tickup-prime` repo's own Endurance Lab and enterprise guide.
 
 ## What you get in Standard Edition
 
