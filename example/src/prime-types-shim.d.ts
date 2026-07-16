@@ -19,8 +19,6 @@ declare module '@tickup/prime' {
         userIdentifier?: string | null,
     ) => Promise<boolean>;
 
-    export const isWebGL2Supported: () => boolean;
-
     export const TICKUP_PRIME_PRIMARY: string;
     export const TICKUP_PRIME_SECONDARY: string;
     export const TICKUP_PRIME_TEXT: string;

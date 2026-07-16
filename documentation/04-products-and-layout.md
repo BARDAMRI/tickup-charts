@@ -50,4 +50,4 @@ The shell wraps children in **`ModeProvider`**. If you use **`TickUpStage`** alo
 
 ## Tier comparison: TickUp Prime
 
-**TickUp Prime** adds a commercial shell, WebGL-class rendering, and expanded limits. Details: **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** · **[Showcase](https://bardamri.github.io/tickup-charts/)**
+**TickUp Prime** adds a commercial shell, a Hyper-Optimized Canvas 2D engine with uncapped data capacity and unthrottled live-feed rendering, and expanded limits. Details: **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** · **[Showcase](https://bardamri.github.io/tickup-charts/)**

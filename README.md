@@ -10,16 +10,16 @@
 
 | | **TickUp Core (Standard Edition)** | **TickUp Prime (Pro)** |
 | :--- | :--- | :--- |
-| **Rendering** | HTML5 Canvas 2D | WebGL 2.0 |
-| **Live updates** | 1 Hz (1 second) throttling | ~60 FPS pipeline |
-| **History depth** | Up to **5,000** candles (generous Standard cap) | Unlimited (product-dependent) |
+| **Rendering** | HTML5 Canvas 2D | Hyper-Optimized Canvas 2D |
+| **Live updates** | 1 Hz (1 second) throttling | Unthrottled — commits as fast as your feed sends |
+| **History depth** | Up to **5,000** candles (generous Standard cap) | Uncapped data capacity — no 5,000-candle limit |
 | **Indicators** | Up to **3** overlays | Unlimited |
 | **Advanced UX** | — | Magnetic snapping, VWAP Pro, premium visuals |
 | **License** | MIT (this repo) | Commercial |
 
 TickUp **Core** is the MIT **Standard Edition**: a production-quality charting stack for **dashboards**, **internal tools**, and **simple market UIs**. It uses a **generous but limited** history window (currently **5,000** candles) so performance stays predictable while Prime remains the path for boundless scale.
 
-**Power users** and **trading-grade products** should evaluate **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** for WebGL throughput, deep history, and professional interaction tooling. Try it live in the **[Prime Showcase](https://bardamri.github.io/tickup-charts/)**.
+**Power users** and **trading-grade products** should evaluate **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** for uncapped data capacity, unthrottled live-feed rendering, and professional interaction tooling. Try it live in the **[Prime Showcase](https://bardamri.github.io/tickup-charts/)**.
 
 ![TickUp Interaction Demo](https://raw.githubusercontent.com/BARDAMRI/tickup-charts/main/assets/showcase/interaction-demo.gif)
 
@@ -33,7 +33,7 @@ TickUp **Core** is the MIT **Standard Edition**: a production-quality charting s
 ## Why upgrade to Prime?
 
 - You need **more than 5,000** bars, **faster** than 1 Hz updates, or **more than three** studies without caps.
-- You want **WebGL**-class density and Prime-only interaction and analysis features.
+- You want **uncapped data capacity and unthrottled live-feed rendering**, plus Prime-only interaction and analysis features.
 
 ## How to upgrade
 

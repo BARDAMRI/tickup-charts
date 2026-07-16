@@ -89,4 +89,4 @@ Wrap with **`ModeProvider`**. Pass required `TickUpStageProps` from TypeScript. 
 
 ## Tier comparison: TickUp Prime
 
-**[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** documents the commercial WebGL product, unlimited studies, and enterprise integrations. **[Showcase](https://bardamri.github.io/tickup-charts/)**
+**[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** documents the commercial Hyper-Optimized Canvas 2D product — uncapped data capacity, unthrottled live-feed rendering — plus unlimited studies and enterprise integrations. **[Showcase](https://bardamri.github.io/tickup-charts/)**

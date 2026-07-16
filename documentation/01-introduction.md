@@ -46,4 +46,4 @@ Details: [Data & live updates](./07-data-and-live-updates.md), [Interval schema 
 
 ## Tier comparison: TickUp Prime
 
-For **WebGL** throughput, **unlimited** history (product-dependent), **unlimited** indicators, and premium workflows beyond the **5,000**-candle Standard baseline, evaluate **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[showcase](https://bardamri.github.io/tickup-charts/)**.
+For a Hyper-Optimized Canvas 2D engine with **uncapped data capacity** and **unthrottled live-feed rendering**, **unlimited** indicators, and premium workflows beyond the **5,000**-candle Standard baseline, evaluate **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[showcase](https://bardamri.github.io/tickup-charts/)**.

@@ -127,4 +127,4 @@ These are **not bugs**; they keep dashboards fast on typical hardware. See [Data
 
 ## Tier comparison: TickUp Prime
 
-For **WebGL**, **unlimited** history (product-dependent), and **unlimited** indicators, evaluate **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[live showcase](https://bardamri.github.io/tickup-charts/)**.
+For **uncapped data capacity** (no 5,000-candle limit), **unthrottled live-feed rendering**, and **unlimited** indicators on a Hyper-Optimized Canvas 2D engine, evaluate **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[live showcase](https://bardamri.github.io/tickup-charts/)**.

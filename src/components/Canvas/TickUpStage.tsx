@@ -293,10 +293,13 @@ export const TickUpStage = forwardRef<TickUpStageHandle, TickUpStageProps>(({
         startIndex: number,
         endIndex: number
     }>({ start: 0, end: 0, startIndex: 0, endIndex: 0 });
-    const [visiblePriceRange, setVisiblePriceRange] = React.useState<PriceRange>({
-        min: Math.min(...intervalsArray.map(inter => inter?.l || 0)),
-        max: Math.max(...intervalsArray.map(inter => inter?.h || 0)),
-        range: Math.max(...intervalsArray.map(inter => inter?.h || 0)) - Math.min(...intervalsArray.map(inter => inter?.l || 0))
+    const [visiblePriceRange, setVisiblePriceRange] = React.useState<PriceRange>(() => {
+        // Spreading a huge array into Math.min/Math.max overflows the call stack
+        // (V8 caps ~65k args); a plain loop over the already-clamped intervals avoids that.
+        if (!intervals.length) {
+            return { min: Infinity, max: -Infinity, range: -Infinity };
+        }
+        return findPriceRange(intervals, 0, intervals.length - 1);
     });
     const [drawings, setDrawings] = useState<IDrawingShape[]>([]);
     const [alertState, setAlertState] = useState<{ isOpen: boolean; title: string; message: string }>({

@@ -77,4 +77,4 @@ These guides use **GitHub Flavored Markdown** (fenced code blocks with language 
 
 ## Tier comparison: TickUp Prime
 
-**TickUp Core** is the **Standard Edition**: Canvas 2D, a **5,000**-candle cap, **~1 Hz** live-update throttling on Standard shells, and **three** overlay indicators. For WebGL, deep history, and expanded tooling, see **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[live showcase](https://bardamri.github.io/tickup-charts/)**.
+**TickUp Core** is the **Standard Edition**: Canvas 2D, a **5,000**-candle cap, **~1 Hz** live-update throttling on Standard shells, and **three** overlay indicators. For uncapped data capacity, unthrottled live-feed rendering, and expanded tooling on the same Hyper-Optimized Canvas 2D engine, see **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[live showcase](https://bardamri.github.io/tickup-charts/)**.

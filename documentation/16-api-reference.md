@@ -127,12 +127,12 @@ The default **`import … from 'tickup'`** entry re-exports the symbols below. *
 
 **Type:** string enum (`'standard' | 'prime'`).
 
-**Purpose:** Selects the **visual profile** for the plot (standard Canvas 2D look vs Prime-styled neon / glass accents in this package). **WebGL** throughput requires the separate **@tickup/prime** engine and license path.
+**Purpose:** Selects the **visual profile** for the plot (standard Canvas 2D look vs Prime-styled neon / glass accents in this package). **Uncapped data capacity and unthrottled live-feed rendering** require the separate **@tickup/prime** engine and license path.
 
 | Value | Purpose | Default in merged options |
 |-------|---------|---------------------------|
 | `standard` | Default Canvas 2D presentation. | Yes (`DEFAULT_GRAPH_OPTIONS`) |
-| `prime` | Prime **styling** profile in Core; pair with a Prime engine via ref `setEngine` for full WebGL. | No |
+| `prime` | Prime **styling** profile in Core; pair with a Prime engine via ref `setEngine` for the full Hyper-Optimized Canvas 2D engine. | No |
 
 If **omitted** in `chartOptions`, the library merge supplies **`standard`**.
 
@@ -419,4 +419,4 @@ More: [Interval schema & debugging](./17-interval-schema-and-debugging.md), [Com
 
 ## Tier comparison: TickUp Prime
 
-For WebGL throughput, deep history, and unlimited overlays, see **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[showcase](https://bardamri.github.io/tickup-charts/)**.
+For uncapped data capacity, unthrottled live-feed rendering, and unlimited overlays on a Hyper-Optimized Canvas 2D engine, see **[TickUp Prime](https://github.com/BARDAMRI/tickup-prime)** and the **[showcase](https://bardamri.github.io/tickup-charts/)**.

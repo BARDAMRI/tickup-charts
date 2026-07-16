@@ -21,7 +21,7 @@ Some deployments also honor a pathname ending in **`/compare`** when the server 
 | Column | What it represents |
 |--------|--------------------|
 | **Left — TickUp Core (Standard)** | **Canvas 2D**, **5,000-bar** cap, **~1 Hz** live-update behavior on Standard shells, standard attribution. |
-| **Right — TickUp Prime** | **Prime product shell** with licensed/eval features when **`@tickup/prime`** is linked; **WebGL** path when the real Prime bundle is present and **`setEngine`** is applied. |
+| **Right — TickUp Prime** | **Prime product shell** with licensed/eval features when **`@tickup/prime`** is linked; **uncapped data capacity and unthrottled live-feed rendering** on the same Hyper-Optimized Canvas 2D engine when the real Prime bundle is present and **`setEngine`** is applied. |
 
 The page loads a **high-volume mock stream** (thousands of bars) so the **Standard cap** is visible next to Prime’s presentation.
 

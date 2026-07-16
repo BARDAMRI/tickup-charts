@@ -18,6 +18,7 @@ import {
 import {Zap, Play, Pause, RefreshCw, Sun, Moon} from 'lucide-react';
 import TickUpDemo from './TickUpDemo';
 import ComparisonLab from './ComparisonLab';
+import EnduranceLab from './EnduranceLab';
 import {PrimeProTelemetry} from './PrimeProTelemetry';
 import {SHOWCASE_PRIME_LICENSE_KEY, SHOWCASE_PRIME_USER_ID} from './showcaseConstants';
 import {syncDocumentTheme} from './syncDocumentTheme';
@@ -173,7 +174,7 @@ const TIER_ROWS: {
     {
         key: 'prime',
         title: 'TickUp Prime',
-        blurb: 'Production @tickup/prime bundle: WebGL, neon luxury profile, VWAP Pro, magnetic drawing with Pro license, and uncapped history in this lane.',
+        blurb: 'Production @tickup/prime bundle: Hyper-Optimized Canvas 2D, neon luxury profile, VWAP Pro, magnetic drawing with Pro license, and uncapped data capacity in this lane.',
         Cmp: TickUpPrimeTier,
         lux: true,
     },
@@ -295,7 +296,7 @@ export default function App() {
         }
         return ChartTheme.dark;
     });
-    const [page, setPage] = useState<'tiers' | 'ticks' | 'compare'>('tiers');
+    const [page, setPage] = useState<'tiers' | 'ticks' | 'compare' | 'endurance'>('tiers');
     const [primeEngine, setPrimeEngine] = useState<TickUpChartEngine | null>(null);
     const [primeLinked, setPrimeLinked] = useState(false);
     const [primeLicenseInput, setPrimeLicenseInput] = useState<string>(() => {
@@ -335,8 +336,12 @@ export default function App() {
             relPath = relPath.replace(/\/$/, '') || '/';
             const pathCompare =
                 relPath === '/compare' || relPath.endsWith('/compare');
+            const pathEndurance =
+                relPath === '/endurance' || relPath.endsWith('/endurance');
             if (raw === 'compare' || raw === 'playground' || pathCompare) {
                 setPage('compare');
+            } else if (raw === 'endurance' || pathEndurance) {
+                setPage('endurance');
             }
         };
         syncRoute();
@@ -353,7 +358,11 @@ export default function App() {
             if (window.location.hash !== '#/compare') {
                 window.location.hash = '#/compare';
             }
-        } else if (page === 'tiers' && window.location.hash === '#/compare') {
+        } else if (page === 'endurance') {
+            if (window.location.hash !== '#/endurance') {
+                window.location.hash = '#/endurance';
+            }
+        } else if (page === 'tiers' && (window.location.hash === '#/compare' || window.location.hash === '#/endurance')) {
             window.location.hash = '';
         }
     }, [page]);
@@ -707,7 +716,25 @@ export default function App() {
                     >
                         Core vs Prime
                     </button>
-                    {page !== 'compare' ? (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setPage('endurance');
+                            window.location.hash = '#/endurance';
+                        }}
+                        className={`rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                            page === 'endurance'
+                                ? 'showcase-nav-pill--active'
+                                : theme === ChartTheme.dark
+                                    ? 'border-white/10 bg-black/30 text-slate-300 hover:border-white/20 hover:text-white'
+                                    : 'border-slate-200 bg-white/70 text-slate-700 hover:border-slate-300 hover:text-slate-900'
+                        }`}
+                        aria-pressed={page === 'endurance'}
+                        title="200k-candle stress test, dirty-data feed, render-fault recovery, memory sampling"
+                    >
+                        Endurance Lab
+                    </button>
+                    {page !== 'compare' && page !== 'endurance' ? (
                     <div className={`flex items-center gap-3 rounded-full border p-1.5 pl-4 pr-1.5 shadow-xl ${
                     theme === ChartTheme.dark ? 'border-white/10 bg-black/40' : 'border-slate-200 bg-white/60'
                 }`}>
@@ -781,6 +808,8 @@ export default function App() {
                     primeUserIdentifier={primeUserIdentifier || null}
                     primeEngine={primeEngine}
                 />
+            ) : page === 'endurance' ? (
+                <EnduranceLab theme={theme} onThemeVariantChange={setTheme} />
             ) : (
                 <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 p-6 lg:gap-16 lg:p-12 mb-20">
                 <div className="text-center pt-8 pb-4">
@@ -789,9 +818,9 @@ export default function App() {
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#3EC5FF] to-[#0A6B99] ml-4 drop-shadow-lg">Analysis</span>
                     </h1>
                     <p className={`mx-auto max-w-3xl text-lg mb-8 leading-relaxed ${theme === ChartTheme.dark ? 'text-slate-400' : 'text-slate-600'}`}>
-                        TickUp is an ultra-fast, lightweight charting engine built for serious financial applications. 
-                        With a remarkably tiny footprint, full developer support, and seamless turnkey integrations, it scales 
-                        effortlessly from simple data embeds to immersive, WebGL-accelerated trading platforms. 
+                        TickUp is an ultra-fast, lightweight charting engine built for serious financial applications.
+                        With a remarkably tiny footprint, full developer support, and seamless turnkey integrations, it scales
+                        effortlessly from simple data embeds to immersive, hyper-optimized Canvas 2D trading platforms.
                         Give your users the institutional-grade technical analysis tools they deserve.
                     </p>
                     <div className={`flex flex-wrap items-center justify-center gap-4 text-xs lg:text-sm font-semibold uppercase tracking-wider ${theme === ChartTheme.dark ? 'text-slate-300' : 'text-slate-700'}`}>
@@ -802,7 +831,7 @@ export default function App() {
                             <span className="text-emerald-400">🛡️</span> Developer Native
                         </span>
                         <span className={`flex items-center gap-2 rounded-full border px-4 py-2 shadow-sm ${theme === ChartTheme.dark ? 'border-white/10 bg-white/5' : 'border-slate-200 bg-white'}`}>
-                            <span className="text-[#5A48DE]">✨</span> WebGL Accelerated
+                            <span className="text-[#5A48DE]">✨</span> Hyper-Optimized Canvas 2D
                         </span>
                     </div>
                 </div>
@@ -833,10 +862,10 @@ export default function App() {
                                     </tr>
                                 </thead>
                                 <tbody className={theme === ChartTheme.dark ? 'divide-y divide-white/10' : 'divide-y divide-slate-200'}>
-                                    <tr><td className="px-4 py-3">Live Updates</td><td className="px-4 py-3">1Hz Updates (Standard)</td><td className="px-4 py-3">60FPS Real-time</td></tr>
-                                    <tr><td className="px-4 py-3">History</td><td className="px-4 py-3">5k History (generous cap)</td><td className="px-4 py-3">Unlimited History</td></tr>
+                                    <tr><td className="px-4 py-3">Live Updates</td><td className="px-4 py-3">1Hz Updates (Standard)</td><td className="px-4 py-3">Unthrottled live-feed rendering</td></tr>
+                                    <tr><td className="px-4 py-3">History</td><td className="px-4 py-3">5k History (generous cap)</td><td className="px-4 py-3">Uncapped data capacity (no 5,000 candle limit)</td></tr>
                                     <tr><td className="px-4 py-3">Indicator Capacity</td><td className="px-4 py-3">3 Indicators</td><td className="px-4 py-3">Unlimited Indicators</td></tr>
-                                    <tr><td className="px-4 py-3">Engine</td><td className="px-4 py-3">Standard Performance</td><td className="px-4 py-3">WebGL High-Performance</td></tr>
+                                    <tr><td className="px-4 py-3">Engine</td><td className="px-4 py-3">Standard Performance</td><td className="px-4 py-3">Hyper-Optimized Canvas 2D</td></tr>
                                     <tr><td className="px-4 py-3">Drawing UX</td><td className="px-4 py-3">Manual Alignment</td><td className="px-4 py-3">Magnetic Drawing</td></tr>
                                 </tbody>
                             </table>
@@ -1071,7 +1100,7 @@ export default function App() {
                                 Pricing & licensing
                             </h4>
                             <p className="mb-3 leading-relaxed">
-                                TickUp Core is MIT. Prime is a commercial upgrade for WebGL throughput, deep history, and pro tooling.
+                                TickUp Core is MIT. Prime is a commercial upgrade for uncapped data capacity, unthrottled live-feed rendering, and pro tooling.
                             </p>
                             <div className="flex flex-col gap-2 text-xs font-semibold">
                                 <a
