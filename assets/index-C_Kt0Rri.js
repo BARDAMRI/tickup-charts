@@ -1,5 +1,5 @@
 import { r as reactExports, j as jsxRuntimeExports, c as clientExports } from './vendor-react-D0COmpux.js';
-import { P as Pt, f as ft, _ as __vitePreload, Y as Yt, V as Vt, I as It, t as to, y as yt, v, i as io, B as Bo, X as XQ, n as no, r as ro, a as ao, N as Nt, b as rn } from './vendor-tickup-core-BbxtnNAl.js';
+import { P as Pt, f as ft, _ as __vitePreload, Y as Yt, V as Vt, I as It, n as no, y as yt, v, a as ao, Q as Qo, M as MQ, r as ro, i as io, B as Bo, N as Nt, b as rn } from './vendor-tickup-core-Cu7khoaB.js';
 import { M as Moon, S as Sun, B as BookOpen, Z as Zap, L as Layers, P as Pencil, a as MousePointer2, T as TrendingUp, G as GitBranch, b as Magnet, E as Eraser, C as ChartCandlestick, c as ChartArea, d as ChartLine, F as Flame, e as Play, f as Pause, R as RefreshCw } from './vendor-lucide-BUwdCf2e.js';
 
 true&&(function polyfill() {
@@ -159,7 +159,7 @@ function advanceLiveSeries(series, intervalSec, tickCounter) {
   return [...series, appendBarAfter(last, intervalSec)];
 }
 
-const INTERVAL_SEC$1 = {
+const INTERVAL_SEC$2 = {
   "1m": 60,
   "5m": 300,
   "15m": 900,
@@ -233,7 +233,7 @@ function isFiniteIntervalBar(it) {
 class DemoMarketDataService {
   symbols = SYMBOLS;
   intervals = INTERVALS;
-  intervalSecByKey = INTERVAL_SEC$1;
+  intervalSecByKey = INTERVAL_SEC$2;
   /**
    * Fetch synthetic history (yfinance-like).
    * This is async to mimic real APIs; it is deterministic per (symbol, interval, count, endTimeSec).
@@ -244,7 +244,7 @@ class DemoMarketDataService {
       throw new Error(`Unknown demo symbol: ${params.symbol}`);
     }
     const interval = params.interval;
-    const intervalSec = INTERVAL_SEC$1[interval];
+    const intervalSec = INTERVAL_SEC$2[interval];
     const count = Math.max(2, Math.floor(params.count || 0));
     const endTimeSec = Math.floor(params.endTimeSec ?? 17e8);
     const startTime = endTimeSec - intervalSec * count;
@@ -269,7 +269,7 @@ class DemoMarketDataService {
    */
   subscribeLive(opts) {
     const { interval } = opts;
-    const intervalSec = INTERVAL_SEC$1[interval];
+    const intervalSec = INTERVAL_SEC$2[interval];
     const tickCounter = { current: 0 };
     const id = window.setInterval(() => {
       const cur = opts.getCurrent();
@@ -1202,7 +1202,7 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
                       {
                         className: `relative h-[min(75vh,48rem)] min-h-[22rem] w-full overflow-hidden rounded-xl border ${isPageDark ? "border-white/10 bg-[#06080d]" : "border-slate-200 bg-white"}`,
                         children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                          to,
+                          no,
                           {
                             ref: chartRef,
                             themeVariant: shellTheme,
@@ -1266,7 +1266,7 @@ function TickUpDemo({ onOpenCompare, onIntervalFeedRequest, onRangeFeedRequest }
                               }
                             ),
                             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-[200px] w-full", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                              to,
+                              no,
                               {
                                 themeVariant: shellTheme,
                                 onThemeVariantChange: setThemePreference,
@@ -2115,7 +2115,7 @@ function ComparisonLab({
                 ),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative h-[380px]", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    io,
+                    ao,
                     {
                       ref: coreRef,
                       ...sharedHostProps,
@@ -2210,7 +2210,7 @@ function ComparisonLab({
                 ),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative h-[380px]", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Bo,
+                    Qo,
                     {
                       ref: primeRef,
                       ...sharedHostProps,
@@ -2264,6 +2264,342 @@ function ComparisonLab({
             }
           )
         ] })
+      ]
+    }
+  );
+}
+
+const INTERVAL_SEC$1 = 300;
+const INITIAL_CANDLE_COUNT = 2e5;
+const TICKS_PER_SECOND = 50;
+const DIRTY_TICK_EVERY = 25;
+const MEMORY_LOG_INTERVAL_MS = 1e4;
+const RECOVERY_DELAY_MS = 1500;
+function enduranceRng(seed) {
+  let s = seed >>> 0;
+  return () => (s = 1664525 * s + 1013904223 >>> 0) / 4294967295;
+}
+function makeEnduranceIntervals(count) {
+  const rand = enduranceRng(777001);
+  const out = new Array(count);
+  let t = 16e8;
+  let lastClose = 100;
+  for (let i = 0; i < count; i++) {
+    const o = lastClose;
+    const noise = (rand() - 0.5) * 1.2;
+    const c = +(o + 0.01 + noise).toFixed(2);
+    const h = +(Math.max(o, c) + rand() * 0.4).toFixed(2);
+    const l = +(Math.min(o, c) - rand() * 0.4).toFixed(2);
+    const v = Math.max(1, Math.round(1e3 + (rand() - 0.5) * 400));
+    out[i] = { t, o, h, l, c, v };
+    lastClose = c;
+    t += INTERVAL_SEC$1;
+  }
+  return out;
+}
+function makeCleanTick(last) {
+  const o = last.c;
+  const noise = (Math.random() - 0.5) * 1;
+  const c = +(o + 0.01 + noise).toFixed(2);
+  const h = +(Math.max(o, c) + Math.random() * 0.35).toFixed(2);
+  const l = +(Math.min(o, c) - Math.random() * 0.35).toFixed(2);
+  const v = Math.max(1, Math.round(1e3 + (Math.random() - 0.5) * 400));
+  return { t: last.t + INTERVAL_SEC$1, o, h, l, c, v };
+}
+const DIRTY_VARIANTS = ["null-fields", "nan-price", "missing-fields", "out-of-order-timestamp"];
+function makeDirtyTick(last, variant) {
+  switch (variant) {
+    case "null-fields":
+      return { t: last.t + INTERVAL_SEC$1, o: null, h: null, l: null, c: null, v: null };
+    case "nan-price":
+      return { t: last.t + INTERVAL_SEC$1, o: last.c, h: NaN, l: NaN, c: NaN, v: last.v };
+    case "missing-fields":
+      return { t: last.t + INTERVAL_SEC$1 };
+    case "out-of-order-timestamp":
+      return { t: last.t - 999999, o: last.c, h: last.c + 1, l: last.c - 1, c: last.c, v: last.v };
+  }
+}
+class RenderFaultBoundary extends reactExports.Component {
+  state = { hasError: false };
+  recoveryTimer = null;
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error) {
+    console.error("[EnduranceLab] render fault caught by boundary — recovering:", error);
+  }
+  componentDidUpdate() {
+    if (this.state.hasError && this.recoveryTimer == null) {
+      this.recoveryTimer = window.setTimeout(() => {
+        this.recoveryTimer = null;
+        this.setState({ hasError: false });
+        this.props.onRecovered();
+      }, RECOVERY_DELAY_MS);
+    }
+  }
+  componentWillUnmount() {
+    if (this.recoveryTimer != null) {
+      window.clearTimeout(this.recoveryTimer);
+    }
+  }
+  render() {
+    if (this.state.hasError) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-full w-full flex-col items-center justify-center gap-2 bg-black/70 text-amber-300", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold uppercase tracking-widest", children: "Recovering…" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-amber-200/70", children: "Render fault caught — reinitializing chart engine" })
+      ] });
+    }
+    return this.props.children;
+  }
+}
+function ChaosProbe({ armed }) {
+  if (armed) {
+    throw new Error("EnduranceLab: simulated render-path fault");
+  }
+  return null;
+}
+function EnduranceLab({
+  theme,
+  onThemeVariantChange
+}) {
+  const isDark = theme === ft.dark;
+  const hostRef = reactExports.useRef(null);
+  const initialIntervals = reactExports.useMemo(() => makeEnduranceIntervals(INITIAL_CANDLE_COUNT), []);
+  const initialVisibleRange = reactExports.useMemo(() => {
+    const lastT = initialIntervals[initialIntervals.length - 1].t;
+    return { start: initialIntervals[0].t, end: lastT + INTERVAL_SEC$1 };
+  }, [initialIntervals]);
+  const chartOptions = reactExports.useMemo(
+    () => ({
+      base: {
+        theme,
+        showOverlayLine: true,
+        showHistogram: true,
+        showCrosshair: true,
+        style: { backgroundColor: isDark ? "#05080f" : "#ffffff" }
+      },
+      axes: { yAxisPosition: It.right }
+    }),
+    [theme, isDark]
+  );
+  const [feedRunning, setFeedRunning] = reactExports.useState(true);
+  const [stats, setStats] = reactExports.useState({
+    sent: 0,
+    accepted: 0,
+    droppedByEngine: 0,
+    warnings: 0,
+    engineExceptions: 0
+  });
+  const statsRef = reactExports.useRef(stats);
+  statsRef.current = stats;
+  const lastBarRef = reactExports.useRef(initialIntervals[initialIntervals.length - 1]);
+  const dirtyCycleRef = reactExports.useRef(0);
+  const tickCounterRef = reactExports.useRef(0);
+  const [engineBarCount, setEngineBarCount] = reactExports.useState(initialIntervals.length);
+  const pushTick = reactExports.useCallback(() => {
+    const api = hostRef.current;
+    if (!api?.applyLiveData) return;
+    tickCounterRef.current += 1;
+    const isDirty = tickCounterRef.current % DIRTY_TICK_EVERY === 0;
+    const last = lastBarRef.current;
+    const tick = isDirty ? makeDirtyTick(last, DIRTY_VARIANTS[dirtyCycleRef.current++ % DIRTY_VARIANTS.length]) : makeCleanTick(last);
+    let result;
+    try {
+      result = api.applyLiveData(tick, MQ.append);
+    } catch (err) {
+      console.error("[EnduranceLab] applyLiveData threw — should never happen:", err);
+      setStats((s) => ({ ...s, sent: s.sent + 1, engineExceptions: s.engineExceptions + 1 }));
+      return;
+    }
+    if (!isDirty && result.errors.length === 0) {
+      lastBarRef.current = tick;
+    }
+    if (result.intervals.length) {
+      setEngineBarCount(result.intervals.length);
+    }
+    setStats((s) => ({
+      sent: s.sent + 1,
+      accepted: s.accepted + (result.errors.length === 0 ? 1 : 0),
+      droppedByEngine: s.droppedByEngine + (result.errors.length > 0 ? 1 : 0),
+      warnings: s.warnings + result.warnings.length,
+      engineExceptions: s.engineExceptions
+    }));
+  }, []);
+  reactExports.useEffect(() => {
+    if (!feedRunning) return;
+    const id = window.setInterval(pushTick, 1e3 / TICKS_PER_SECOND);
+    return () => window.clearInterval(id);
+  }, [feedRunning, pushTick]);
+  const [fps, setFps] = reactExports.useState(0);
+  reactExports.useEffect(() => {
+    let raf = 0;
+    let frames = 0;
+    let windowStart = performance.now();
+    const loop = (now) => {
+      frames += 1;
+      if (now - windowStart >= 1e3) {
+        setFps(frames);
+        frames = 0;
+        windowStart = now;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  const [memorySupported, setMemorySupported] = reactExports.useState(false);
+  const [memoryStats, setMemoryStats] = reactExports.useState(null);
+  reactExports.useEffect(() => {
+    const perf = performance;
+    const supported = typeof perf.memory !== "undefined";
+    setMemorySupported(supported);
+    if (!supported) return;
+    const log = () => {
+      const m = perf.memory;
+      const snapshot = {
+        usedMB: +(m.usedJSHeapSize / 1048576).toFixed(1),
+        totalMB: +(m.totalJSHeapSize / 1048576).toFixed(1),
+        limitMB: +(m.jsHeapSizeLimit / 1048576).toFixed(1)
+      };
+      console.log("[EnduranceLab] performance.memory", snapshot);
+      setMemoryStats(snapshot);
+    };
+    log();
+    const id = window.setInterval(log, MEMORY_LOG_INTERVAL_MS);
+    return () => window.clearInterval(id);
+  }, []);
+  const [chaosArmed, setChaosArmed] = reactExports.useState(false);
+  const [remountEpoch, setRemountEpoch] = reactExports.useState(0);
+  const [faultsRecovered, setFaultsRecovered] = reactExports.useState(0);
+  const triggerRenderFault = reactExports.useCallback(() => setChaosArmed(true), []);
+  const handleRecovered = reactExports.useCallback(() => {
+    setChaosArmed(false);
+    setRemountEpoch((e) => e + 1);
+    setFaultsRecovered((n) => n + 1);
+  }, []);
+  const [chartMounted, setChartMounted] = reactExports.useState(true);
+  const [mountCycles, setMountCycles] = reactExports.useState(0);
+  const toggleMounted = reactExports.useCallback(() => {
+    setChartMounted((m) => !m);
+    if (!chartMounted) {
+      setMountCycles((n) => n + 1);
+    }
+  }, [chartMounted]);
+  const acceptRate = stats.sent ? Math.round(stats.accepted / stats.sent * 100) : 100;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "main",
+    {
+      className: `mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-6 lg:p-12 ${isDark ? "text-slate-200" : "text-slate-800"}`,
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-3xl font-bold tracking-tight", children: "Endurance Lab" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: `max-w-3xl text-sm ${isDark ? "text-slate-400" : "text-slate-600"}`, children: [
+            "Stress harness for the Standard (Core) engine: a ",
+            INITIAL_CANDLE_COUNT.toLocaleString(),
+            "-candle initial payload, a continuous ",
+            TICKS_PER_SECOND,
+            " ticks/sec live feed (1 in ",
+            DIRTY_TICK_EVERY,
+            " ticks deliberately malformed), a simulated render-fault recovery cycle, and a live memory sampler."
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(StatTile, { label: "Est. FPS", value: String(fps), isDark }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(StatTile, { label: "Bars in engine", value: engineBarCount.toLocaleString(), isDark }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(StatTile, { label: "Ticks sent", value: stats.sent.toLocaleString(), isDark }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(StatTile, { label: "Accept rate", value: `${acceptRate}%`, isDark }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(StatTile, { label: "Dropped (dirty)", value: stats.droppedByEngine.toLocaleString(), isDark }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(StatTile, { label: "Warnings", value: stats.warnings.toLocaleString(), isDark }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            StatTile,
+            {
+              label: "Engine exceptions",
+              value: stats.engineExceptions.toLocaleString(),
+              isDark,
+              danger: stats.engineExceptions > 0
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              onClick: () => setFeedRunning((r) => !r),
+              className: `rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide ${isDark ? "border-white/15 bg-white/5 hover:bg-white/10" : "border-slate-300 bg-white hover:bg-slate-50"}`,
+              children: feedRunning ? "Pause feed" : "Resume feed"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              onClick: triggerRenderFault,
+              disabled: chaosArmed,
+              className: "rounded-lg border border-amber-500/50 bg-amber-500/10 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-amber-500 hover:bg-amber-500/20 disabled:opacity-50",
+              children: "Trigger render fault"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              onClick: toggleMounted,
+              className: `rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide ${isDark ? "border-white/15 bg-white/5 hover:bg-white/10" : "border-slate-300 bg-white hover:bg-slate-50"}`,
+              children: chartMounted ? "Unmount chart" : "Remount chart"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              onClick: () => onThemeVariantChange(isDark ? ft.light : ft.dark),
+              className: `rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide ${isDark ? "border-white/15 bg-white/5 hover:bg-white/10" : "border-slate-300 bg-white hover:bg-slate-50"}`,
+              children: "Toggle theme"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: `text-xs ${isDark ? "text-slate-500" : "text-slate-500"}`, children: [
+            "Faults recovered: ",
+            faultsRecovered,
+            " · Mount cycles: ",
+            mountCycles
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `text-xs ${isDark ? "text-slate-500" : "text-slate-500"}`, children: memorySupported ? memoryStats ? `Heap: ${memoryStats.usedMB}MB / ${memoryStats.totalMB}MB (limit ${memoryStats.limitMB}MB)` : "Sampling memory…" : "performance.memory not supported in this browser" })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: `relative h-[560px] w-full overflow-hidden rounded-xl border ${isDark ? "border-white/10 bg-black/40" : "border-slate-200 bg-slate-50"}`,
+            children: chartMounted ? /* @__PURE__ */ jsxRuntimeExports.jsx(RenderFaultBoundary, { onRecovered: handleRecovered, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full w-full", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(ChaosProbe, { armed: chaosArmed }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                ao,
+                {
+                  ref: hostRef,
+                  intervalsArray: initialIntervals,
+                  initialVisibleTimeRange: initialVisibleRange,
+                  initialTimeDetailLevel: yt.Medium,
+                  chartOptions,
+                  themeVariant: theme,
+                  onThemeVariantChange,
+                  defaultSymbol: "ENDURANCE"
+                }
+              )
+            ] }, remountEpoch) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `flex h-full w-full items-center justify-center text-sm ${isDark ? "text-slate-500" : "text-slate-400"}`, children: 'Chart unmounted — click "Remount chart" to reinitialize' })
+          }
+        )
+      ]
+    }
+  );
+}
+function StatTile({ label, value, isDark, danger }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      className: `rounded-lg border px-3 py-2 ${danger ? "border-red-500/50 bg-red-500/10" : isDark ? "border-white/10 bg-white/5" : "border-slate-200 bg-white"}`,
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `text-[10px] font-semibold uppercase tracking-wider ${isDark ? "text-slate-400" : "text-slate-500"}`, children: label }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `font-mono text-lg font-semibold ${danger ? "text-red-500" : isDark ? "text-slate-100" : "text-slate-900"}`, children: value })
       ]
     }
   );
@@ -2437,31 +2773,31 @@ const TIER_ROWS = [
     key: "pulse",
     title: "TickUp Pulse",
     blurb: "Minimal embed — price plot and axes only (no toolbars). Pure data.",
-    Cmp: no
+    Cmp: ro
   },
   {
     key: "flow",
     title: "TickUp Flow",
     blurb: "Analysis — top bar & settings; no drawing tools sidebar.",
-    Cmp: ro
+    Cmp: io
   },
   {
     key: "command",
     title: "TickUp Command",
     blurb: "Full trader UI — drawings, modals, programmatic API.",
-    Cmp: io
+    Cmp: ao
   },
   {
     key: "desk",
     title: "TickUp Desk",
     blurb: "Broker-style — same as Command; attribution always on.",
-    Cmp: ao
+    Cmp: Bo
   },
   {
     key: "prime",
     title: "TickUp Prime",
-    blurb: "Production @tickup/prime bundle: WebGL, neon luxury profile, VWAP Pro, magnetic drawing with Pro license, and uncapped history in this lane.",
-    Cmp: Bo,
+    blurb: "Production @tickup/prime bundle: Hyper-Optimized Canvas 2D, neon luxury profile, VWAP Pro, magnetic drawing with Pro license, and uncapped data capacity in this lane.",
+    Cmp: Qo,
     lux: true
   }
 ];
@@ -2611,8 +2947,11 @@ function App() {
       }
       relPath = relPath.replace(/\/$/, "") || "/";
       const pathCompare = relPath === "/compare" || relPath.endsWith("/compare");
+      const pathEndurance = relPath === "/endurance" || relPath.endsWith("/endurance");
       if (raw === "compare" || raw === "playground" || pathCompare) {
         setPage("compare");
+      } else if (raw === "endurance" || pathEndurance) {
+        setPage("endurance");
       }
     };
     syncRoute();
@@ -2628,7 +2967,11 @@ function App() {
       if (window.location.hash !== "#/compare") {
         window.location.hash = "#/compare";
       }
-    } else if (page === "tiers" && window.location.hash === "#/compare") {
+    } else if (page === "endurance") {
+      if (window.location.hash !== "#/endurance") {
+        window.location.hash = "#/endurance";
+      }
+    } else if (page === "tiers" && (window.location.hash === "#/compare" || window.location.hash === "#/endurance")) {
       window.location.hash = "";
     }
   }, [page]);
@@ -2785,7 +3128,7 @@ function App() {
     const last = intervals[intervals.length - 1];
     tickCountRef.current += 1;
     const n = tickCountRef.current;
-    const result = n % 5 !== 0 ? api.applyLiveData(jitterLastBar(last), XQ.mergeByTime) : api.applyLiveData(makeNextBar(last, INTERVAL_SEC), XQ.append);
+    const result = n % 5 !== 0 ? api.applyLiveData(jitterLastBar(last), MQ.mergeByTime) : api.applyLiveData(makeNextBar(last, INTERVAL_SEC), MQ.append);
     if (result.intervals.length) {
       setSeries(result.intervals);
     }
@@ -2936,7 +3279,21 @@ Wire onSymbolSearch to load data for this symbol.`);
                     children: "Core vs Prime"
                   }
                 ),
-                page !== "compare" ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center gap-3 rounded-full border p-1.5 pl-4 pr-1.5 shadow-xl ${theme === ft.dark ? "border-white/10 bg-black/40" : "border-slate-200 bg-white/60"}`, children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    onClick: () => {
+                      setPage("endurance");
+                      window.location.hash = "#/endurance";
+                    },
+                    className: `rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${page === "endurance" ? "showcase-nav-pill--active" : theme === ft.dark ? "border-white/10 bg-black/30 text-slate-300 hover:border-white/20 hover:text-white" : "border-slate-200 bg-white/70 text-slate-700 hover:border-slate-300 hover:text-slate-900"}`,
+                    "aria-pressed": page === "endurance",
+                    title: "200k-candle stress test, dirty-data feed, render-fault recovery, memory sampling",
+                    children: "Endurance Lab"
+                  }
+                ),
+                page !== "compare" && page !== "endurance" ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center gap-3 rounded-full border p-1.5 pl-4 pr-1.5 shadow-xl ${theme === ft.dark ? "border-white/10 bg-black/40" : "border-slate-200 bg-white/60"}`, children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 pr-2", children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "relative flex h-3 w-3", children: [
                       !livePaused && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" }),
@@ -2998,13 +3355,13 @@ Wire onSymbolSearch to load data for this symbol.`);
             primeUserIdentifier: primeUserIdentifier || null,
             primeEngine
           }
-        ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("main", { className: "mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 p-6 lg:gap-16 lg:p-12 mb-20", children: [
+        ) : page === "endurance" ? /* @__PURE__ */ jsxRuntimeExports.jsx(EnduranceLab, { theme, onThemeVariantChange: setTheme }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("main", { className: "mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 p-6 lg:gap-16 lg:p-12 mb-20", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center pt-8 pb-4", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("h1", { className: "mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-7xl", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `text-transparent bg-clip-text bg-gradient-to-b ${theme === ft.dark ? "from-white to-slate-400" : "from-slate-800 to-slate-500"}`, children: "Next-Gen" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-transparent bg-clip-text bg-gradient-to-b from-[#3EC5FF] to-[#0A6B99] ml-4 drop-shadow-lg", children: "Analysis" })
             ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mx-auto max-w-3xl text-lg mb-8 leading-relaxed ${theme === ft.dark ? "text-slate-400" : "text-slate-600"}`, children: "TickUp is an ultra-fast, lightweight charting engine built for serious financial applications. With a remarkably tiny footprint, full developer support, and seamless turnkey integrations, it scales effortlessly from simple data embeds to immersive, WebGL-accelerated trading platforms. Give your users the institutional-grade technical analysis tools they deserve." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: `mx-auto max-w-3xl text-lg mb-8 leading-relaxed ${theme === ft.dark ? "text-slate-400" : "text-slate-600"}`, children: "TickUp is an ultra-fast, lightweight charting engine built for serious financial applications. With a remarkably tiny footprint, full developer support, and seamless turnkey integrations, it scales effortlessly from simple data embeds to immersive, hyper-optimized Canvas 2D trading platforms. Give your users the institutional-grade technical analysis tools they deserve." }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex flex-wrap items-center justify-center gap-4 text-xs lg:text-sm font-semibold uppercase tracking-wider ${theme === ft.dark ? "text-slate-300" : "text-slate-700"}`, children: [
               /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: `flex items-center gap-2 rounded-full border px-4 py-2 shadow-sm ${theme === ft.dark ? "border-white/10 bg-white/5" : "border-slate-200 bg-white"}`, children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[#3EC5FF]", children: "⚡" }),
@@ -3016,7 +3373,7 @@ Wire onSymbolSearch to load data for this symbol.`);
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: `flex items-center gap-2 rounded-full border px-4 py-2 shadow-sm ${theme === ft.dark ? "border-white/10 bg-white/5" : "border-slate-200 bg-white"}`, children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[#5A48DE]", children: "✨" }),
-                " WebGL Accelerated"
+                " Hyper-Optimized Canvas 2D"
               ] })
             ] })
           ] }),
@@ -3040,12 +3397,12 @@ Wire onSymbolSearch to load data for this symbol.`);
                       /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Live Updates" }),
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "1Hz Updates (Standard)" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "60FPS Real-time" })
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Unthrottled live-feed rendering" })
                       ] }),
                       /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "History" }),
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "5k History (generous cap)" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Unlimited History" })
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Uncapped data capacity (no 5,000 candle limit)" })
                       ] }),
                       /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Indicator Capacity" }),
@@ -3055,7 +3412,7 @@ Wire onSymbolSearch to load data for this symbol.`);
                       /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Engine" }),
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Standard Performance" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "WebGL High-Performance" })
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Hyper-Optimized Canvas 2D" })
                       ] }),
                       /* @__PURE__ */ jsxRuntimeExports.jsxs("tr", { children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: "px-4 py-3", children: "Drawing UX" }),
@@ -3262,7 +3619,7 @@ Wire onSymbolSearch to load data for this symbol.`);
                       className: `mb-4 rounded-xl border p-4 text-sm ${theme === ft.dark ? "border-[#3EC5FF]/25 bg-[#0a1624]/90 text-slate-300" : "border-[#3EC5FF]/30 bg-cyan-50/80 text-slate-700"}`,
                       children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: `mb-2 text-xs font-bold uppercase tracking-widest ${theme === ft.dark ? "text-[#7dd3fc]" : "text-cyan-800"}`, children: "Pricing & licensing" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-3 leading-relaxed", children: "TickUp Core is MIT. Prime is a commercial upgrade for WebGL throughput, deep history, and pro tooling." }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-3 leading-relaxed", children: "TickUp Core is MIT. Prime is a commercial upgrade for uncapped data capacity, unthrottled live-feed rendering, and pro tooling." }),
                         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2 text-xs font-semibold", children: [
                           /* @__PURE__ */ jsxRuntimeExports.jsx(
                             "a",
