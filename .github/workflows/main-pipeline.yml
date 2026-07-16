@@ -43,10 +43,26 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump version (patch)
+      - name: Detect version bump type from commit message
+        id: bump_type
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          shopt -s nocasematch
+          if [[ "$COMMIT_MSG" =~ \[major\] ]]; then
+            VERSION_TYPE="major"
+          elif [[ "$COMMIT_MSG" =~ \[minor\] ]]; then
+            VERSION_TYPE="minor"
+          else
+            VERSION_TYPE="patch"
+          fi
+          echo "Detected version bump: $VERSION_TYPE"
+          echo "type=$VERSION_TYPE" >> "$GITHUB_OUTPUT"
+
+      - name: Bump version
         id: bump
         run: |
-          npm version patch -m "chore: bump version to %s [skip ci]"
+          npm version "${{ steps.bump_type.outputs.type }}" -m "chore: bump version to %s [skip ci]"
           echo "publish_version=$(npm pkg get version | tr -d '\"')" >> "$GITHUB_OUTPUT"
 
       - name: Verify publish is newer than registry (anti-rollback)
